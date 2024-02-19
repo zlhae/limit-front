@@ -1,0 +1,71 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  develop-deploy:
+    runs-on: ubuntu-22.04
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      REPO: ${{ secrets.DOCKER_FRONT_REPOSITORY }}
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.push.base_ref }}
+
+      - name: Build React Docker image
+        run: |
+          docker build -t $REPO:$IMAGE_TAG .
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Publish Docker image
+        run: |
+          docker push $REPO:$IMAGE_TAG
+
+      - name: Run deploy script in WAS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.WAS_HOST }}
+          username: ${{ secrets.WAS_USERNAME }}
+          key: ${{ secrets.WAS_SSH_KEY_PAIR }}
+          port: ${{ secrets.WAS_SSH_PORT }}
+          timeout: 30s
+
+          script: |
+            echo "############# PULL DOCKER IMAGE #############"
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker pull ${{env.REPO}}:${{env.IMAGE_TAG}}
+            echo "############# RUN DEPLOY SCRIPT #############"
+            cd ${{ vars.FRONT_DEPLOY_SCRIPT_PATH }}
+            sh deploy.sh ${{env.IMAGE_TAG}}
