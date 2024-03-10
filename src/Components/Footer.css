@@ -1,0 +1,32 @@
+.footer{
+    width: 100%;
+}
+
+.footer-inner{
+    margin: 70px 150px;
+    margin-bottom: 70px;
+    padding-top: 70px;
+    border-top: 1px solid #d9d9d9;
+}
+
+.footer-inner a{
+    color: #6d6d6d;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+#github-logo{
+    height: 25px;
+}
+
+#notion-logo{
+    height: 25px;
+}
+
+.link-container{
+    float: right;
+}
+
+.link-container a{
+    margin-left: 10px;
+}
