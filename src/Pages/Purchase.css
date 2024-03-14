@@ -1,0 +1,33 @@
+.purchase-container{
+    margin: 0px 150px;
+}
+
+.toggle-container{
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+}
+
+.toggle-container div{
+    text-align: center;
+    padding: 15px;
+    width: 50%;
+    border-radius: 100px;
+}
+
+.toggle-container h5{
+    margin: 0px;
+}
+
+.purchase-bid-checked{
+    background-color: #ffc9394c;
+    transition: 0.5s;
+}
+
+.purchase-immediate-checked{
+    background-color: #ffc9394c;
+    transition: 0.5s;
+}

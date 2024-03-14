@@ -14,7 +14,7 @@ const Header=()=>{
                 </div>
             </div>
             <div className='header-main'>
-                <img id="limit-logo" alt="limit-logo" src="images/limit-logo.svg"></img>
+                <Link to={"/"}><img id="limit-logo" alt="limit-logo" src="images/limit-logo.svg"></img></Link>
                 <div className="bnt_area">
                     <Link to={"/chatting"}><img id="chatting-icon" alt="chatting-icon" src="images/chatting-icon.svg"></img></Link>
                     <Link to={"/search"}><img id="search-icon" alt="search-icon" src="images/search-icon.svg"></img></Link>
