@@ -4,6 +4,7 @@ import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Login from "./Pages/Login";
 import Purchase from "./Pages/Purchase";
+import Sale from "./Pages/Sale";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/purchase" element={<Purchase></Purchase>}></Route>
+        <Route path="/sale" element={<Sale></Sale>}></Route>
       </Routes>
       <Footer></Footer>
     </div>

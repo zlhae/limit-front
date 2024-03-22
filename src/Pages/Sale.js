@@ -1,11 +1,12 @@
-import './Purchase.css';
+import './Sale.css';
 import { useState } from 'react';
-import ProductInformation from '../Components/ProductInformation';
+import ProductInformation from "../Components/ProductInformation"
 import ImmediatePrice from '../Components/ImmediatePrice';
 import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
+import SaleSecondhand from '../Components/SaleSecondhand';
 
-const Purchase=()=>{
+const Sale=()=>{
     const [position,setPosition]=useState(1);
 
     const productInformationData={
@@ -26,23 +27,29 @@ const Purchase=()=>{
             case 1:
                 return(
                     <DoBid
-                        type="purchase"
+                        type="sale"
                     ></DoBid>
                 );
             case 2:
                 return(
                     <DoImmediate
-                        type="purchase"
+                        type="sale"
                         immediatePriceData={immediatePriceData}
                     ></DoImmediate>
                 );
+            case 3:
+                return(
+                    <SaleSecondhand
+                        type="sale"
+                    ></SaleSecondhand>
+                )
             default:
                 return;
         }
     }
 
     return(
-        <div className="purchase-container">
+        <div className="sale-container">
             <ProductInformation
                 image={productInformationData.image}
                 number={productInformationData.number}
@@ -52,20 +59,26 @@ const Purchase=()=>{
             ></ProductInformation>
             <ImmediatePrice
                 purchase={immediatePriceData.purchase}
-                sale={immediatePriceData.sale}   
+                sale={immediatePriceData.sale}
             ></ImmediatePrice>
-            <div className='purchase-toggle-container'>
+            <div className='sale-toggle-container'>
                 <div
-                    className={`purchase-bid${position===1?"-checked":""}`}
+                    className={`sale-bid${position===1?"-checked":""}`}
                     onClick={(e)=>setPosition(1)}
                 >
-                    <h5>구매 입찰</h5>
+                    <h5>판매 입찰</h5>
                 </div>
                 <div
-                    className={`purchase-immediate${position===2?"-checked":""}`}
+                    className={`sale-immediate${position===2?"-checked":""}`}
                     onClick={(e)=>setPosition(2)}
                 >
-                    <h5>즉시 구매</h5>
+                    <h5>즉시 판매</h5>
+                </div>
+                <div
+                    className={`sale-secondhand${position===3?"-checked":""}`}
+                    onClick={(e)=>setPosition(3)}
+                >
+                    <h5>중고 상품 등록</h5>
                 </div>
             </div>
             {showSubmitBox()}
@@ -73,4 +86,4 @@ const Purchase=()=>{
     );
 }
 
-export default Purchase;
+export default Sale;

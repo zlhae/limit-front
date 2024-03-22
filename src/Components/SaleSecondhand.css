@@ -1,0 +1,177 @@
+.sale-secondhand-image-input label{
+    background-color: #72b8df4c;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    padding: 10px 0px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.sale-secondhand-image-component{
+    background-color: #ffffff;
+    width: 18%;
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+.sale-secondhand-image-component:not(:first-of-type){
+    margin-left: 2.5%;
+}
+
+.sale-secondhand-image-component img{
+    width: 100%;
+}
+
+.sale-secondhand-image-component img#delete_btn{
+    position: absolute;
+    width: 15%; height: 15%;
+    right: 5%; top: 5%;
+}
+
+.sale-secondhand-image-input input{
+    display: none;
+}
+
+.sale-secondhand-image-input label{
+    font-size: 0.83em;
+    font-weight: bold;
+}
+
+.sale-secondhand-price{
+    height: 45px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+}
+
+.sale-secondhand-price-input{
+    float: right;
+}
+
+.sale-secondhand-price-input input{
+    border: 0;
+    outline: none;
+    font-size: 1.17em;
+    text-align: right;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+.sale-secondhand-price-input input::-webkit-outer-spin-button, input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sale-secondhand-price-input h3{
+    margin: 0px;
+    display: inline-block;
+}
+
+.sale-secondhand-size-radios{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.sale-secondhand-size-radio{
+    display: inline-block;
+    width: 9.1%;
+    margin-right: 1%;
+    margin-bottom: 10px;
+}
+
+.sale-secondhand-size-radio:nth-child(10n){
+    margin-right: 0;
+}
+
+.sale-secondhand-size-radio input[type='radio']{
+    display: none
+}
+
+.sale-secondhand-size-radio label{
+    display: inline-block;
+    padding: 10px 0px;
+    width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 0.83em;
+    background-color: #ffffff;
+    color: #979797;
+    border: 1px dashed #979797;
+}
+
+.sale-secondhand-size-radio input[type='radio']:checked+label{
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.sale-secondhand-delivery-checkbox{
+    display: inline-block;
+    width: 9.1%;
+    margin-right: 1%;
+}
+
+.sale-secondhand-delivery-checkbox input[type='checkbox']{
+    display: none
+}
+
+.sale-secondhand-delivery-checkbox label{
+    width: 100%;
+    text-align: center;
+    padding: 10px 0px;
+    display: inline-block;
+    border-radius: 10px;
+    font-size: 0.83em;
+    background-color: #ffffff;
+    color: #979797;
+    border: 1px dashed #979797;
+}
+
+.sale-secondhand-delivery-checkbox input[type='checkbox']:checked+label{
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.sale-secondhand-location input{
+    border: 0;
+    outline: none;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+    background-color: transparent;
+    width: 100%;
+}
+
+.sale-secondhand-defect-checkboxs{
+    margin: 0px 0px 5px 0px;
+}
+
+.sale-secondhand-defect-checkbox{
+    display: inline-block;
+}
+
+.sale-secondhand-defect-checkbox input[type='checkbox']{
+    accent-color: #979797;
+}
+
+.sale-secondhand-defect-checkbox label{
+    font-size: 0.83em;
+}
+
+.sale-secondhand-defect textarea{
+    width: 100%;
+    border: 0;
+    outline: none;
+    padding: 10px;
+    border-radius: 10px;
+    height: 70px;
+    resize: none;
+}
+
+#sale-secondhand-submit{
+    width: 100%;
+    border: none;
+    background-color: #72b8df4c;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+}

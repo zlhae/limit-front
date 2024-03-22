@@ -1,0 +1,92 @@
+.purchase-bid-price{
+    height: 45px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+}
+
+.purchase-bid-price-input{
+    float: right;
+}
+
+.purchase-bid-price-input input{
+    border: 0;
+    outline: none;
+    font-size: 1.17em;
+    text-align: right;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+.purchase-bid-price-input input::-webkit-outer-spin-button, input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.purchase-bid-price-input h3{
+    margin: 0px;
+    display: inline-block;
+}
+
+.purchase-bid-period-detail p{
+    margin: 0px;
+    font-size: 0.83em;
+    color: #979797;
+}
+
+#purchase-bid-submit{
+    width: 100%;
+    border: none;
+    background-color: #ffc9394c;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+.sale-bid-price{
+    height: 45px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+    margin-bottom: 30px;
+}
+
+.sale-bid-price-input{
+    float: right;
+}
+
+.sale-bid-price-input input{
+    border: 0;
+    outline: none;
+    font-size: 1.17em;
+    text-align: right;
+    font-weight: bold;
+    background-color: transparent;
+}
+
+.sale-bid-price-input input::-webkit-outer-spin-button, input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.sale-bid-price-input h3{
+    margin: 0px;
+    display: inline-block;
+}
+
+.sale-bid-period{
+    margin-bottom: 30px;
+}
+
+.sale-bid-period-detail p{
+    margin: 0px;
+    font-size: 0.83em;
+    color: #979797;
+}
+
+#sale-bid-submit{
+    width: 100%;
+    border: none;
+    background-color: #72b8df4c;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+}
