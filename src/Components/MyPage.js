@@ -75,7 +75,16 @@ const LeftNavBar = styled.div` // 마이페이지 좌측 목록 네비바 컨테
     display: flex;
     flex-direction: column;
     width: 10%;
-    margin-left: 150px;
+    min-width: 120px;
+    margin-left: 20%;
+
+    @media (max-width: 1000px) {
+        margin-left: 5%;
+    }
+
+    @media (min-width: 1001px) and (max-width: 1200px) {
+        margin-left: 10%;
+    }
 `;
 
 const NaviList = styled.div` // 좌측 네비바 내부 목록
@@ -88,6 +97,16 @@ const NaviList = styled.div` // 좌측 네비바 내부 목록
 `;
 
 const RightContainer = styled.div` // 우측 컴포넌트 최상위 부모 컨테이너
-    width: 70%;
-    margin-right: 150px;
+    width: 50%;
+    margin-right: 20%;
+
+    @media (max-width: 1000px) {
+        width: 72.5%;
+        margin-right: 5%;
+    }
+
+    @media (min-width: 1001px) and (max-width: 1200px) {
+        width: 67.5%;
+        margin-right: 10%;
+    }
 `;

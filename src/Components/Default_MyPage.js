@@ -66,7 +66,7 @@ export default function Default_MyPage() {
     );
 }
 
-const ProfileContainer = styled.div` // 사용자 프로필 최상위 부모 컨테이너
+const ProfileContainer = styled.div` // 사용자 프로필 부모 컨테이너
     display: flex;
     width: 100%;
     height: 150px;
@@ -84,6 +84,10 @@ const ProfileImage = styled.div` // 사용자 프로필 이미지
     background-image: url(${Default_Profile});
     background-size: cover;
     border-radius: 50%;
+
+    @media (max-width: 950px) {
+        min-width: 120px;
+    }
 `;
 
 const UserInfoContainer = styled.div` // 사용자 정보 컨테이너
@@ -101,7 +105,7 @@ const UserInfo = styled.div` // 사용자 닉네임 & 이메일 정보
 `;
 
 const ProfileModiBtn = styled.div` // 프로필 수정 페이지 이동 버튼
-    width: 150px;
+    min-width: 150px;
     height: 50px;
     background-color: #D9D9D9;
     border-radius:15px;
