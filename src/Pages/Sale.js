@@ -1,4 +1,4 @@
-import './Sale.css';
+import styled from 'styled-components';
 import { useState } from 'react';
 import ProductInformation from "../Components/ProductInformation"
 import ImmediatePrice from '../Components/ImmediatePrice';
@@ -49,7 +49,7 @@ const Sale=()=>{
     }
 
     return(
-        <div className="sale-container">
+        <SaleContainer>
             <ProductInformation
                 image={productInformationData.image}
                 number={productInformationData.number}
@@ -61,29 +61,60 @@ const Sale=()=>{
                 purchase={immediatePriceData.purchase}
                 sale={immediatePriceData.sale}
             ></ImmediatePrice>
-            <div className='sale-toggle-container'>
-                <div
-                    className={`sale-bid${position===1?"-checked":""}`}
+            <SaleToggleContainer>
+                <SaleToggleElement
+                    check={position===1?"checked":""}
                     onClick={(e)=>setPosition(1)}
                 >
-                    <h5>판매 입찰</h5>
-                </div>
-                <div
-                    className={`sale-immediate${position===2?"-checked":""}`}
+                    <SaleToggleText>판매 입찰</SaleToggleText>
+                </SaleToggleElement>
+                <SaleToggleElement
+                    check={position===2?"checked":""}
                     onClick={(e)=>setPosition(2)}
                 >
-                    <h5>즉시 판매</h5>
-                </div>
-                <div
-                    className={`sale-secondhand${position===3?"-checked":""}`}
+                    <SaleToggleText>즉시 판매</SaleToggleText>
+                </SaleToggleElement>
+                <SaleToggleElement
+                    check={position===3?"checked":""}
                     onClick={(e)=>setPosition(3)}
                 >
-                    <h5>중고 상품 등록</h5>
-                </div>
-            </div>
+                    <SaleToggleText>중고 상품 등록</SaleToggleText>
+                </SaleToggleElement>
+            </SaleToggleContainer>
             {showSubmitBox()}
-        </div>
+        </SaleContainer>
     );
 }
+
+const SaleContainer=styled.div`
+    width: 50%;
+    margin: 0 auto;
+
+    @media (max-width: 1100px){
+        width: 80%
+    }
+`
+
+const SaleToggleContainer=styled.div`
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+`
+
+const SaleToggleElement=styled.div`
+    text-align: center;
+    padding: 15px;
+    width: 50%;
+    border-radius: 100px;
+    background-color: ${props => props.check === "checked" ? "#72b8df4c" : "transparent"};
+    transition: 0.5s;
+`
+
+const SaleToggleText=styled.h5`
+    margin: 0px;
+`
 
 export default Sale;

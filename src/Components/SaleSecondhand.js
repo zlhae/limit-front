@@ -1,4 +1,4 @@
-import './SaleSecondhand.css';
+import styled from 'styled-components';
 import { useState } from 'react';
 
 const SaleSecondhand=({type})=>{
@@ -89,95 +89,290 @@ const SaleSecondhand=({type})=>{
     ]
 
     return(
-        <div className={`${type}-submit-box`}>
-            <div id={`${type}-component`} className={`${type}-secondhand-image`}>
-                <h5 id={`${type}-title`}>중고 상품 상세 사진</h5>
-                <div className={`${type}-secondhand-image-input`}>
+        <div>
+            <SecondhandComponent>
+                <SecondhandTitle>중고 상품 상세 사진</SecondhandTitle>
+                <div>
                     <input
                         type='file'
                         accept='image/*'
                         multiple
                         onChange={handleAddImage}
                         id='image-input'
+                        style={{display: 'none'}}
                     ></input>
-                    <label htmlFor='image-input'>사진 업로드</label>
+                    <ImageInputLabel htmlFor='image-input'>사진 업로드</ImageInputLabel>
                 </div>
-                <div className={`${type}-secondhand-image-show`}>
+                <div>
                     {secondhandImage.map((image, id)=>(
-                         <div className={`${type}-secondhand-image-component`}>
-                            <img src={image} alt={`${image}-${id}`}></img>
-                            <img
-                                id='delete_btn'
+                         <ImageComponent>
+                            <Image src={image} alt={`${image}-${id}`}></Image>
+                            <DeleteBtn
                                 src='images/delete_btn.svg'
                                 onClick={()=>handleDelteImage(id)}
-                            ></img>
-                        </div>
+                            ></DeleteBtn>
+                        </ImageComponent>
                     ))}
                 </div>
-            </div>
-            <div className={`${type}-secondhand-information`}>
-                <div id={`${type}-component`} className={`${type}-secondhand-price`}>
-                    <h5 id={`${type}-title`}>중고 상품 판매가</h5>
-                    <div className={`${type}-secondhand-price-input`}>
-                        <input type='number' onChange={(e)=>{setSecondhandPrice(Number(e.target.value))}}></input>
-                        <h3>원</h3>
-                    </div>
-                </div>
-                <div id={`${type}-component`} className={`${type}-secondhand-size`}>
-                    <h5 id={`${type}-title`}>사이즈</h5>
-                    <div className={`${type}-secondhand-size-radios`}>
+            </SecondhandComponent>
+            <div>
+                <PriceComponent>
+                    <SecondhandTitle>중고 상품 판매가</SecondhandTitle>
+                    <PriceInputContainer>
+                        <PriceInput type='number' onChange={(e)=>{setSecondhandPrice(Number(e.target.value))}}></PriceInput>
+                        <PriceInputWon>원</PriceInputWon>
+                    </PriceInputContainer>
+                </PriceComponent>
+                <SecondhandComponent>
+                    <SecondhandTitle>사이즈</SecondhandTitle>
+                    <SizeRadioContainer>
                         {productSizeData.map(item=>
-                            <div className={`${type}-secondhand-size-radio`} key={item}>
-                                <input  
+                            <SizeRadio key={item}>
+                                <SizeRadioInput
                                     type='radio'
                                     value={item}
                                     id={item}
                                     name='size-radio'
                                     onClick={(e)=>{setSecondhandSize(Number(e.target.value))}}
-                                ></input>
-                                <label htmlFor={item}>{item}</label>
-                            </div>
+                                ></SizeRadioInput>
+                                <SizeRadioLabel htmlFor={item}>{item}</SizeRadioLabel>
+                            </SizeRadio>
                         )}
-                    </div>
-                </div>
-                <div id={`${type}-component`} className={`${type}-secondhand-delivery`}>
-                    <h5 id={`${type}-title`}>가능한 상품 전달 방식</h5>
-                    <div className={`${type}-secondhand-delivery-checkboxs`}>
+                    </SizeRadioContainer>
+                </SecondhandComponent>
+                <SecondhandComponent>
+                    <SecondhandTitle>가능한 상품 전달 방식</SecondhandTitle>
+                    <div>
                         {deliveryType.map(item=>
-                            <div className={`${type}-secondhand-delivery-checkbox`} key={item.en}>
-                                <input type='checkbox' value={item.en} id={item.en} onChange={handleSecondhandDeliveryChange}></input>
-                                <label htmlFor={item.en}>{item.ko}</label>
-                            </div>
+                            <DeliveryCheckbox key={item.en}>
+                                <DeliveryCheckboxInput type='checkbox' value={item.en} id={item.en} onChange={handleSecondhandDeliveryChange}></DeliveryCheckboxInput>
+                                <DeliveryCheckboxLabel htmlFor={item.en}>{item.ko}</DeliveryCheckboxLabel>
+                            </DeliveryCheckbox>
                         )}
                     </div>
-                </div>
-                <div id={`${type}-component`} className={`${type}-secondhand-location`}>
-                    <h5 id={`${type}-title`}>판매자 위치 정보</h5>
-                    <input
+                </SecondhandComponent>
+                <SecondhandComponent>
+                    <SecondhandTitle>판매자 위치 정보</SecondhandTitle>
+                    <LocationInput
                         type='text'
                         placeholder='ex) 리밋광역시 리밋구 리밋동'
                         onChange={(e)=>setSecondhandLocation(e.target.value)}
-                    ></input>
-                </div>
-                <div id={`${type}-component`} className={`${type}-secondhand-defect`}>
-                    <h5 id={`${type}-title`}>하자 상세 정보</h5>
-                    <div className={`${type}-secondhand-defect-checkboxs`}>
+                    ></LocationInput>
+                </SecondhandComponent>
+                <SecondhandComponent>
+                    <SecondhandTitle>하자 상세 정보</SecondhandTitle>
+                    <DefectCheckboxContainer>
                         {detectType.map(item=>
-                            <div className={`${type}-secondhand-defect-checkbox`} key={item.en}>
-                                <input type='checkbox' value={item.en} id={item.en} onChange={handleSecondhandDetectChange}></input>
-                                <label htmlFor={item.en}>{item.ko}</label>
-                            </div>
+                            <DefectCheckbox key={item.en}>
+                                <DefectCheckboxInput type='checkbox' value={item.en} id={item.en} onChange={handleSecondhandDetectChange}></DefectCheckboxInput>
+                                <DefectCheckboxLabel htmlFor={item.en}>{item.ko}</DefectCheckboxLabel>
+                            </DefectCheckbox>
                         )}
-                    </div>
-                    <textarea
-                        placeholder='하자 정보를 상세하게 기술해주세요.'
-                        onChange={(e)=>{setSecondhandDetectDetail(e.target.value)}}
-                    ></textarea>
-                </div>
-                <button id={`${type}-secondhand-submit`}>중고 상품 등록하기</button>
+                    </DefectCheckboxContainer>
+                    <DefectTextareaContainer>
+                        <DefectTextarea
+                            placeholder='하자 정보를 상세하게 기술해주세요.'
+                            onChange={(e)=>{setSecondhandDetectDetail(e.target.value)}}
+                        ></DefectTextarea>
+                    </DefectTextareaContainer>
+                </SecondhandComponent>
+                <SecondhandSubmit>중고 상품 등록하기</SecondhandSubmit>
             </div>
         </div>
     );
 }
+
+const SecondhandComponent=styled.div`
+    margin-bottom: 30px;
+`
+
+const SecondhandTitle=styled.h5`
+    margin: 0px;
+    margin-bottom: 5px;
+`
+
+const ImageInputLabel=styled.label`
+    background-color: #72b8df4c;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    padding: 10px 0px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 0.83em;
+    font-weight: bold;
+`
+
+const ImageComponent=styled.div`
+    background-color: #ffffff;
+    width: 18%;
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+    &:not(:first-of-type){
+        margin-left: 2.5%;
+    }
+`
+
+const Image=styled.img`
+    width: 100%;
+`
+
+const DeleteBtn=styled.img`
+    position: absolute;
+    width: 15%; height: 15%;
+    right: 5%; top: 5%;
+`
+
+const PriceComponent=styled.div`
+    height: 45px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+    margin-bottom: 30px;
+`
+
+const PriceInputContainer=styled.div`
+    float: right;
+`
+
+const PriceInput=styled.input`
+    border: 0;
+    outline: none;
+    font-size: 1.17em;
+    text-align: right;
+    font-weight: bold;
+    background-color: transparent;
+`
+
+const PriceInputWon=styled.h3`
+    margin: 0px;
+    display: inline-block;
+`
+
+const SizeRadioContainer=styled.div`
+    display: flex;
+    flex-wrap: wrap;
+`
+
+const SizeRadio=styled.div`
+    display: inline-block;
+    width: 9.1%;
+    margin-right: 1%;
+    margin-bottom: 10px;
+
+    &:nth-child(10n){
+        margin-right: 0;
+    }
+
+    @media(max-width: 1100px){
+        width: 13%;
+        margin-right= 1.5%;
+
+        &:nth-child(7n){
+            margin-right: 0;
+        }
+        &:nth-child(10n){
+            margin-right: 1.5%;
+        }
+    }
+`
+
+const SizeRadioInput=styled.input`
+    display: none;
+    &:checked+label{
+        color: #000000;
+        border: 1px solid #000000;
+    }
+`
+
+const SizeRadioLabel=styled.label`
+    display: inline-block;
+    padding: 10px 0px;
+    width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 0.83em;
+    background-color: #ffffff;
+    color: #979797;
+    border: 1px dashed #979797;
+`
+
+const DeliveryCheckbox=styled.div`
+    display: inline-block;
+    width: 9.1%;
+    margin-right: 1%;
+
+    @media (max-width: 1100px){
+        width: 13%;
+        margin-right: 1.5%;
+    }
+`
+const DeliveryCheckboxInput=styled.input`
+    display: none;
+    &:checked+label{
+        color: #000000;
+        border: 1px solid #000000;
+    }
+`
+
+const DeliveryCheckboxLabel=styled.label`
+    width: 100%;
+    text-align: center;
+    padding: 10px 0px;
+    display: inline-block;
+    border-radius: 10px;
+    font-size: 0.83em;
+    background-color: #ffffff;
+    color: #979797;
+    border: 1px dashed #979797;
+`
+
+const LocationInput=styled.input`
+    border: 0;
+    outline: none;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #979797;
+    background-color: transparent;
+    width: 100%;
+`
+
+const DefectCheckboxContainer=styled.div`
+    margin: 0px 0px 5px 0px;
+`
+
+const DefectCheckbox=styled.div`
+    display: inline-block;
+`
+
+const DefectCheckboxInput=styled.input`
+    accent-color: #979797;
+`
+
+const DefectCheckboxLabel=styled.label`
+    font-size: 0.83em;
+`
+
+const DefectTextareaContainer=styled.div`
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 10px;
+`
+
+const DefectTextarea=styled.textarea`
+    width: 100%;
+    border: 0;
+    outline: none;
+    height: 70px;
+    resize: none;
+`
+
+const SecondhandSubmit=styled.button`
+    width: 100%;
+    border: none;
+    background-color: #72b8df4c;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 10px;
+`
 
 export default SaleSecondhand;

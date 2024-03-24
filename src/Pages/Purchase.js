@@ -1,4 +1,4 @@
-import './Purchase.css';
+import styled from 'styled-components';
 import { useState } from 'react';
 import ProductInformation from '../Components/ProductInformation';
 import ImmediatePrice from '../Components/ImmediatePrice';
@@ -42,7 +42,7 @@ const Purchase=()=>{
     }
 
     return(
-        <div className="purchase-container">
+        <PurchaseContainer>
             <ProductInformation
                 image={productInformationData.image}
                 number={productInformationData.number}
@@ -54,23 +54,54 @@ const Purchase=()=>{
                 purchase={immediatePriceData.purchase}
                 sale={immediatePriceData.sale}   
             ></ImmediatePrice>
-            <div className='purchase-toggle-container'>
-                <div
-                    className={`purchase-bid${position===1?"-checked":""}`}
+            <PurchaseToggleContainer>
+                <PurchaseToggleElement
+                    check={position===1?"checked":""}
                     onClick={(e)=>setPosition(1)}
                 >
-                    <h5>구매 입찰</h5>
-                </div>
-                <div
-                    className={`purchase-immediate${position===2?"-checked":""}`}
+                    <PurchaseToggleText>구매 입찰</PurchaseToggleText>
+                </PurchaseToggleElement>
+                <PurchaseToggleElement
+                    check={position===2?"checked":""}
                     onClick={(e)=>setPosition(2)}
                 >
-                    <h5>즉시 구매</h5>
-                </div>
-            </div>
+                    <PurchaseToggleText>즉시 구매</PurchaseToggleText>
+                </PurchaseToggleElement>
+            </PurchaseToggleContainer>
             {showSubmitBox()}
-        </div>
+        </PurchaseContainer>
     );
 }
+
+const PurchaseContainer=styled.div`
+    width: 50%;
+    margin: 0 auto;
+
+    @media (max-width: 1100px){
+        width: 80%;
+    }
+`
+
+const PurchaseToggleContainer=styled.div`
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 100px;
+    margin-bottom: 30px;
+`
+
+const PurchaseToggleElement=styled.div`
+    text-align: center;
+    padding: 15px;
+    width: 50%;
+    border-radius: 100px;
+    background-color: ${props => props.check === "checked" ? "#ffc9394c" : "transparent"};
+    transition: 0.5s;
+`
+
+const PurchaseToggleText=styled.h5`
+    margin: 0px;
+`
 
 export default Purchase;
