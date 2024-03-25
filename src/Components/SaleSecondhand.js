@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 const SaleSecondhand=({type})=>{
     const [secondhandImage,setSecondhandImage]=useState([]);
@@ -12,7 +13,11 @@ const SaleSecondhand=({type})=>{
         }
 
         if(imageUrlList.length>5){
-            alert("이미지는 5개까지만 업로드 가능합니다.")
+            Swal.fire(
+                '이미지 업로드 실패!',
+                '이미지는 5개까지만 업로드 가능합니다.',
+                'fail',
+            );
         }
         else{
             setSecondhandImage(imageUrlList);
@@ -206,16 +211,28 @@ const ImageInputLabel=styled.label`
 const ImageComponent=styled.div`
     background-color: #ffffff;
     width: 18%;
-    border-radius: 10px;
     position: relative;
     display: inline-block;
     &:not(:first-of-type){
         margin-left: 2.5%;
     }
+    &::after{
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+    }
 `
 
 const Image=styled.img`
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(50, 50);
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: auto;
+    border-radius: 10px;
 `
 
 const DeleteBtn=styled.img`
