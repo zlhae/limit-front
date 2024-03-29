@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import DeleteIcon from '../Images/delete_btn.svg'
 
 const SaleSecondhand=({type})=>{
     const [secondhandImage,setSecondhandImage]=useState([]);
@@ -113,7 +114,7 @@ const SaleSecondhand=({type})=>{
                          <ImageComponent>
                             <Image src={image} alt={`${image}-${id}`}></Image>
                             <DeleteBtn
-                                src='images/delete_btn.svg'
+                                src={DeleteIcon}
                                 onClick={()=>handleDelteImage(id)}
                             ></DeleteBtn>
                         </ImageComponent>
@@ -312,6 +313,10 @@ const SizeRadioLabel=styled.label`
     background-color: #ffffff;
     color: #979797;
     border: 1px dashed #979797;
+
+    @media (max-width: 400px){
+        font-size : 0.75em;
+    }
 `
 
 const DeliveryCheckbox=styled.div`
@@ -342,6 +347,10 @@ const DeliveryCheckboxLabel=styled.label`
     background-color: #ffffff;
     color: #979797;
     border: 1px dashed #979797;
+
+    @media (max-width: 400px){
+        font-size : 0.75em;
+    }
 `
 
 const LocationInput=styled.input`

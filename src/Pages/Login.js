@@ -7,7 +7,7 @@ const Login=()=>{
     const [password, setPassword]=useState("");
 
     return(
-        <div>
+        <LoginContainer>
             <LoginTitle id='login-title'>로그인</LoginTitle>
             <EmailLoginContainer>  
                 <EmailLoginInput
@@ -36,9 +36,19 @@ const Login=()=>{
                 <GotoJoinText>아직 계정이 없으신가요?</GotoJoinText>
                 <GotoJoinLink to={"/search"}>회원가입으로 이동</GotoJoinLink>
             </GotoJoinContainer>
-        </div>
+        </LoginContainer>
     );
 }
+
+const LoginContainer=styled.div`
+    width: 450px;
+    margin: 0 auto;
+    margin-top: 70px;
+
+    @media (max-width: 600px){
+        width: 80%;
+    }
+`
 
 const LoginTitle=styled.h1`
     text-align: center;
@@ -46,23 +56,23 @@ const LoginTitle=styled.h1`
 `
 
 const EmailLoginContainer=styled.div`
-    width: 452px;
-    margin: 0 auto;
+    width: 100%;
     margin-bottom: 30px;
 `
 
 const EmailLoginInput=styled.input`
-    width: 440px; height: 50px;
+    width: 100%; height: 50px;
     display: inline-block;
-    margin: 0 auto;
     border: none;
     border-radius: 10px;
     margin-bottom: 15px;
-    padding-left: 10px;
+    padding: 0px;
+    padding-left: 15px;
+    box-sizing: border-box;
 `
 
 const EmailLoginButton=styled.button`
-    width: 452px; height: 50px;
+    width: 100%; height: 50px;
     display: inline-block;
     margin: 0 auto;
     border: none;
@@ -73,18 +83,18 @@ const EmailLoginButton=styled.button`
 `
 
 const LoginHr=styled.hr`
-    width: 450px;
+    width: 100%;
     margin-bottom: 30px;
 `
 
 const OauthLoginContainer=styled.div`
-    width: 452px;
+    width: 100%;
     margin: 0 auto;
     margin-bottom: 30px;
 `
 
 const OauthLoginButton=styled.button`
-    width: 452px; height: 50px;
+    width: 100%; height: 50px;
     display: inline-block;
     margin: 0 auto;
     border: none;
@@ -96,8 +106,11 @@ const OauthLoginButton=styled.button`
 `
 
 const SearchContainer=styled.div`
-    width: 215px;
+    width: 180px;
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
 `
 
 const SearchLink=styled(Link)`
@@ -105,18 +118,20 @@ const SearchLink=styled(Link)`
     font-weight: bold;
     font-size: 13px;
     text-decoration: none;
-    margin: 0 15px;
 `
 
 const GotoJoinContainer=styled.div`
-    width: 280px;
+    width: 270px;
     margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
 `
 
 const GotoJoinText=styled.p`
     color: #979797;
     font-size: 13px;
     display: inline-block;
+    margin: 0px;
     margin-right: 10px;
 `
 
