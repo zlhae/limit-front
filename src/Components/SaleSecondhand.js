@@ -188,7 +188,7 @@ const SaleSecondhand=({type})=>{
 }
 
 const SecondhandComponent=styled.div`
-    margin-bottom: 30px;
+    margin-bottom: 30px; 
 `
 
 const SecondhandTitle=styled.h5`
