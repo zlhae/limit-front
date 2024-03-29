@@ -283,7 +283,7 @@ const SizeRadio=styled.div`
 
     @media(max-width: 1100px){
         width: 13%;
-        margin-right= 1.5%;
+        margin-right: 1.5%;
 
         &:nth-child(7n){
             margin-right: 0;
