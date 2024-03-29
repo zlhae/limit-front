@@ -5,12 +5,13 @@ import ImmediatePrice from '../Components/ImmediatePrice';
 import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
 import SaleSecondhand from '../Components/SaleSecondhand';
+import MockDataImage from '../Images/product-mock-data.png';
 
 const Sale=()=>{
     const [position,setPosition]=useState(1);
 
     const productInformationData={
-        image: 'images/product-mock-data.png',
+        image: MockDataImage,
         number: '1203A507-020',
         name_en: 'Asics x C.P. Company Gel-Quantum 360 VII Cement Grey',
         name_ko: '아식스 x C.P. 컴퍼니 젤 퀀텀 360 8 시멘트 그레이',

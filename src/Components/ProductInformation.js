@@ -22,6 +22,7 @@ const ProductInformationContainer=styled.div`
     display: flex;
     border-radius: 15px;
     margin-bottom: 30px;
+    margin-top: 70px;
 `
 const ProductInformationImgContainer=styled.div`
     display: inline-block;

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import GithubLogo from '../Images/github-logo.svg';
+import NotionLogo from '../Images/notion-logo.svg';
 
 const Footer=()=>{
     return(
@@ -7,8 +9,8 @@ const Footer=()=>{
             <FooterInner>
                 <FotterIneerLink to={"/cs-center"}>고객센터로 이동하기</FotterIneerLink>
                 <LinkContainer>
-                    <LinkContainerA href="https://github.com/orgs/TEAM-SPACE-1/dashboard"><LogoImg alt="github-logo" src="images/github-logo.svg"></LogoImg></LinkContainerA>
-                    <LinkContainerA href="https://www.notion.so/5045309ba1ae403ba687f0a0f437145b?pvs=4"><LogoImg alt="notion-logo" src="images/notion-logo.svg"></LogoImg></LinkContainerA>
+                    <LinkContainerA href="https://github.com/orgs/TEAM-SPACE-1/dashboard"><LogoImg alt="github-logo" src={GithubLogo}></LogoImg></LinkContainerA>
+                    <LinkContainerA href="https://www.notion.so/5045309ba1ae403ba687f0a0f437145b?pvs=4"><LogoImg alt="notion-logo" src={NotionLogo}></LogoImg></LinkContainerA>
                 </LinkContainer>
             </FooterInner>
         </FooterContainer>

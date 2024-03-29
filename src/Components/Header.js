@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import Logo from '../Images/limit-logo.svg';
+import ChattingIcon from '../Images/chatting-icon.svg';
+import SearchIcon from '../Images/search-icon.svg'
 
 const Header=()=>{
     return(
@@ -12,10 +15,10 @@ const Header=()=>{
                 </HeaderTopList>
             </HeaderTop>
             <HeaderMain>
-                <Link to={"/"}><img alt="limit-logo" src="images/limit-logo.svg"></img></Link>
+                <Link to={"/"}><img alt="limit-logo" src={Logo}></img></Link>
                 <div className="header-bnt-area">
-                    <Link to={"/chatting"}><IconImg alt='chatting-icon' src='images/chatting-icon.svg'></IconImg></Link>
-                    <Link to={"/search"}><IconImg alt='search-icon' src='images/search-icon.svg'></IconImg></Link>
+                    <Link to={"/chatting"}><IconImg alt='chatting-icon' src={ChattingIcon}></IconImg></Link>
+                    <Link to={"/search"}><IconImg alt='search-icon' src={SearchIcon}></IconImg></Link>
                 </div>
             </HeaderMain>
         </HeaderContainer>
@@ -26,7 +29,6 @@ const HeaderContainer=styled.div`
     width: 100%;
     height: 85px;
     background-color: #ffffff;
-    margin-bottom: 70px;
     position: sticky;
 `
 const HeaderTop=styled.div`
