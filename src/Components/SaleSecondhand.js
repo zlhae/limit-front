@@ -315,7 +315,7 @@ const SizeRadioLabel=styled.label`
 `
 
 const DeliveryCheckbox=styled.div`
-    display: inline-block;
+    display: inline-block; 
     width: 9.1%;
     margin-right: 1%;
 
