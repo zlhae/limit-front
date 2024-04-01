@@ -8,6 +8,7 @@ import Purchase from "./Pages/Purchase";
 import Sale from "./Pages/Sale";
 import TotalCate from "./Pages/TotalCate";
 import Search from "./Pages/Search";
+import CsCenter from "./Pages/CsCenter";
 
 function App() {
   return (
@@ -15,11 +16,12 @@ function App() {
       <Header></Header>
       <Routes>
         <Route path="/login" element={<Login></Login>}></Route>
-        <Route path = "/my-page" element = {<MyPage />} />
+        <Route path="/my-page" element={<MyPage></MyPage>}></Route>
+        <Route path="/cs-center" element={<CsCenter></CsCenter>}></Route>
         <Route path="/purchase" element={<Purchase></Purchase>}></Route>
         <Route path="/sale" element={<Sale></Sale>}></Route>
-        <Route path="/totalcate" element={<TotalCate />}/>
-        <Route path="/search" element={<Search />} />
+        <Route path="/totalcate" element={<TotalCate></TotalCate>}></Route>
+        <Route path="/search" element={<Search></Search>}></Route>
       </Routes>
       <Footer></Footer>
     </div>

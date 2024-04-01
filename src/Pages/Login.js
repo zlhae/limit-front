@@ -53,6 +53,7 @@ const LoginContainer=styled.div`
 const LoginTitle=styled.h1`
     text-align: center;
     margin-bottom: 50px;
+    cursor: default;
 `
 
 const EmailLoginContainer=styled.div`
@@ -80,6 +81,7 @@ const EmailLoginButton=styled.button`
     font-weight: bold;
     background-color: #979797;
     color: #ffffff;
+    cursor: pointer;
 `
 
 const LoginHr=styled.hr`
@@ -102,6 +104,7 @@ const OauthLoginButton=styled.button`
     margin-bottom: 15px;
     font-weight: bold;
     background-color: #ffffff;
+    cursor: pointer;
     color: ${props => props.type === "naver" ? "#72dd60" : props.type === "kakao" ? "#ffc939" : "#72b8df"};
 `
 
@@ -133,6 +136,7 @@ const GotoJoinText=styled.p`
     display: inline-block;
     margin: 0px;
     margin-right: 10px;
+    cursor: default;
 `
 
 const GotoJoinLink=styled(Link)`

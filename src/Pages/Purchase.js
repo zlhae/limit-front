@@ -98,11 +98,13 @@ const PurchaseToggleElement=styled.div`
     width: 50%;
     border-radius: 100px;
     background-color: ${props => props.check === "checked" ? "#ffc9394c" : "transparent"};
+    cursor: pointer;
     transition: 0.5s;
 `
 
 const PurchaseToggleText=styled.h5`
     margin: 0px;
+    cursor: pointer;
 `
 
 export default Purchase;

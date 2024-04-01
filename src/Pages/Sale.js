@@ -111,6 +111,7 @@ const SaleToggleElement=styled.div`
     width: 33.3%;
     border-radius: 100px;
     background-color: ${props => props.check === "checked" ? "#72b8df4c" : "transparent"};
+    cursor: pointer;
     transition: 0.5s;
 `
 
@@ -119,6 +120,7 @@ const SaleToggleText=styled.h5`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 
     @media (max-width: 400px){
         font-size : 0.75em;
