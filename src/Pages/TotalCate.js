@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
+import Product from '../Components/Product';
 import SubHeader from '../Components/SubHeader';
-import ProductListWrap from '../Components/ProductListWrap';
-import PlusMinusButton from '../Components/PlusMinusButton';
 import SideFilter from '../Components/SideFilter';
 import styled from 'styled-components';
+import ProductListWrap from '../Components/Product';
 
 const TotalCate = () => {
-    /*const [isLeft,setIsLeft]=useState(true);
-
-    const onClickLeft=()=>{
-        setIsLeft(true);
-    }
-    const onClickRight=()=>{
-        setIsLeft(false);
-    }*/
 
     return (
         <MainProduct className='main_product'>
@@ -26,11 +18,14 @@ const TotalCate = () => {
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>
-                        <h3>상품 23,882</h3>
+                        <h3> 상품 23,334개</h3>
                     </ProductNumber>
-                    <ProductListWrap />
+                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap></ProductListWrap>
                 </ProductWrapper>
             </ProductContainer>
+            <test></test>
         </MainProduct>
     );
 }
@@ -41,21 +36,27 @@ const MainProduct = styled.div`
 
 const ProductContainer = styled.div`
     display: flex; 
-    justify-content: space-between;
-    align-items: flex-start;
+    
 `;
 
 const SideFilterWrapper = styled.div`
-    margin-right: 60px;
+    margin-left: 10%;
 `;
 
 const ProductWrapper = styled.div`
+    flex: 2;
+    
+
+
+    margin-bottom: 10px;
+    margin-right: 20px;
+
+    
     
 `;
 
 const ProductNumber = styled.h3`
-    font-size: 16px;
-    font-weight: lighter;
+    
 `;
 
 export default TotalCate;

@@ -13,6 +13,9 @@ const Product = () => {
     return (
         <ProductContainer>
             <ThumbBox>
+                <BookmarkWrapper>
+                    <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
+                </BookmarkWrapper>
                 <img src={TestImage} alt='Product Thumbnail' />
             </ThumbBox>
             <div className='info_box'>
@@ -20,13 +23,13 @@ const Product = () => {
                     <Brand>
                         <h1>Asics</h1>
                     </Brand>
-                    <BookmarkWrapper>
-                        <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
-                    </BookmarkWrapper>
                 </BrandBookmark>
                 <Name>
                     <h2>Asics Unlimited Gel-Kayano 14 Carrier Grey Black</h2>
                 </Name>
+                <KoreaName>
+                    <h3>아식스 언리미티드 젤 카야노 14 캐리어 그레이 블랙</h3>
+                </KoreaName>
                 <Tag>
                     <TagText>택배</TagText>
                     <TagText>직거래</TagText>
@@ -39,43 +42,94 @@ const Product = () => {
     );
 }
 
-const ProductContainer = styled.div`
+const ProductListWrap = () => {
+    return (
+        <ProductListContainer className='product_list_wrap'>
+            <ProductGroup>
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+            </ProductGroup>
+        </ProductListContainer>
+    );
+}
+
+const ProductListContainer = styled.div` /* 한 줄 */
     width: 100%;
-    max-width: 200px;
-    height: auto;
+    display: flex;
+`;
+
+const ProductContainer = styled.div`
+
+
+    gap: 20px;
+    margin-right: 20px;
+
+    @media(max-width: 1100px){
+        width: 8%;
+        margin-right: 15px;
+
+    }
+`;
+
+const ProductGroup = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-right: 20px;
+
 `;
 
 const ThumbBox = styled.div`
+    flex: 2;
+    position: relative;
     img {
         width: 100%;
         height: auto;
-        border-radius:10px;
+        border-radius: 10px;
     }
 `;
 
 const BrandBookmark = styled.div`
     display: flex;
     justify-content: space-between;
-    align-items: center;
 `;
 
 const Brand = styled.div`
     h1 {
-        font-size: 17px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: -3px;
     }
 `;
 
 const BookmarkWrapper = styled.span`
-    display: flex;
-    align-items: center;
+    position: absolute;
+    bottom: 5px; 
+    right: 7px;
 `;
 
 const Name = styled.div`
     h2 {
-        font-size: 15px;
-        font-weight: 50;
+        font-size: 13px;
+        font-weight: 500;
         width: 100%;
-        margin-top: -10px;
+        margin-top: -7px;
+    }
+`;
+
+const KoreaName = styled.div`
+    h3 {
+        font-size: 11px;
+        font-weight: lighter;
+        width: 100%;
+        color: #6D6D6D;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap; 
+        margin-top: -3px;
     }
 `;
 
@@ -85,8 +139,8 @@ const Tag = styled.div`
 
 const TagText = styled.span`
     background-color: #d9d9d9;
-    padding: 5px 10px;
-    font-size: 13px;
+    padding: 4px 8px;
+    font-size: 12px;
 
     &:not(:last-child) {
         margin-right: 5px;
@@ -95,8 +149,8 @@ const TagText = styled.span`
 
 const Price = styled.div`
     h3 {
-        font-size: 16px;
+        font-size: 14px;
     }
 `;
 
-export default Product;
+export default ProductListWrap;
