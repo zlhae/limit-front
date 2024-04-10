@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Product from '../Components/Product';
 import SubHeader from '../Components/SubHeader';
-import SideFilter from '../Components/SideFilter';
+import SideFilterGoods from '../Components/SideFilter_goods';
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
-const TotalCate = () => {
+const GoodsCate = () => {
 
     return (
         <MainProduct className='main_product'>
@@ -14,7 +14,7 @@ const TotalCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilter />
+                    <SideFilterGoods />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>
@@ -44,7 +44,11 @@ const SideFilterWrapper = styled.div`
 `;
 
 const ProductWrapper = styled.div`
+    flex: 2;
+    margin-bottom: 10px;
+    margin-right: 20px;
 
+    
     
 `;
 
@@ -52,4 +56,4 @@ const ProductNumber = styled.h3`
     
 `;
 
-export default TotalCate;
+export default GoodsCate;

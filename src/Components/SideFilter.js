@@ -15,8 +15,8 @@ const SideFilter = () => {
     const [isMaleSelected, setIsMaleSelected] = useState(false);
     const [isFemaleSelected, setIsFemaleSelected] = useState(false);
     const [showResetButton, setShowResetButton] = useState(false);
-    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-    const [isGenderOpen, setIsGenderOpen] = useState(false);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(true);
+    const [isGenderOpen, setIsGenderOpen] = useState(true);
 
     useEffect(() => {
         setShowResetButton(
@@ -178,7 +178,7 @@ const SideFilter = () => {
                                         <label><ChildCheckbox type='checkbox' name='checkbox_looper'></ChildCheckbox>로퍼</label>
                                         <label><ChildCheckbox type='checkbox' name='checkbox_derby_raceup'></ChildCheckbox>더비/레이스업</label>
                                         <label><ChildCheckbox type='checkbox' name='checkbox_heels_pumps'></ChildCheckbox>힐/펌프스</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_noots'></ChildCheckbox>부츠</label>
+                                        <label><ChildCheckbox type='checkbox' name='checkbox_boots'></ChildCheckbox>부츠</label>
                                         <label><ChildCheckbox type='checkbox' name='checkbox_footwear'></ChildCheckbox>기타 신발</label>
 
                                     </>

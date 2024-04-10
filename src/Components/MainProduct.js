@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
 import TestImage from '../Images/test01.png';
 
-const Product = () => {
+const MainProduct = () => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleBookmarkClick = () => {
@@ -42,46 +42,40 @@ const Product = () => {
     );
 }
 
-const ProductListWrap = () => {
+const MainProductListWrap = () => {
     return (
         <ProductListContainer className='product_list_wrap'>
             <ProductGroup>
-                <Product />
-                <Product />
-                <Product />
-                <Product />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
             </ProductGroup>
         </ProductListContainer>
     );
 }
 
-const ProductListContainer = styled.div`
-    display: flex;
-    margin-right: 10%; /* 오른쪽에서 10% 떨어지도록 */
+const ProductListContainer = styled.div` /* MainProduct 집합, 위치 css */
+    width: 80%;
+    margin: 0 auto;
+    overflow-x: scroll;
 `;
 
 const ProductContainer = styled.div`
-width: 65%; /* 너비의 65%를 차지하도록 */
-max-width: 100%; /* 최대 너비 설정 */
 
-@media screen and (max-width: 768px) {
-    width: 60%; /* 화면 크기가 작아질 때 너비의 60%를 차지하도록 */
-    max-width: 100%; /* 작아진 화면 크기의 100%를 차지하도록 */
-}
 `;
 
 const ProductGroup = styled.div`
-gap: 20px;  
-    width: 100%;
     display: flex;
-    flex-direction: row;
-    margin-right: 20px;
-
+    gap: 20px;
 `;
 
-const ThumbBox = styled.div`
-    flex: 2;
+const ThumbBox = styled.div` 
     position: relative;
+
     img {
         width: 100%;
         height: auto;
@@ -94,7 +88,8 @@ const BrandBookmark = styled.div`
     justify-content: space-between;
 `;
 
-const Brand = styled.div`
+const Brand = styled.div` 
+
     h1 {
         font-size: 14px;
         font-weight: bold;
@@ -150,4 +145,5 @@ const Price = styled.div`
     }
 `;
 
-export default ProductListWrap;
+
+export default MainProductListWrap;

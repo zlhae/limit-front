@@ -7,7 +7,14 @@ import Login from "./Pages/Login";
 import Purchase from "./Pages/Purchase";
 import Sale from "./Pages/Sale";
 import TotalCate from "./Pages/TotalCate";
+import OuterCate from "./Pages/OuterCate";
+import TopCate from "./Pages/TopCate";
+import BottomCate from "./Pages/BottomCate";
+import ShoesCate from "./Pages/ShoesCate";
+import BagCate from "./Pages/BagCate";
+import GoodsCate from "./Pages/GoodsCate";
 import Search from "./Pages/Search";
+import Main from "./Pages/Main";
 
 function App() {
   return (
@@ -19,7 +26,14 @@ function App() {
         <Route path="/purchase" element={<Purchase></Purchase>}></Route>
         <Route path="/sale" element={<Sale></Sale>}></Route>
         <Route path="/totalcate" element={<TotalCate />}/>
+        <Route path="/outercate" element={<OuterCate />}/>
+        <Route path="/topcate" element={<TopCate />}/>
+        <Route path="/bottomcate" element={<BottomCate />}/>
+        <Route path="/shoescate" element={<ShoesCate />}/>
+        <Route path="/bagcate" element={<BagCate />}/>
+        <Route path="/goodscate" element={<GoodsCate />}/>
         <Route path="/search" element={<Search />} />
+        <Route path="/" element={<Main />} />
       </Routes>
       <Footer></Footer>
     </div>
