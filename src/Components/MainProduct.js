@@ -65,7 +65,11 @@ const ProductListContainer = styled.div` /* MainProduct 집합, 위치 css */
 `;
 
 const ProductContainer = styled.div`
+    width: 100%;
 
+    @media (max-width: 1100px) {
+        width: 25%;
+    }
 `;
 
 const ProductGroup = styled.div`

@@ -21,8 +21,6 @@ const TopCate = () => {
                         <h3> 상품 23,334개</h3>
                     </ProductNumber>
                     <ProductListWrap></ProductListWrap>
-                    <ProductListWrap></ProductListWrap>
-                    <ProductListWrap></ProductListWrap>
                 </ProductWrapper>
             </ProductContainer>
             <test></test>
@@ -35,21 +33,16 @@ const MainProduct = styled.div`
 `;
 
 const ProductContainer = styled.div`
-    display: flex; 
-    
+    display: flex;
+    width: 80%;
+    margin: 0 auto;
 `;
 
 const SideFilterWrapper = styled.div`
-    margin-left: 10%;
 `;
 
 const ProductWrapper = styled.div`
-    flex: 2;
-    margin-bottom: 10px;
-    margin-right: 20px;
 
-    
-    
 `;
 
 const ProductNumber = styled.h3`

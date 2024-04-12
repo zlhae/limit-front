@@ -208,8 +208,11 @@ const SideFilterTop = () => {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: 140px; 
+    width: 170px; 
     
+    @media (max-width: 1100px) {
+        width: 120px;
+    }
 `;
 
 const TopFilterArray = styled.div` /* 인기순, 최신순 css */

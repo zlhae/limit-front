@@ -242,6 +242,9 @@ const Container = styled.div`
     flex-direction: column;
     width: 140px; 
     
+    @media(max-width: 1100px) {
+        width: 120px;
+    }
 `;
 
 const TopFilterArray = styled.div` /* 인기순, 최신순 css */

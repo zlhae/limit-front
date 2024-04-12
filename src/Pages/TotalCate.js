@@ -17,12 +17,11 @@ const TotalCate = () => {
                     <SideFilter />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
-                    <ProductNumber>
-                        <h3> 상품 23,334개</h3>
+                    <ProductNumber>            
                     </ProductNumber>
-                    <ProductListWrap></ProductListWrap>
-                    <ProductListWrap></ProductListWrap>
-                    <ProductListWrap></ProductListWrap>
+                        <ProductListWrap></ProductListWrap>
+                        <ProductListWrap></ProductListWrap>
+                        <ProductListWrap></ProductListWrap>
                 </ProductWrapper>
             </ProductContainer>
             <test></test>
@@ -35,17 +34,17 @@ const MainProduct = styled.div`
 `;
 
 const ProductContainer = styled.div`
-    display: flex; 
+display; flex;
+justify-content: flex-end;
     
 `;
 
 const SideFilterWrapper = styled.div`
-    margin-left: 10%;
+   margin-left: 10%;
 `;
 
 const ProductWrapper = styled.div`
-
-    
+   margin-left: 10%;
 `;
 
 const ProductNumber = styled.h3`

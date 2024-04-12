@@ -50,32 +50,44 @@ const ProductListWrap = () => {
                 <Product />
                 <Product />
                 <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
+                <Product />
             </ProductGroup>
         </ProductListContainer>
     );
 }
 
 const ProductListContainer = styled.div`
-    display: flex;
-    margin-right: 10%; /* 오른쪽에서 10% 떨어지도록 */
+
+    flex-wrap: wrap;
 `;
 
 const ProductContainer = styled.div`
-width: 65%; /* 너비의 65%를 차지하도록 */
-max-width: 100%; /* 최대 너비 설정 */
-
-@media screen and (max-width: 768px) {
-    width: 60%; /* 화면 크기가 작아질 때 너비의 60%를 차지하도록 */
-    max-width: 100%; /* 작아진 화면 크기의 100%를 차지하도록 */
-}
+    flex: 2;
+    width: 16%;
 `;
 
 const ProductGroup = styled.div`
-gap: 20px;  
-    width: 100%;
+
+    margin-left: 45px;
+    gap: 25px;
     display: flex;
-    flex-direction: row;
-    margin-right: 20px;
+    flex-wrap: wrap;
+    
+    @media (max-width: 1100px) {
+        gap: 10px;
+        margin-left: 45px;
+    }
 
 `;
 
@@ -141,6 +153,11 @@ const TagText = styled.span`
 
     &:not(:last-child) {
         margin-right: 5px;
+    }
+
+    @media (max-width: 1100px) {
+        font-size: 10px;
+        padding: 4px 4px;
     }
 `;
 

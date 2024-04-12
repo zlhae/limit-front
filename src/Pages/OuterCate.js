@@ -36,17 +36,21 @@ const MainProduct = styled.div`
 
 const ProductContainer = styled.div`
     display: flex; 
+    width: 80%;
+    margin: 0 auto;
+
+    @media (max-width: 1100px) {
+        width: 80%;
+    }
     
 `;
 
 const SideFilterWrapper = styled.div`
-    margin-left: 10%;
+    
 `;
 
 const ProductWrapper = styled.div`
-    flex: 2;
-    margin-bottom: 10px;
-    margin-right: 20px;
+    
 
     
     
