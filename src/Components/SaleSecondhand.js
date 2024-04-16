@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import DeleteIcon from '../Images/delete_btn.svg'
 
 const SaleSecondhand=({type})=>{
     const [secondhandImage,setSecondhandImage]=useState([]);
@@ -113,7 +114,7 @@ const SaleSecondhand=({type})=>{
                          <ImageComponent>
                             <Image src={image} alt={`${image}-${id}`}></Image>
                             <DeleteBtn
-                                src='images/delete_btn.svg'
+                                src={DeleteIcon}
                                 onClick={()=>handleDelteImage(id)}
                             ></DeleteBtn>
                         </ImageComponent>
@@ -194,6 +195,7 @@ const SecondhandComponent=styled.div`
 const SecondhandTitle=styled.h5`
     margin: 0px;
     margin-bottom: 5px;
+    cursor: default;
 `
 
 const ImageInputLabel=styled.label`
@@ -206,6 +208,7 @@ const ImageInputLabel=styled.label`
     margin-bottom: 10px;
     font-size: 0.83em;
     font-weight: bold;
+    cursor: pointer;
 `
 
 const ImageComponent=styled.div`
@@ -239,6 +242,7 @@ const DeleteBtn=styled.img`
     position: absolute;
     width: 15%; height: 15%;
     right: 5%; top: 5%;
+    cursor: pointer;
 `
 
 const PriceComponent=styled.div`
@@ -259,11 +263,20 @@ const PriceInput=styled.input`
     text-align: right;
     font-weight: bold;
     background-color: transparent;
+    &::-webkit-outer-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+    }
 `
 
 const PriceInputWon=styled.h3`
     margin: 0px;
     display: inline-block;
+    cursor: default;
 `
 
 const SizeRadioContainer=styled.div`
@@ -312,6 +325,11 @@ const SizeRadioLabel=styled.label`
     background-color: #ffffff;
     color: #979797;
     border: 1px dashed #979797;
+    cursor: pointer;
+
+    @media (max-width: 400px){
+        font-size : 0.75em;
+    }
 `
 
 const DeliveryCheckbox=styled.div`
@@ -342,6 +360,11 @@ const DeliveryCheckboxLabel=styled.label`
     background-color: #ffffff;
     color: #979797;
     border: 1px dashed #979797;
+    cursor: pointer;
+
+    @media (max-width: 400px){
+        font-size : 0.75em;
+    }
 `
 
 const LocationInput=styled.input`
@@ -363,10 +386,12 @@ const DefectCheckbox=styled.div`
 
 const DefectCheckboxInput=styled.input`
     accent-color: #979797;
+    cursor: pointer;
 `
 
 const DefectCheckboxLabel=styled.label`
     font-size: 0.83em;
+    cursor: pointer;
 `
 
 const DefectTextareaContainer=styled.div`
@@ -390,6 +415,7 @@ const SecondhandSubmit=styled.button`
     padding: 10px;
     font-weight: bold;
     border-radius: 10px;
+    cursor: pointer;
 `
 
 export default SaleSecondhand;

@@ -28,6 +28,7 @@ const DoBid=({type})=>{
 const PurchaseSaleTitle=styled.h5`
     margin: 0px;
     margin-bottom: 5px;
+    cursor: default;
 `
 
 const BidPriceContainer=styled.div`
@@ -48,11 +49,20 @@ const BidPriceInput=styled.input`
     text-align: right;
     font-weight: bold;
     background-color: transparent;
+    &::-webkit-outer-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    &::-webkit-inner-spin-button{
+        -webkit-appearance: none;
+        margin: 0;
+    }
 `
 
 const BidPriceWon=styled.h3`
     margin: 0px;
     display: inline-block;
+    cursor: default;
 `
 
 const BidPeriodContainer=styled.div`
@@ -63,6 +73,7 @@ const BidPeriodDetail=styled.p`
     margin: 0px;
     font-size: 0.83em;
     color: #979797;
+    cursor: default;
 `
 
 const BidSumbit=styled.button`
@@ -72,6 +83,7 @@ const BidSumbit=styled.button`
     padding: 10px;
     font-weight: bold;
     border-radius: 10px;
+    cursor: pointer;
 `
 
 export default DoBid;

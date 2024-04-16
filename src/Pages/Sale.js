@@ -92,7 +92,7 @@ const SaleContainer=styled.div`
     margin: 0 auto;
 
     @media (max-width: 1100px){
-        width: 80%
+        width: 80%;
     }
 `
 
@@ -108,14 +108,23 @@ const SaleToggleContainer=styled.div`
 const SaleToggleElement=styled.div`
     text-align: center;
     padding: 15px;
-    width: 50%;
+    width: 33.3%;
     border-radius: 100px;
     background-color: ${props => props.check === "checked" ? "#72b8df4c" : "transparent"};
+    cursor: pointer;
     transition: 0.5s;
 `
 
 const SaleToggleText=styled.h5`
     margin: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+
+    @media (max-width: 400px){
+        font-size : 0.75em;
+    }
 `
 
 export default Sale;

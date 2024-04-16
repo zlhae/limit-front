@@ -37,17 +37,22 @@ const ProductInformationImg=styled.img`
 
 const ProductInformationTextContainer=styled.div`
     display: inline-block;
-    flex: 1;    
+    flex: 1;
+    min-width: 150px;
 `
 
 const ProductInformationTextBold=styled.h3`
     margin: 0px 0px 5px 0px;
+    cursor: default;
 `
 
 const ProductInformationTextRegular=styled.h5`
     margin: 0px 0px 5px 0px;
     font-weight: normal;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
 `
 
 export default ProductInformation;

@@ -8,6 +8,7 @@ import Purchase from "./Pages/Purchase";
 import Sale from "./Pages/Sale";
 import TotalCate from "./Pages/TotalCate";
 import Search from "./Pages/Search";
+import CsCenter from "./Pages/CsCenter";
 import SignUp from "./Pages/SignUp";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
     <div className="App">
       <Header></Header>
       <Routes>
+        <Route path = "/cs-center" element={<CsCenter/>}></Route>
         <Route path = "/login" element = {<Login/>}></Route>
         <Route path = "/sign-up" element = {<SignUp/>}></Route>
         <Route path = "/my-page" element = {<MyPage/>} />

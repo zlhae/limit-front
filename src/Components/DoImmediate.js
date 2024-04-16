@@ -19,12 +19,14 @@ const ImmediateElement=styled.div`
 const ImmediateTitle=styled.h5`
     margin: 0px;
     margin-bottom: 5px;
+    cursor: default;
 `
 
 const ImmediateContext=styled.h3`
     margin: 0px;
     text-align: right;
     border-bottom: 1px solid #979797;
+    cursor: default;
 `
 
 const ImmediateSubmit=styled.button`
@@ -34,6 +36,7 @@ const ImmediateSubmit=styled.button`
     padding: 10px;
     font-weight: bold;
     border-radius: 10px;
+    cursor: pointer;
 `
 
 export default DoImmediate;

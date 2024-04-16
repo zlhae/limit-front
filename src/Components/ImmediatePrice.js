@@ -34,10 +34,12 @@ const PurchaseSaleContaienr=styled.div`
 const PriceTitle=styled.h5`
     margin: 0px;
     font-weight: normal;
+    cursor: default;
 `
 
 const PriceContext=styled.h3`
     margin: 0px;
+    cursor: default;
 `
 
 export default ImmediatePrice;
