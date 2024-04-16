@@ -34,7 +34,7 @@ const Login=()=>{
             </SearchContainer>
             <GotoJoinContainer>
                 <GotoJoinText>아직 계정이 없으신가요?</GotoJoinText>
-                <GotoJoinLink to={"/search"}>회원가입으로 이동</GotoJoinLink>
+                <GotoJoinLink to={"/sign-up"}>회원가입으로 이동</GotoJoinLink>
             </GotoJoinContainer>
         </div>
     );

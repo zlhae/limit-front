@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
-import Default_MyPage from "./Default_MyPage.js";
-import Unopened_Purchase from "./Unopened_Purchase.js";
-import Unopened_Sale from "./Unopened_Sale.js";
-import Used_Purchase from "./Used_Purchase.js";
-import Used_Sale from "./Used_Sale.js";
-import Interest_Product from "./Interest_Product.js";
-import InquiryPage from "./InquiryPage.js";
+import Default_MyPage from "../Components/Default_MyPage.js";
+import Unopened_Purchase from "../Components/Unopened_Purchase.js";
+import Unopened_Sale from "../Components/Unopened_Sale.js";
+import Used_Purchase from "../Components/Used_Purchase.js";
+import Used_Sale from "../Components/Used_Sale.js";
+import ModifyProfile from '../Components/ModifyProfile.js';
+import Interest_Product from "../Components/Interest_Product.js";
+import InquiryPage from "../Components/InquiryPage.js";
 
 export default function MyPage() {
 
@@ -25,12 +26,14 @@ export default function MyPage() {
                 return <Used_Purchase />;
             case "used_sale":
                 return <Used_Sale />;
+            case "modify_profile":
+                return <ModifyProfile />;
             case "interest_product":
                 return <Interest_Product />;
             case "inquiry":
                 return <InquiryPage />;
             default:
-                return <Default_MyPage />;
+                return <Default_MyPage setSelectedMenu = {setSelectedMenu}/>;
         }
     }
 
@@ -69,6 +72,7 @@ const MyPageContainer = styled.div` // 마이페이지 최상위 부모 컨테�
     display: flex;
     justify-content: space-between;
     width: 100%;
+    margin-top: 2.5%;
 `;
 
 const LeftNavBar = styled.div` // 마이페이지 좌측 목록 네비바 컨테이너

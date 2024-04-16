@@ -6,6 +6,19 @@ import Swal from 'sweetalert2';
 
 export default function Interest_Product() {
     return (
-      <div>이 컴포넌트는 Interest_Product 입니다.</div>
+        <Container>
+            <Title>관심 상품 목록</Title>
+        </Container>
     );
 }
+
+const Container = styled.div` // 최상위 부모컨테이너
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+`;
+
+const Title = styled.div` // 제목 컴포넌트
+    font-size: 20px;
+    font-weight: bold;
+`;

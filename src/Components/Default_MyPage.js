@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import Swal from 'sweetalert2';
 import Default_Profile from "../Images/Default_Profile.svg";
 
-export default function Default_MyPage() {
+export default function Default_MyPage({setSelectedMenu}) {
+
     return (
         <>
             <ProfileContainer>
@@ -14,7 +15,7 @@ export default function Default_MyPage() {
                     <UserInfo type = {"nickname"}>리밋</UserInfo>
                     <UserInfo type = {"email"}>limit@gmail.com</UserInfo>
                 </UserInfoContainer>
-                <ProfileModiBtn>프로필 관리</ProfileModiBtn>
+                <ProfileModiBtn onClick = {() => setSelectedMenu("modify_profile")}>프로필 관리</ProfileModiBtn>
             </ProfileContainer>
             <Title>미개봉 구매 내역</Title>
             <ContentsBox type = {"Purchase"}>
@@ -114,6 +115,7 @@ const ProfileModiBtn = styled.div` // 프로필 수정 페이지 이동 버튼
     font-size: 15px;
     font-weight: bold;
     margin: 20px 20px 0 auto;
+    cursor: pointer;
 `;
 
 const Title = styled.div` // 제목 컴포넌트
