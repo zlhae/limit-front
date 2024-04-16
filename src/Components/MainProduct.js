@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
 import TestImage from '../Images/test01.png';
 
-const Product = () => {
+const MainProduct = () => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleBookmarkClick = () => {
@@ -42,58 +42,44 @@ const Product = () => {
     );
 }
 
-const ProductListWrap = () => {
+const MainProductListWrap = () => {
     return (
         <ProductListContainer className='product_list_wrap'>
             <ProductGroup>
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
+                <MainProduct />
             </ProductGroup>
         </ProductListContainer>
     );
 }
 
-const ProductListContainer = styled.div`
-
-    flex-wrap: wrap;
+const ProductListContainer = styled.div` /* MainProduct 집합, 위치 css */
+    width: 80%;
+    margin: 0 auto;
+    overflow-x: scroll;
 `;
 
 const ProductContainer = styled.div`
-    flex: 2;
-    width: 16%;
+    width: 100%;
+
+    @media (max-width: 1100px) {
+        width: 25%;
+    }
 `;
 
 const ProductGroup = styled.div`
-
-    margin-left: 45px;
-    gap: 25px;
     display: flex;
-    flex-wrap: wrap;
-    
-    @media (max-width: 1100px) {
-        gap: 10px;
-        margin-left: 45px;
-    }
-
+    gap: 20px;
 `;
 
-const ThumbBox = styled.div`
-    flex: 2;
+const ThumbBox = styled.div` 
     position: relative;
+
     img {
         width: 100%;
         height: auto;
@@ -106,7 +92,8 @@ const BrandBookmark = styled.div`
     justify-content: space-between;
 `;
 
-const Brand = styled.div`
+const Brand = styled.div` 
+
     h1 {
         font-size: 14px;
         font-weight: bold;
@@ -154,11 +141,6 @@ const TagText = styled.span`
     &:not(:last-child) {
         margin-right: 5px;
     }
-
-    @media (max-width: 1100px) {
-        font-size: 10px;
-        padding: 4px 4px;
-    }
 `;
 
 const Price = styled.div`
@@ -167,4 +149,5 @@ const Price = styled.div`
     }
 `;
 
-export default ProductListWrap;
+
+export default MainProductListWrap;

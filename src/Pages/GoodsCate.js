@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import Product from '../Components/Product';
 import SubHeader from '../Components/SubHeader';
-import SideFilter from '../Components/SideFilter';
+import SideFilterGoods from '../Components/SideFilter_goods';
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
-const TotalCate = () => {
+const GoodsCate = () => {
 
     return (
         <MainProduct className='main_product'>
@@ -14,14 +14,15 @@ const TotalCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilter />
+                    <SideFilterGoods />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
-                    <ProductNumber>            
+                    <ProductNumber>
+                        <h3> 상품 23,334개</h3>
                     </ProductNumber>
-                        <ProductListWrap></ProductListWrap>
-                        <ProductListWrap></ProductListWrap>
-                        <ProductListWrap></ProductListWrap>
+                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap></ProductListWrap>
                 </ProductWrapper>
             </ProductContainer>
             <test></test>
@@ -34,21 +35,25 @@ const MainProduct = styled.div`
 `;
 
 const ProductContainer = styled.div`
-display; flex;
-justify-content: flex-end;
+    display: flex; 
     
 `;
 
 const SideFilterWrapper = styled.div`
-   margin-left: 10%;
+    margin-left: 10%;
 `;
 
 const ProductWrapper = styled.div`
-   margin-left: 10%;
+    flex: 2;
+    margin-bottom: 10px;
+    margin-right: 20px;
+
+    
+    
 `;
 
 const ProductNumber = styled.h3`
     
 `;
 
-export default TotalCate;
+export default GoodsCate;
