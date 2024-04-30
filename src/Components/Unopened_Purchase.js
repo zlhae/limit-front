@@ -15,6 +15,6 @@ export default function Unopened_Purchase() {
     ];
 
     return (
-        <MyPageTemplate title = "미개봉 구매 내역" toggleButtons = {toggleButtons}></MyPageTemplate>
+        <MyPageTemplate title = {"미개봉 구매 내역"} toggleButtons = {toggleButtons}></MyPageTemplate>
     );
 }

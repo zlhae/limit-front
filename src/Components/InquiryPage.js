@@ -22,7 +22,7 @@ export default function InquiryPage() {
                         <TitleAndButtonBox>
                             <InquiryTitle>ㅇㅇㅇ 서비스에 대해 문의 드립니다.</InquiryTitle>
                             <DetailButton onClick = {toggleExpanded}>
-                                {expanded ? "답변 닫기" : "답변 보기"}
+                                {expanded ? "닫기" : "보기"}
                             </DetailButton>
                         </TitleAndButtonBox>
                         {expanded && 
@@ -53,15 +53,19 @@ const Container = styled.div` // 최상위 부모컨테이너
 `;
 
 const Title = styled.div` // 제목 컴포넌트
-    font-size: 20px;
+    font-size: 17.5px;
     font-weight: bold;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
 `;
 
 const InnerContainer = styled.div` // 내부 컨테이너
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 500px;
+    height: 100vh;
     margin-top: 30px;
     border-radius: 15px;
     background-color: white;
@@ -79,15 +83,16 @@ const InquiryBox = styled.div` // 문의 내역 컨테이너 컴포넌트
 `;
 
 const InquiryDate = styled.div` // 문의 내역 작성(생성) 날짜
-    min-width: 90px;
-    font-size: 15px;
+    flex-shrink: 0; 
+    flex-basis: content; 
+    font-size: 12.5px;
     line-height: 50px;
     margin-left: 15px;
+    margin-right: 5px;
 `;
 
 const InfoBox = styled.div` // 문의 내역 상세 정보 컨테이너
     flex-grow: 1;
-    flex-direction: column;
 `;
 
 const TitleAndButtonBox = styled.div` // 제목&버튼 컨테이너
@@ -96,19 +101,37 @@ const TitleAndButtonBox = styled.div` // 제목&버튼 컨테이너
 `;
 
 const InquiryTitle = styled.div` // 문의 내역 제목 컴포넌트
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     line-height: 50px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (min-width: 650px) and (max-width: 800px) {
+        width: 300px;
+        font-size: 14px;
+    }
+
+    @media (min-width: 500px) and (max-width: 649px) {
+        width: 200px;
+        font-size: 13px;
+    }
+
+    @media (max-width: 499px) {
+        width: 125px;
+        font-size: 12px;
+    }
 `;
 
 const DetailButton = styled.div` // 답변 보기&닫기 버튼
-    min-width: 100px;
+    width: 50px;
     height: 35px;
     background-color: white;
     border-radius: 10px;
     text-align: center;
     line-height: 35px;
-    font-size: 15px;
+    font-size: 12.5px;
     margin: 7.5px 7.5px 0 auto;
     cursor: pointer;
 
@@ -118,12 +141,12 @@ const DetailButton = styled.div` // 답변 보기&닫기 버튼
 `;
 
 const HiddenBox = styled.div` // 답변 보기버튼을 클릭했을 시 나타나는 컴포넌트
-    width: 100%;
+    width: 95%;
 `;
 
 const QuestionBox = styled.div` // 사용자 질문내용 박스
-    width: 95%;
-    font-size: 15px;
+    width: 100%;
+    font-size: 12.5px;
     white-space: pre-wrap;
 `;
 
@@ -131,9 +154,13 @@ const AnswerBox = styled.div` // 관리자 답변내용 박스
     width: 95%;
     background-color: white;
     border-radius: 5px;   
-    font-size: 15px;
+    font-size: 12.5px;
     margin-top: 10px;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 15px;
     white-space: pre-wrap;
+
+    @media (max-width: 800px) {
+        width: 85%;
+    }
 `;

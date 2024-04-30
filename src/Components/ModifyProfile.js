@@ -54,7 +54,7 @@ export default function ModifyProfile() {
         <Container>
             <Title>프로필 관리</Title>
             <ProfileContainer>
-                <ProfileImage></ProfileImage>
+                <ProfileImage/>
                 <UserInfoContainer>
                     <Nickname>리밋 관리자</Nickname>
                     <ButtonContainer>
@@ -87,7 +87,7 @@ export default function ModifyProfile() {
                     <ToggleButton onClick = {toggleShowPassWord}>
                         {showPassWord ? <FontAwesomeIcon icon = {faEye}/> : <FontAwesomeIcon icon = {faEyeSlash}/>}
                     </ToggleButton>
-                    <ChangeButton>변경</ChangeButton>
+                    <ChangeButton style = {{marginLeft: "6%"}}>변경</ChangeButton>
                 </InfoBox>
 
                 <SubTitle style = {{marginTop: "25px"}}>개인 정보</SubTitle>
@@ -116,8 +116,12 @@ const Container = styled.div` // 최상위 부모컨테이너
 `;
 
 const Title = styled.div` // 제목 컴포넌트
-    font-size: 20px;
+    font-size: 17.5px;
     font-weight: bold;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
 `;
 
 const ProfileContainer = styled.div` // 프로필 컨테이너
@@ -127,6 +131,10 @@ const ProfileContainer = styled.div` // 프로필 컨테이너
     background-color: white;
     border-radius: 15px;
     margin-top: 30px;
+
+    @media (max-width: 800px) {
+        height: 120px;
+    }
 `;
 
 const ProfileImage = styled.div` // 사용자 프로필 이미지
@@ -138,50 +146,70 @@ const ProfileImage = styled.div` // 사용자 프로필 이미지
     background-size: cover;
     border-radius: 50%;
 
-    @media (max-width: 950px) {
-        min-width: 120px;
+    @media (max-width: 800px) {
+        width: 90px;
+        height: 90px;
     }
 `;
 
 const UserInfoContainer = styled.div` // 사용자 정보 컨테이너
     display: flex;
     flex-direction: column;
-    align-items: left;
     justify-content: center;
-    width: 200px;
     height: 150px;
     margin-left: 30px;
+
+    @media (max-width: 800px) {
+        height: 120px;
+        margin-left: 20px;
+    }
 `;
 
 const Nickname = styled.div` // 사용자 닉네임
-    font-size: 20px;
+    font-size: 17.5px;
     font-weight: bold;
     margin-bottom: 10px;
+
+    @media (max-width: 800px) {
+        font-size: 15px;
+    }
 `;
 
 const ButtonContainer = styled.div` // 버튼 컨테이너
     display: flex;
     width: 100%;
-    font-size: 15px;
+    font-size: 12.5px;
     color: #6D6D6D;
     text-align: center;
+
+    @media (max-width: 800px) {
+        font-size: 10px;
+    }
 `;
 
 const ImageChangeBtn = styled.div` // 프로필 이미지 변경 버튼
-    width: 100px;
+    width: 70px;
     padding: 10px;
     background-color: #D9D9D9;
-    border-radius: 15px;
+    border-radius: 10px;
     margin-right: 10px;
     cursor: pointer;
+
+    @media (max-width: 800px) {
+        width: 60px;
+    }
 `;
 
 const ImageDeleteBtn = styled.div` // 프로필 이미지 삭제 버튼
-    width: 50px;
+    width: 35px;
     padding: 10px;
     background-color: #D9D9D9;
-    border-radius: 15px;
+    border-radius: 10px;
     cursor: pointer;
+
+    @media (max-width: 800px) {
+        width: 30px;
+    }
 `;
 
 const DetailInfoBox = styled.div` // 상세정보 부모 컨테이너
@@ -189,6 +217,10 @@ const DetailInfoBox = styled.div` // 상세정보 부모 컨테이너
     flex-direction: column;
     width: 70%;
     margin-top: 20px;
+
+    @media (max-width: 800px) {
+        width: 100%;
+    }
 `; 
 
 const SubTitle = styled.div` // 컨테이너 내부 제목 컴포넌트

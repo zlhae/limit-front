@@ -19,6 +19,10 @@ const Container = styled.div` // 최상위 부모컨테이너
 `;
 
 const Title = styled.div` // 제목 컴포넌트
-    font-size: 20px;
+    font-size: 17.5px;
     font-weight: bold;
+
+    @media (max-width: 800px) {
+        display: none;
+    }
 `;

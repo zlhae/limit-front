@@ -15,6 +15,6 @@ export default function Used_Sale() {
   ];
 
     return (
-        <MyPageTemplate title = "중고 판매 내역" toggleButtons = {toggleButtons}></MyPageTemplate>
+        <MyPageTemplate title = {"중고 판매 내역"} toggleButtons = {toggleButtons}></MyPageTemplate>
     );
 }

@@ -25,6 +25,14 @@ const SignUpBox = styled.div` // 회원가입 컨테이너
     flex-direction: column;
     width: 450px;
     margin: 100px auto;
+
+    @media (min-width: 500px) and (max-width: 600px) {
+        width: 400px;
+    }
+
+    @media (max-width: 500px) {
+        width: 250px;
+    }
 `;
 
 const Title = styled.div` // 제목 컴포넌트
@@ -42,12 +50,20 @@ const EmailBox = styled.div` // 이메일 컨테이너
     border-radius: 5px;
     border: 1px solid #909090;
     background-color: white;
+    
+    @media (max-width: 500px) {
+        height: 25px; 
+    }
 `;
 
 const InputField = styled.input` // 사용자 이메일 입력 필드
     width: 80%;
     font-size: 15px; 
     border: none;
+
+    @media (max-width: 500px) {
+        font-size: 12.5px; 
+    }
 `;
 
 const SubmitButton = styled.div` // 이메일 전송 버튼
@@ -61,12 +77,22 @@ const SubmitButton = styled.div` // 이메일 전송 버튼
     text-align: center;
     line-height: 35px;
     cursor: pointer;
+
+    @media (max-width: 500px) {
+        height: 25px; 
+        line-height: 25px;
+        font-size: 10px;
+    }
 `;
 
 const SuscessMessage = styled.div` // 이메일 전송 성공메세지
     font-size: 15px;
     text-align: center;
     margin-top: 30px;
+
+    @media (max-width: 500px) {
+        font-size: 12.5px; 
+    }
 `;
 
 const LoginPageLink = styled(Link)` // 로그인페이지 링크
@@ -74,4 +100,8 @@ const LoginPageLink = styled(Link)` // 로그인페이지 링크
     text-align: center;
     margin-top: 30px;
     color: #6d6d6d;
+
+    @media (max-width: 500px) {
+        font-size: 12.5px; 
+    }
 `;

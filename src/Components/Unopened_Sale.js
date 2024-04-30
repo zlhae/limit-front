@@ -15,6 +15,6 @@ export default function Unopened_Sale() {
   ];
 
     return (
-        <MyPageTemplate title = "미개봉 판매 내역" toggleButtons = {toggleButtons}></MyPageTemplate>
+        <MyPageTemplate title = {"미개봉 판매 내역"} toggleButtons = {toggleButtons}></MyPageTemplate>
     );
 }
