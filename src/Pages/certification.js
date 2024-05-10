@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function Certification() {
+export default function Certification() { 
 
     const location = useLocation(); // useLocation 훅
     const navigate = useNavigate(); // 페이지 이동 훅
