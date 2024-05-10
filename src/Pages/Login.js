@@ -43,10 +43,10 @@ const Login=()=>{
 const LoginContainer=styled.div`
     width: 450px;
     margin: 0 auto;
-    margin-top: 70px;
+    margin-top: 50px;
 
     @media (max-width: 600px){
-        width: 80%;
+        width: 90%;
     }
 `
 
@@ -54,6 +54,10 @@ const LoginTitle=styled.h1`
     text-align: center;
     margin-bottom: 50px;
     cursor: default;
+
+    @media (max-width: 600px){
+        font-size: 20px;
+    }
 `
 
 const EmailLoginContainer=styled.div`

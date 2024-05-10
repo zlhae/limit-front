@@ -94,6 +94,10 @@ const SaleContainer=styled.div`
     @media (max-width: 1100px){
         width: 80%;
     }
+
+    @media (max-width: 600px){
+        width: 90%;
+    }
 `
 
 const SaleToggleContainer=styled.div`
