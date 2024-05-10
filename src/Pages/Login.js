@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Login=()=>{
+const Login=()=>{  
     const [id, setId]=useState("");
     const [password, setPassword]=useState("");
 
-    return(
+    return(  
         <LoginContainer>
             <LoginTitle id='login-title'>로그인</LoginTitle>
             <EmailLoginContainer>  
