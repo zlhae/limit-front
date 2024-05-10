@@ -30,7 +30,7 @@ const Login=()=>{
             </OauthLoginContainer>
             <SearchContainer>
                 <SearchLink to={"/search-id"}>아이디 찾기</SearchLink>
-                <SearchLink to={"/search-password"}>비밀번호 찾기</SearchLink>
+                <SearchLink to={"/search-pw"}>비밀번호 찾기</SearchLink>
             </SearchContainer>
             <GotoJoinContainer>
                 <GotoJoinText>아직 계정이 없으신가요?</GotoJoinText>
