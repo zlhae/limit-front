@@ -10,7 +10,7 @@ const TopBrand = () => {
             <img src={TestImage} alt='Product Thumbnail' />
             </div>
         </div>
-    );
+    );   
 }
 
 export default TopBrand;
