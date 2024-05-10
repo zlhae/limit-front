@@ -34,7 +34,7 @@ const FooterInner=styled.div`
 const FotterIneerLink=styled(Link)`
     color: #6d6d6d;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 13px;  
 `
 
 const LinkContainer=styled.div`
