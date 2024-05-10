@@ -172,7 +172,7 @@ const Container = styled.div`
     transition: width 0.3s ease-in-out;
     
     @media (max-width: 600px) {
-        width: 80%; 
+        width: 90%; 
         margin: 0 auto;  
         align-items: center;  
     }

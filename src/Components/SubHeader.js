@@ -30,6 +30,10 @@ const LiTabs = styled.ul`
     display: flex;
     height: 30px;
     padding: 0px 10%;
+
+    @media (max-width: 600px) {
+        padding: 0px 5%;
+    }
 `;
 
 const TabName = styled.li`
