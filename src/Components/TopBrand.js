@@ -11,6 +11,6 @@ const TopBrand = () => {
             </div>
         </div>
     );   
-}
-
+}   
+    
 export default TopBrand;
