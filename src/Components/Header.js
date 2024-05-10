@@ -35,6 +35,10 @@ const HeaderTop=styled.div`
     display: flex;
     height: 30px;
     padding: 0px 10%;
+
+    @media (max-width: 600px) {
+        padding: 0px 5%;
+    }
 `
 
 const HeaderTopList=styled.ul`
@@ -58,6 +62,10 @@ const HeaderMain=styled.div`
     padding: 0px 10%;
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 600px) {
+        padding: 0px 5%;
+    }
 `
 
 const IconImg=styled.img`

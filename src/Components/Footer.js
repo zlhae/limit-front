@@ -25,6 +25,10 @@ const FooterInner=styled.div`
     margin-bottom: 70px;
     padding-top: 70px;
     border-top: 1px solid #d9d9d9;
+
+    @media (max-width: 600px) {
+        margin: 70px 5%;
+    }
 `
 
 const FotterIneerLink=styled(Link)`

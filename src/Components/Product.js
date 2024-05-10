@@ -57,7 +57,7 @@ const ProductListContainer = styled.div` /* ProductListWrap */
     justify-content: center;
 
     @media (max-width: 600px) {
-        width: 80%; 
+        width: 90%; 
         margin: 0 auto;
     }
 `;

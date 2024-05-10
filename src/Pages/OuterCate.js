@@ -27,6 +27,7 @@ const OuterCate = () => {
 }
 
 const MainProduct = styled.div`
+
 `;
 
 const ProductContainer = styled.div`
