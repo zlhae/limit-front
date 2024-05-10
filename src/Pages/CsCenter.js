@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+import SubHeader from '../Components/SubHeader';
 import Notification from '../Components/Notification';
 import Event from '../Components/Event';
-import ProductRegistrationInquiry from '../Components/ProductRegistrationInquiry';
 import ServiceInformation from '../Components/ServiceInformation';
+import ProductRegistrationInquiry from '../Components/ProductRegistrationInquiry';
 import OtherInquiry from '../Components/OtherInquiry';
 
 const CsCenter=()=>{
@@ -25,21 +26,24 @@ const CsCenter=()=>{
     }
 
     return(
-        <CsCenterContainer>
-            <NavigationContainer>
-                <NavigationTitle>고객센터</NavigationTitle>
-                <CategoryContainer>
-                    <NavigationElement onClick={(e)=>{handleMenu(0)}}>공지사항</NavigationElement>
-                    <NavigationElement onClick={(e)=>{handleMenu(1)}}>이벤트</NavigationElement>
-                    <NavigationElement onClick={(e)=>{handleMenu(2)}}>서비스 안내</NavigationElement>
-                </CategoryContainer>
-                <CategoryContainer>
-                    <NavigationElement onClick={(e)=>{handleMenu(3)}}>상품 등록 문의</NavigationElement>
-                    <NavigationElement onClick={(e)=>{handleMenu(4)}}>기타 문의</NavigationElement>
-                </CategoryContainer>
-            </NavigationContainer>
-            {showContent()}
-        </CsCenterContainer>
+        <div>
+            <SubHeader></SubHeader>
+            <CsCenterContainer>
+                <NavigationContainer>
+                    <NavigationTitle>고객센터</NavigationTitle>
+                    <CategoryContainer>
+                        <NavigationElement onClick={(e)=>{handleMenu(0)}}>공지사항</NavigationElement>
+                        <NavigationElement onClick={(e)=>{handleMenu(1)}}>이벤트</NavigationElement>
+                        <NavigationElement onClick={(e)=>{handleMenu(2)}}>서비스 안내</NavigationElement>
+                    </CategoryContainer>
+                    <CategoryContainer>
+                        <NavigationElement onClick={(e)=>{handleMenu(3)}}>상품 등록 문의</NavigationElement>
+                        <NavigationElement onClick={(e)=>{handleMenu(4)}}>기타 문의</NavigationElement>
+                    </CategoryContainer>
+                </NavigationContainer>
+                {showContent()}
+            </CsCenterContainer>
+        </div>
     )
 }
 
@@ -50,6 +54,7 @@ const CsCenterContainer=styled.div`
 `
 
 const NavigationContainer=styled.div`
+    width: 90px;
     margin-right: 50px;
 
     @media (max-width:600px){

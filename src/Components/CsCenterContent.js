@@ -28,7 +28,7 @@ const CsCenterContent=({type, contentData})=>{
 }
 
 const NotificationContainer=styled.div`
-    height: 450px;
+    height: 425px;
     overflow-y: scroll;
 `
 
