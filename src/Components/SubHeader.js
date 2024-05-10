@@ -42,6 +42,10 @@ const TabName = styled.li`
     font-size: 16px;
     font-weight: bold;
     color: black;
+
+    @media (max-width: 600px) {
+        font-size: 14px;
+    }
 `;
 
 const TabLink = styled(Link)`
