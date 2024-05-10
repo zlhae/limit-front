@@ -11,29 +11,34 @@ export default function Certification() {
     const [linkPath, setLinkPath] = useState("/sign-up-info"); // 링크 경로 상태
     const [linkText, setLinkText] = useState("회원가입 정보입력 페이지로 이동"); // 링크 텍스트 상태
     const [certificationToken, setCertificationToken] = useState(""); // 인증토큰값
+    const [email, setEmail] = useState(""); // 사용자 이메일
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search); // url쿼리 파라미터 가져오기
-        const email = searchParams.get("email"); // 이메일 가져오기
-        setCertificationToken(searchParams.get("certificationToken")); // 인증토큰 가져오기
+    useEffect(() => { // url 쿼리 파라미터 파싱
+        const searchParams = new URLSearchParams(location.search);
+        setEmail(searchParams.get("email"));
+        setCertificationToken(searchParams.get("certificationToken"));
+    }, [location.search]);
 
-        const CertificationEmail = async () => { // 이메일 인증 메서드
-            try {
-                const response = await axios.post("https://api.lim-it.one/api/v1/auth/cert/email/verify", { certificationToken, email });
+    useEffect(() => { // 이메일 인증
+        if (certificationToken && email) {
+            const CertificationEmail = async () => {
+                try {
+                    const response = await axios.post("https://api.lim-it.one/api/v1/auth/cert/email/verify", { certificationToken, email });
 
-                if (response.status === 200) {
-                    setResponseMessage("인증이 성공적으로 완료되었습니다.\n아래의 링크를 통해 추가적인 회원가입정보를 입력해주십시오.");
+                    if (response.status === 200) {
+                        setResponseMessage("인증이 성공적으로 완료되었습니다.\n아래의 링크를 통해 추가적인 회원가입정보를 입력해주십시오.");
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        setResponseMessage("인증을 실패하였습니다.\n다시 회원가입 페이지로 이동하셔서 이메일을 전송해주십시오.");
+                        setLinkPath("/sign-up");
+                        setLinkText("회원가입 페이지로 이동");
+                    } 
                 }
-            } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    setResponseMessage("인증을 실패하였습니다.\n다시 회원가입 페이지로 이동하셔서 이메일을 전송해주십시오.");
-                    setLinkPath("/sign-up");
-                    setLinkText("회원가입 페이지로 이동");
-                } 
-            }
-        };
-        CertificationEmail();
-    }, []); 
+            };
+            CertificationEmail();
+        }
+    }, [certificationToken, email]);
 
     const PageLink = () => { // 페이지 이동 링크 메서드
         if (linkPath === "/sign-up-info") {
