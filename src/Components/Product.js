@@ -18,7 +18,7 @@ const Product = () => {
                 </BookmarkWrapper>
                 <img src={TestImage} alt='Product Thumbnail' />
             </ThumbBox>
-            <div className='info_box'>
+            <InfoBox>
                 <BrandBookmark>
                     <Brand>
                         <h1>Asics</h1>
@@ -37,133 +37,145 @@ const Product = () => {
                 <Price>
                     <h3>310,000원</h3>
                 </Price>
-            </div>
+            </InfoBox>
         </ProductContainer>
     );
 }
 
 const ProductListWrap = () => {
     return (
-        <ProductListContainer className='product_list_wrap'>
+        <ProductListContainer>
             <ProductGroup>
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
-                <Product />
+                {Array.from({ length: 17 }, (_, i) => <Product key={i} />)}
             </ProductGroup>
         </ProductListContainer>
     );
 }
 
-const ProductListContainer = styled.div`
-
-    flex-wrap: wrap;
-`;
-
-const ProductContainer = styled.div`
-    flex: 2;
-    width: 16%;
-`;
-
-const ProductGroup = styled.div`
-
-    margin-left: 45px;
-    gap: 25px;
+const ProductListContainer = styled.div` /* ProductListWrap */
     display: flex;
-    flex-wrap: wrap;
-    
-    @media (max-width: 1100px) {
-        gap: 10px;
-        margin-left: 45px;
+    justify-content: center;
+
+    @media (max-width: 600px) {
+        width: 80%; 
+        margin: 0 auto;
+    }
+`;
+
+const ProductContainer = styled.div` /* 1개 Product */
+    width: 100%; 
+
+    @media (max-width: 600px) {
+        width: 100%;  
+    }
+`;
+
+const ProductGroup = styled.div` /* ProductListWrap 나열 */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16%, 1fr)); 
+    gap: 20px;
+    width: 100%;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 
+    @media (max-width: 600px) {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+        gap: 15px;
+        margin-top: -15px;
+    }
 `;
 
-const ThumbBox = styled.div`
-    flex: 2;
+const ThumbBox = styled.div` /* 상품 이미지 */
     position: relative;
+    
     img {
         width: 100%;
         height: auto;
         border-radius: 10px;
-    }
+
+        @media (min-width: 1024px) {
+            width: 100%;  
+        }
 `;
 
-const BrandBookmark = styled.div`
-    display: flex;
-    justify-content: space-between;
-`;
-
-const Brand = styled.div`
-    h1 {
-        font-size: 14px;
-        font-weight: bold;
-        margin-top: -3px;
-    }
-`;
-
-const BookmarkWrapper = styled.span`
+const BookmarkWrapper = styled.span` /* 북마크 */
     position: absolute;
-    bottom: 5px; 
-    right: 7px;
+    bottom: 7px; 
+    right: 10px;
 `;
 
-const Name = styled.div`
+const BrandBookmark = styled.div` /* 브랜드 위치 */
+    justify-content: space-between;
+    padding: 0;
+`;
+
+const Brand = styled.div` /* 브랜드 */
+    h1 {
+        font-size: 15px;
+        font-weight: bold;
+        margin-top: -5px;
+
+        @media (max-width: 600px) {
+            font-size: 14px; 
+        }
+    }
+`;
+
+const Name = styled.div` /* 영어 이름 */
     h2 {
         font-size: 13px;
         font-weight: 500;
-        width: 100%;
-        margin-top: -7px;
+        margin-top: -5px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        text-overflow: ellipsis;
     }
 `;
 
-const KoreaName = styled.div`
+const KoreaName = styled.div` /* 한글 이름 */
     h3 {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: lighter;
-        width: 100%;
+        margin-top: -5px;
         color: #6D6D6D;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap; 
-        margin-top: -3px;
+
+        @media (max-width: 600px) {
+            font-size: 11px; 
+        }
     }
 `;
 
-const Tag = styled.div`
-    display: inline-block;
+const InfoBox = styled.div` /* 브랜드, 영어 이름, 한글 이름, 택배, 직거래, 가격 위치 */
+    margin-top: 10px;
 `;
 
-const TagText = styled.span`
-    background-color: #d9d9d9;
+const Tag = styled.div` /* 택배, 직거래 위치 */
+    display: flex;
+    margin-top: 5px;
+`;
+
+const TagText = styled.span` /* 택배, 직거래 */
+    background-color: #ededed;
     padding: 4px 8px;
     font-size: 12px;
-
-    &:not(:last-child) {
-        margin-right: 5px;
-    }
-
-    @media (max-width: 1100px) {
-        font-size: 10px;
-        padding: 4px 4px;
-    }
+    margin-right: 5px;
 `;
 
-const Price = styled.div`
+const Price = styled.div` /* 가격 */
     h3 {
-        font-size: 14px;
+        font-size: 15px;
+        margin-top: 8px;
+
+        @media (max-width: 600px) {
+            font-size: 14px; 
+        }
     }
 `;
 
