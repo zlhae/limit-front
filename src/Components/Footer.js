@@ -18,23 +18,23 @@ const Footer=()=>{
 }
 
 const FooterContainer=styled.div`
-    width: 100%;
+    width: 100%;  
 `
 const FooterInner=styled.div`
     margin: 70px 10%;
     margin-bottom: 70px;
     padding-top: 70px;
-    border-top: 1px solid #d9d9d9;
+    border-top: 1px solid #d9d9d9;   
 
     @media (max-width: 600px) {
         margin: 70px 5%;
     }
-`
+`  
 
 const FotterIneerLink=styled(Link)`
     color: #6d6d6d;
     font-weight: bold;
-    font-size: 13px;  
+    font-size: 13px;     
 `
 
 const LinkContainer=styled.div`
