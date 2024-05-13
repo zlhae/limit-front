@@ -15,8 +15,8 @@ const SideFilter = () => {
     const [isMaleSelected, setIsMaleSelected] = useState(false);
     const [isFemaleSelected, setIsFemaleSelected] = useState(false);
     const [showResetButton, setShowResetButton] = useState(false);
-    const [isCategoryOpen, setIsCategoryOpen] = useState(true);
-    const [isGenderOpen, setIsGenderOpen] = useState(true);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isGenderOpen, setIsGenderOpen] = useState(false);
 
     useEffect(() => {
         setShowResetButton(
@@ -106,153 +106,175 @@ const SideFilter = () => {
     };
 
     return (
-        <Container>
-            <div className='filter_container'>
-                <TopFilterArray>
-                    <select name='array_type' id='aType'>
-                        <option value="popular">인기순</option>
-                        <option value="lately">최신순</option>
-                    
-                    </select>
-                </TopFilterArray>
-                <StatusFilter>
-                    <StatusFilterBox>
-                        <div className='status_filter_text'>
-                            <h1>필터</h1>
-                        </div>
-                        <div className='status_filter_btn'>
-                            <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
-                            <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
-                        </div>
-                    </StatusFilterBox>
-                    <CateFilterBox>
-                        <div className='cate_filter_text'>
-                            <h1>카테고리</h1>
-                            <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
-                        </div>
-                        {isCategoryOpen && (
-                            <div className='cate_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_outer' checked={isOuterSelected} onChange={toggleOuter}></input>아우터</label>
-                                {isOuterSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_jacket'></ChildCheckbox>자켓</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_anorak'></ChildCheckbox>아노락</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_coat'></ChildCheckbox>코트</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_padding'></ChildCheckbox>패딩</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_outers'></ChildCheckbox>기타 아우터</label>
-                                    </>
-                                )}
-                                <label><input type='checkbox' name='checkbox_top' checked={isTopSelected} onChange={toggleTop}></input>상의</label>
-                                {isTopSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_short_tshirt'></ChildCheckbox>반팔 티셔츠</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_long_tshirt'></ChildCheckbox>긴팔 티셔츠</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_cardigan'></ChildCheckbox>가디건</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_shirt'></ChildCheckbox>셔츠</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_hoodie'></ChildCheckbox>후드</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_hooded_zipup'></ChildCheckbox>후드 집업</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_sweatshirt'></ChildCheckbox>스웨트셔츠</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_sleeveless'></ChildCheckbox>슬리브리스</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_onepiece'></ChildCheckbox>원피스</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_knit'></ChildCheckbox>니트</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_tops'></ChildCheckbox>기타 상의</label>
-                                    </>
-                                )}
-                                <label><input type='checkbox' name='checkbox_bottom' checked={isBottomSelected} onChange={toggleBottom}></input>하의</label>
-                                {isBottomSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_pants'></ChildCheckbox>바지</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_short_pants'></ChildCheckbox>반바지</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_skirt'></ChildCheckbox>스커트</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_leggings'></ChildCheckbox>레깅스</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_bottoms'></ChildCheckbox>기타 하의</label>
+        <TotalContainer>
+            <Container>
+                <div className='filter_container'>
+                    <TopFilterArray>
+                        <select name='array_type' id='aType'>
+                            <option value="popular">인기순</option>
+                            <option value="lately">최신순</option>
+                        
+                        </select>
+                    </TopFilterArray>
+                    <StatusFilter>
+                        <FiltersContainer>
+                            <StatusFilterBox>
+                                <div className='status_filter_text'>
+                                    <h1>필터</h1>
+                                </div>
+                                <div className='status_filter_btn'>
+                                    <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
+                                    <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
+                                </div>
+                            </StatusFilterBox>
+                            <CateFilterBox>
+                                <div className='cate_filter_text'>
+                                    <h1>카테고리</h1>
+                                    <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                </div>
+                                {isCategoryOpen && (
+                                    <div className='cate_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_outer' checked={isOuterSelected} onChange={toggleOuter}></input>아우터</label>
+                                        {isOuterSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_jacket'></ChildCheckbox>자켓</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_anorak'></ChildCheckbox>아노락</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_coat'></ChildCheckbox>코트</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_padding'></ChildCheckbox>패딩</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_outers'></ChildCheckbox>기타 아우터</label>
+                                            </>
+                                        )}
+                                        <label><input type='checkbox' name='checkbox_top' checked={isTopSelected} onChange={toggleTop}></input>상의</label>
+                                        {isTopSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_short_tshirt'></ChildCheckbox>반팔 티셔츠</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_long_tshirt'></ChildCheckbox>긴팔 티셔츠</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_cardigan'></ChildCheckbox>가디건</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_shirt'></ChildCheckbox>셔츠</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_hoodie'></ChildCheckbox>후드</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_hooded_zipup'></ChildCheckbox>후드 집업</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_sweatshirt'></ChildCheckbox>스웨트셔츠</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_sleeveless'></ChildCheckbox>슬리브리스</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_onepiece'></ChildCheckbox>원피스</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_knit'></ChildCheckbox>니트</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_tops'></ChildCheckbox>기타 상의</label>
+                                            </>
+                                        )}
+                                        <label><input type='checkbox' name='checkbox_bottom' checked={isBottomSelected} onChange={toggleBottom}></input>하의</label>
+                                        {isBottomSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_pants'></ChildCheckbox>바지</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_short_pants'></ChildCheckbox>반바지</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_skirt'></ChildCheckbox>스커트</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_leggings'></ChildCheckbox>레깅스</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_bottoms'></ChildCheckbox>기타 하의</label>
 
-                                    </>
-                                )}
-                                <label><input type='checkbox' name='checkbox_shoes' checked={isShoesSelected} onChange={toggleShoes}></input>신발</label>
-                                {isShoesSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_sneakers'></ChildCheckbox>스니커즈</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_sandals_slippers'></ChildCheckbox>샌들/슬리퍼</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_flat'></ChildCheckbox>플랫</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_looper'></ChildCheckbox>로퍼</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_derby_raceup'></ChildCheckbox>더비/레이스업</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_heels_pumps'></ChildCheckbox>힐/펌프스</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_boots'></ChildCheckbox>부츠</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_footwear'></ChildCheckbox>기타 신발</label>
+                                            </>
+                                        )}
+                                        <label><input type='checkbox' name='checkbox_shoes' checked={isShoesSelected} onChange={toggleShoes}></input>신발</label>
+                                        {isShoesSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_sneakers'></ChildCheckbox>스니커즈</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_sandals_slippers'></ChildCheckbox>샌들/슬리퍼</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_flat'></ChildCheckbox>플랫</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_looper'></ChildCheckbox>로퍼</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_derby_raceup'></ChildCheckbox>더비/레이스업</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_heels_pumps'></ChildCheckbox>힐/펌프스</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_boots'></ChildCheckbox>부츠</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_footwear'></ChildCheckbox>기타 신발</label>
 
-                                    </>
-                                )}
-                                <label><input type='checkbox' name='checkbox_bag' checked={isBagSelected} onChange={toggleBag}></input>가방</label>
-                                {isBagSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_premiumbag'></ChildCheckbox>프리미엄가방</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_minibag'></ChildCheckbox>미니백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_backpack'></ChildCheckbox>백팩</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_shoulderbag'></ChildCheckbox>숄더백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_totebag'></ChildCheckbox>토트백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_crossbag'></ChildCheckbox>크로스백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_clutch'></ChildCheckbox>클러치</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_duffelbag'></ChildCheckbox>더플백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_echobag'></ChildCheckbox>에코백</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_carrier'></ChildCheckbox>캐리어</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_bags'></ChildCheckbox>기타 가방</label>
+                                            </>
+                                        )}
+                                        <label><input type='checkbox' name='checkbox_bag' checked={isBagSelected} onChange={toggleBag}></input>가방</label>
+                                        {isBagSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_premiumbag'></ChildCheckbox>프리미엄가방</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_minibag'></ChildCheckbox>미니백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_backpack'></ChildCheckbox>백팩</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_shoulderbag'></ChildCheckbox>숄더백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_totebag'></ChildCheckbox>토트백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_crossbag'></ChildCheckbox>크로스백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_clutch'></ChildCheckbox>클러치</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_duffelbag'></ChildCheckbox>더플백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_echobag'></ChildCheckbox>에코백</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_carrier'></ChildCheckbox>캐리어</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_bags'></ChildCheckbox>기타 가방</label>
 
-                                    </>
+                                            </>
+                                        )}
+                                        <label><input type='checkbox' name='checkbox_goods' checked={isGoodsSelected} onChange={toggleGoods}></input>패션잡화</label>
+                                        {isGoodsSelected && (
+                                            <>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_beanie'></ChildCheckbox>비니</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_buckethat'></ChildCheckbox>버킷햇</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_ballcap'></ChildCheckbox>볼캡</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_caps'></ChildCheckbox>기타 모자</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_muffler'></ChildCheckbox>머플러</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_scarf'></ChildCheckbox>스카프</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_tie'></ChildCheckbox>넥타이</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_gloves'></ChildCheckbox>장갑</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_socks'></ChildCheckbox>양말</label>
+                                                <label><ChildCheckbox type='checkbox' name='checkbox_fashion_goods'></ChildCheckbox>기타 패션잡화</label>
+                                            </>
+                                        )}
+                                    </div>
                                 )}
-                                <label><input type='checkbox' name='checkbox_goods' checked={isGoodsSelected} onChange={toggleGoods}></input>패션잡화</label>
-                                {isGoodsSelected && (
-                                    <>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_beanie'></ChildCheckbox>비니</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_buckethat'></ChildCheckbox>버킷햇</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_ballcap'></ChildCheckbox>볼캡</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_caps'></ChildCheckbox>기타 모자</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_muffler'></ChildCheckbox>머플러</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_scarf'></ChildCheckbox>스카프</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_tie'></ChildCheckbox>넥타이</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_gloves'></ChildCheckbox>장갑</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_socks'></ChildCheckbox>양말</label>
-                                        <label><ChildCheckbox type='checkbox' name='checkbox_fashion_goods'></ChildCheckbox>기타 패션잡화</label>
-                                    </>
+                            </CateFilterBox>
+                            <GenderFilterBox>
+                                <div className='gender_filter_text'>
+                                    <h1>성별</h1>
+                                    <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                </div>
+                                {isGenderOpen && (
+                                    <div className='gender_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
+                                        <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
+                                    </div>
                                 )}
-                            </div>
-                        )}
-                    </CateFilterBox>
-                    <GenderFilterBox>
-                        <div className='gender_filter_text'>
-                            <h1>성별</h1>
-                            <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
-                        </div>
-                        {isGenderOpen && (
-                            <div className='gender_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
-                                <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
-                            </div>
-                        )}
-                    </GenderFilterBox>
-                </StatusFilter>
-                {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
-            </div>
-        </Container>
+                            </GenderFilterBox>
+                        </FiltersContainer>
+                    </StatusFilter>
+                    {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
+                </div>
+            </Container>
+        </TotalContainer>
     );
 }
+
+const TotalContainer = styled.div`
+
+    @media (max-width: 600px) {
+        background-color: white;  
+        width: 100%;
+        margin-top: -55px; 
+    }
+`;
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: 140px; 
-    
-    @media(max-width: 1100px) {
-        width: 120px;
+    width: 80%;
+    transition: width 0.3s ease-in-out;
+
+    @media (max-width: 600px) {
+        width: 90%; 
+        margin: 0 auto;  
+        align-items: center;  
     }
 `;
 
 const TopFilterArray = styled.div` /* 인기순, 최신순 css */
     display: flex;
-    margin-bottom: 15px;
+    width: 100%;  
+    order: 2;  
+    justify-content: flex-start;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 
     select {
-        width: 72px;
+        width: auto; 
         height: 30px;
         border: none;
         background-color: transparent;
@@ -271,18 +293,39 @@ const TopFilterArray = styled.div` /* 인기순, 최신순 css */
 `;
 
 const StatusFilter = styled.div`
-margin-bottom: 15px;
+    margin-bottom: 20px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+    }
 `;
 
 const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
-    margin-top: 10px;
+    margin-top: 5px;
 
     .status_filter_text h1 {
         font-size: 14px;
+        flex: 1;
+
+        @media (max-width: 600px) {
+            display: none;
+        }
+    }
+
+    .status_filter_btn img {
+        display: none;
+
+        @media (max-width: 600px){
+            display: block;
+        }
     }
 
     .status_filter_btn {
         display: flex;
+
+        @media (max-width: 600px) {
+            width: 135px; 
+        }
 
         .status_filter_btn_opt1 {
             font-size: 12px;
@@ -302,6 +345,7 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
             border-radius: 20px;
             border: 1px solid #d9d9d9;
             margin-left: 5px;
+            margin-right: 10px;
             transition: background-color 0.3s;
         }
 
@@ -316,7 +360,14 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
 `;
 
 const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
-    margin-top: 10px;
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .cate_filter_text {
         display: flex;
@@ -369,12 +420,28 @@ const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
     }
 `;
 
+const FiltersContainer = styled.div`
+    display: flex;
+    flex-direction: row;  
+    justify-content: space-between; 
+    flex-wrap: wrap;  
+    width: 100%; 
+    margin-bottom: -15px;  
+`;
+
 const ChildCheckbox = styled.input` /* 카테고리 자식 체크박스 css */
     margin-left: 25px; 
 `;
 
 const GenderFilterBox = styled.div` /* 성별 체크박스 css */
-    margin-top: 10px;
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .gender_filter_text {
         display: flex;

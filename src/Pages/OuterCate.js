@@ -69,7 +69,7 @@ const ProductNumber = styled.h3`
     color: #656565;
     
     @media (max-width: 600px) {
-        margin-left: 10%;
+        margin-left: 5%;
         font-size: 10px;
         color: #656565;
         margin-bottom: 25px;
