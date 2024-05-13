@@ -2,9 +2,13 @@ import styled from "styled-components"
 import { useState } from "react";
 
 const CsCenterContent=({type, contentData})=>{
-    const [showContent, setShowContent]=useState(null);
-    const handleShowContent=(id)=>{
-        setShowContent(id===showContent?null:id);
+    const [showContents, setShowContents]=useState([]);
+    const handleShowContents=(id)=>{
+        if(showContents.includes(id)){
+            setShowContents(showContents.filter(item=>item!==id));
+        } else{
+            setShowContents([...showContents,id]);
+        }
     }
 
     return(
@@ -16,9 +20,9 @@ const CsCenterContent=({type, contentData})=>{
                             <NotificationTag>{type}</NotificationTag>
                             <NotificationTitle>{item.title}</NotificationTitle>
                         </div>
-                        <NotificationButton onClick={(e)=>handleShowContent(item.id)}>{showContent===item.id?"닫기":"보기"}</NotificationButton>
+                        <NotificationButton onClick={(e)=>handleShowContents(item.id)}>{showContents.includes(item.id)?"닫기":"보기"}</NotificationButton>
                     </NotificationElement>
-                    {showContent===item.id&&<NotificationContentContainer>
+                    {showContents.includes(item.id)&&<NotificationContentContainer>
                         <NotificationContent>{item.content}</NotificationContent>
                     </NotificationContentContainer>}
                 </div>
