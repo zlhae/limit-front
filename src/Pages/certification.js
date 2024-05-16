@@ -42,7 +42,7 @@ export default function Certification() {
 
     const PageLink = () => { // 페이지 이동 링크 메서드
         if (linkPath === "/sign-up-info") {
-            navigate(linkPath, {state : {certificationToken}}); // 회원가입 정보입력 페이지로 이동할 때만 certificationToken값 전달
+            navigate(linkPath, {state : {certificationToken, email}}); // 회원가입 정보입력 페이지로 이동할 때만 certificationToken값 전달
         } else {
             navigate(linkPath); 
         }

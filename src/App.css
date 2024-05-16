@@ -4,6 +4,12 @@
     src: url("./Fonts/AppleSDGothicNeoM.ttf") format("truetype");
 }
 
+.App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 body{
     background-color: #f5f5f7;
     margin: 0px;
