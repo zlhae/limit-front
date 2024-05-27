@@ -55,7 +55,7 @@ const ServiceInformation=({handleShowMobileSideBar})=>{
         <ContentContainer>
             <MenuImg src={MenuIcon} onClick={(e)=>{e.stopPropagation(); handleShowMobileSideBar();}}></MenuImg>
             <ContentTitle>서비스 안내</ContentTitle>
-            <CsCenterContent type="공지" contentData={serviceInformationData}></CsCenterContent>
+            <CsCenterContent type="서비스" contentData={serviceInformationData}></CsCenterContent>
         </ContentContainer>
     );
 }

@@ -1,42 +1,88 @@
 import styled from "styled-components"
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import axios from "axios";
 
-const CsCenterContent=({type, contentData})=>{
-    const [showContents, setShowContents]=useState([]);
-    const handleShowContents=(id)=>{
-        if(showContents.includes(id)){
-            setShowContents(showContents.filter(item=>item!==id));
+const CsCenterContent=({type})=>{
+    const loadType=type==="공지"?"notices":"events";
+
+    const [contentData, setContentData]=useState([]);
+    const [page, setPage]=useState(0);
+    const [ref, inView]=useInView();
+
+    const contentDataFetch=()=>{
+        axios
+        .get(`https://api.lim-it.one/api/v1/${loadType}?page=${page}&size=10&sort=asc`)
+        .then((response)=>{
+            setContentData([...contentData, ...(response.data.content)])
+            setPage((page)=>page+1)
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    }
+
+    useEffect(()=>{
+        if(inView){
+            contentDataFetch();
+        }
+    },[inView]);
+
+    const [showContentId, setShowContentId]=useState([]);
+    const [showContentDetail, setShowContentDetail]=useState({});
+
+    const handleShowContentId=(id)=>{
+        if(showContentId.includes(id)){
+            setShowContentId(showContentId.filter(item=>item!==id));
         } else{
-            setShowContents([...showContents,id]);
+            if (!showContentDetail[id]) {
+                fetchContentDetail(id);
+            }
+            setShowContentId([...showContentId, id]);
         }
     }
 
+    const fetchContentDetail = (id) => {
+        axios
+            .get(`https://api.lim-it.one/api/v1/${loadType}/${id}`)
+            .then((response) => {
+                setShowContentDetail((prevDetail) => ({
+                    ...prevDetail,
+                    [id]: response.data.content,
+                }));
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     return(
-        <NotificationContainer>
-            {contentData.map(item=>
+        <ContentContainer>
+            {contentData&&contentData.map(item=>
                 <div key={item.id}>
-                    <NotificationElement>
+                    <ContentElement>
                         <div>
-                            <NotificationTag>{type}</NotificationTag>
-                            <NotificationTitle>{item.title}</NotificationTitle>
+                            <ContentTag>{type}</ContentTag>
+                            <ContentTitle>{item.title}</ContentTitle>
                         </div>
-                        <NotificationButton onClick={(e)=>handleShowContents(item.id)}>{showContents.includes(item.id)?"닫기":"보기"}</NotificationButton>
-                    </NotificationElement>
-                    {showContents.includes(item.id)&&<NotificationContentContainer>
-                        <NotificationContent>{item.content}</NotificationContent>
-                    </NotificationContentContainer>}
+                        <ContentButton onClick={(e)=>handleShowContentId(item.id)}>{showContentId.includes(item.id)?"닫기":"보기"}</ContentButton>
+                    </ContentElement>
+                    {showContentId.includes(item.id)&&<ContentDetailContainer>
+                        <ContentDetail>{showContentDetail[item.id]}</ContentDetail>
+                    </ContentDetailContainer>}
                 </div>
             )}
-        </NotificationContainer>
+            <div ref={ref}>Loading...</div>
+        </ContentContainer>
     )
 }
 
-const NotificationContainer=styled.div`
+const ContentContainer=styled.div`
     height: 425px;
     overflow-y: scroll;
 `
 
-const NotificationElement=styled.div`
+const ContentElement=styled.div`
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
@@ -49,7 +95,7 @@ const NotificationElement=styled.div`
     }
 `
 
-const NotificationTag=styled.h5`
+const ContentTag=styled.h5`
     margin: 0px;
     display: inline-block;
     color: #979797;
@@ -61,14 +107,14 @@ const NotificationTag=styled.h5`
     }
 `
 
-const NotificationTitle=styled.h5`
+const ContentTitle=styled.h5`
     margin: 0px;
     display: inline-block;
     font-weight: normal;
     cursor: default;
 `
 
-const NotificationButton=styled.button`
+const ContentButton=styled.button`
     border: 0;
     padding: 5px 10px;
     display: block;
@@ -77,14 +123,14 @@ const NotificationButton=styled.button`
     cursor: pointer;
 `
 
-const NotificationContentContainer=styled.div`
+const ContentDetailContainer=styled.div`
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 20px;
     border: 1px solid #979797;
 `
 
-const NotificationContent=styled.h5`
+const ContentDetail=styled.h5`
     margin: 0px;
     font-weight: normal;
 `
