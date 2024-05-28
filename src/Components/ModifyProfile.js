@@ -41,14 +41,47 @@ export default function ModifyProfile() {
           title: "지역 선택",
           html: '<input id = "swal-input1" class = "swal2-input" placeholder = "거래 가능한 지역을 입력">',
           focusConfirm: false,
-          preConfirm: () => {
-            const address = document.getElementById('swal-input1').value;
+          preConfirm: async () => {
+            const query = document.getElementById("swal-input1").value;
+            if (query) {
+              try {
+                const response = await axios.get("https://api.lim-it.one/api/v1/locations/search", {
+                  params: { query }
+                });
+                const locations = response.data;
+                if (locations.length > 0) {
+                  return locations;
+                } else {
+                  Swal.showValidationMessage('검색 결과가 없습니다.');
+                }
+              } catch (error) {
+                Swal.showValidationMessage('검색 중 오류가 발생했습니다.');
+              }
+            } else {
+              Swal.showValidationMessage('검색어를 입력해주세요.');
+            }
           },
           showCancelButton: true,
           confirmButtonText: "검색",
           cancelButtonText: "취소",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const locations = result.value;
+            if (locations) {
+              const locationOptions = locations.map(location => ({
+                id: location.id,
+                name: `${location.region1} ${location.region2} ${location.region3} ${location.region4}`
+              }));
+              RS.fire({
+                title: "검색 결과",
+                html: `<ul>${locationOptions.map(loc => `<li>${loc.name}</li>`).join('')}</ul>`,
+                showConfirmButton: false,
+                showCloseButton: true,
+              });
+            }
+          }
         });
-      };
+    };
     
     return (
         <Container>

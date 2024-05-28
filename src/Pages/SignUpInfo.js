@@ -50,7 +50,7 @@ export default function SignUpInfo() {
                 certificationToken
             });
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 navigate("/sign-up-complete"); 
             }
         } catch (error) {
@@ -77,6 +77,19 @@ export default function SignUpInfo() {
         setPwConfirmTouched(true); 
     };
 
+    const phoneNumberChange = (e) => { // 사용자 휴대폰 번호 입력제한 메서드
+        const {value} = e.target;
+        const onlyNums = value.replace(/[^\d]/g, '');
+    
+        if (onlyNums.length <= 3) {
+          setPhoneNumber(onlyNums);
+        } else if (onlyNums.length <= 7) {
+          setPhoneNumber(`${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`);
+        } else if (onlyNums.length <= 11) {
+          setPhoneNumber(`${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`);
+        }
+    };
+
     return (
         <Container>
             <Title>회원가입</Title>
@@ -100,7 +113,7 @@ export default function SignUpInfo() {
                 <SubmitButton>중복 확인</SubmitButton>
             </Box>
             <Box>
-                <InputField2 placeholder = "휴대전화 번호" value = {phoneNumber} onChange = {(e) => setPhoneNumber(e.target.value)}/>
+                <InputField2 placeholder = "휴대전화 번호" value = {phoneNumber} type = "tel" onChange = {phoneNumberChange}/>
                 <SubmitButton>인증번호 발송</SubmitButton>
             </Box>
             <Box>
