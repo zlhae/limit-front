@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const Login = () => {
 
-    const navigate = useNavigate(); // 페이지 이동 훅
     const [id, setId] = useState(""); // 사용자 이메일ID
     const [password, setPassword] = useState(""); // 사용자 패스워드
 
@@ -23,7 +22,7 @@ const Login = () => {
                 icon: "success",
                 title: "로그인 성공!"
             });
-            navigate("/");
+            window.location.href = "/"
 
         } catch (error) {
             Swal.fire({
@@ -31,6 +30,12 @@ const Login = () => {
                 title: "로그인 실패",
                 text: "이메일 또는 비밀번호를 확인해주세요.",
             });
+        }
+    };
+
+    const EnterKey = (e) => { 
+        if (e.key === "Enter") {
+            userLogin();
         }
     };
 
@@ -42,11 +47,13 @@ const Login = () => {
                     type = "text"
                     placeholder = "이메일"
                     onChange = {(e) => {setId(e.target.value)}}
+                    onKeyDown = {EnterKey}
                 ></EmailLoginInput>
                 <EmailLoginInput
                     type = "password"
                     placeholder = "비밀번호"
                     onChange = {(e) => {setPassword(e.target.value)}}
+                    onKeyDown = {EnterKey}
                 ></EmailLoginInput>
                 <EmailLoginButton onClick = {userLogin}>이메일로 로그인하기</EmailLoginButton>
             </EmailLoginContainer>

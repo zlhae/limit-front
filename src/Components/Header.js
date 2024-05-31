@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from '../Images/limit-logo.svg';
 import ChattingIcon from '../Images/chatting-icon.svg';
 import SearchIcon from '../Images/search-icon.svg'
@@ -8,7 +8,6 @@ import SearchIcon from '../Images/search-icon.svg'
 const Header = () => {
 
     const [userLogin, setUserLogin] = useState(false); // 사용자 로그인 상태
-    const navigate = useNavigate(); // 페이지 이동 훅
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
@@ -21,7 +20,7 @@ const Header = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         setUserLogin(false);
-        navigate("/");
+        window.location.href = "/"
     };
 
     return(
