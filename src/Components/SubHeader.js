@@ -23,7 +23,11 @@ const Tabs = styled.div`
     height: 40px;
     display: flex; 
     align-items: center;
-    margin-bottom: 70px; 
+    margin-bottom: 70px;
+    
+    @media (max-width: 600px){
+        margin-bottom: 30px;
+    }
 `;
 
 const LiTabs = styled.ul`

@@ -2,6 +2,7 @@ import styled from "styled-components"
 import React, { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import axios from "axios";
+import LoadingIcon from '../Images/loading-icon.svg';
 
 const CsCenterContent=({type})=>{
     const loadType=type==="공지"?"notices":"events";
@@ -72,7 +73,7 @@ const CsCenterContent=({type})=>{
                     </ContentDetailContainer>}
                 </div>
             )}
-            <div ref={ref}>Loading...</div>
+            <Loading src={LoadingIcon} ref={ref}></Loading>
         </ContentContainer>
     )
 }
@@ -133,6 +134,17 @@ const ContentDetailContainer=styled.div`
 const ContentDetail=styled.h5`
     margin: 0px;
     font-weight: normal;
+`
+
+const Loading=styled.img`
+    display: block;
+    margin: auto;
+    animation: rotate_image 2s linear infinite;transform-origin: 50% 50%;
+    @keyframes rotate_image{
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 `
 
 export default CsCenterContent;

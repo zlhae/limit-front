@@ -70,7 +70,6 @@ const CsCenter=()=>{
 
 const CsCenterContainer=styled.div`
     margin: 0px 10%;
-    margin-top: 70px;
     display: flex;
 
     @media (max-width: 600px){

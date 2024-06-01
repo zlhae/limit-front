@@ -1,11 +1,42 @@
 import styled from "styled-components";
 import { useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 import MenuIcon from "../Images/menu-button.svg";
 
 const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
     const [brand, setBrand]=useState("");
     const [productName, setProductName]=useState("");
     const [modelNumber, setModelNumber]=useState("");
+
+    const submitProductRegistrationInquiry=()=>{
+        axios
+        .post('https://api.lim-it.one/api/v1/auth/inquiries/product',{
+            brand: brand,
+            productName: productName,
+            modelNumber: modelNumber
+        },{
+            headers:{
+                Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+            }
+        })
+        .then(()=>{
+            Swal.fire({
+                icon: "success",
+                title: "상품 등록 문의가 접수되었습니다."
+            });
+        })
+        .catch(()=>{
+            Swal.fire({
+                icon: "error",
+                text: "상품 등록 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+            });
+        })
+
+        setBrand('');
+        setProductName('');
+        setModelNumber('');
+    }
 
     return(
         <ContentContainer>
@@ -16,6 +47,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                     <InquiryLabel htmlFor="brand">브랜드</InquiryLabel>
                     <InquiryInput
                         id="brand"
+                        value={brand}
                         type="text"
                         onChange={(e)=>{setBrand(e.target.value)}}
                     ></InquiryInput>
@@ -24,6 +56,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                     <InquiryLabel htmlFor="product-name">상품명</InquiryLabel>
                     <InquiryInput
                         id="product-name"
+                        value={productName}
                         type="text"
                         onChange={(e)=>{setProductName(e.target.value)}}
                     ></InquiryInput>
@@ -32,11 +65,12 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                     <InquiryLabel htmlFor="model-number">모델번호</InquiryLabel>
                     <InquiryInput
                         id="model-number"
+                        value={modelNumber}
                         type="text"
                         onChange={(e)=>{setModelNumber(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
-                <SubmitButton>제출</SubmitButton>
+                <SubmitButton onClick={submitProductRegistrationInquiry}>제출</SubmitButton>
             </InquiryContainer>
         </ContentContainer>
     );
@@ -64,7 +98,11 @@ const ContentTitle=styled.h3`
 `
 
 const InquiryContainer=styled.div`
-    height: 450px;
+    height: 425px;
+
+    @media (max-width:600px){
+        height: 200px;
+    }
 `
 
 const InquiryElement=styled.div`

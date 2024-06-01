@@ -1,10 +1,39 @@
 import styled from "styled-components";
 import { useState } from "react";
+import axios from "axios";
+import Swal from 'sweetalert2';
 import MenuIcon from "../Images/menu-button.svg";
 
 const OtherInquiry=({handleShowMobileSideBar})=>{
     const [title, setTitle]=useState("");
     const [content, setContent]=useState("");
+
+    const submitOtherInquiry=()=>{
+        axios
+        .post('https://api.lim-it.one/api/v1/auth/inquiries/other',{
+            title: title,
+            contents: content
+        },{
+            headers:{
+                Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+            }
+        })
+        .then(()=>{
+            Swal.fire({
+                icon: "success",
+                title: "기타 문의가 접수되었습니다."
+            });
+        })
+        .catch(()=>{
+            Swal.fire({
+                icon: "error",
+                text: "기타 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+            });
+        })
+
+        setTitle('');
+        setContent('');
+    }
 
     return(
         <ContentContainer>
@@ -16,6 +45,7 @@ const OtherInquiry=({handleShowMobileSideBar})=>{
                     <InquiryInput
                         id="title"
                         type="text"
+                        value={title}
                         onChange={(e)=>{setTitle(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
@@ -24,10 +54,11 @@ const OtherInquiry=({handleShowMobileSideBar})=>{
                     <InquiryTextarea
                         id="content"
                         type="text"
+                        value={content}
                         onChange={(e)=>{setContent(e.target.value)}}
                     ></InquiryTextarea>
                 </InquiryElement>
-                <SubmitButton>제출</SubmitButton>
+                <SubmitButton onClick={submitOtherInquiry}>제출</SubmitButton>
             </InquiryContainer>
         </ContentContainer>
     );
@@ -55,7 +86,7 @@ const ContentTitle=styled.h3`
 `
 
 const InquiryContainer=styled.div`
-    height: 450px;
+    height: 425px;
 `
 
 const InquiryElement=styled.div`
@@ -84,7 +115,7 @@ const InquiryTextarea=styled.textarea`
     border: 1px solid #979797;
     padding: 10px 0px 10px 10px;
     border-radius: 10px;
-    height: 300px;
+    height: 285px;
     overflow: scroll;
     resize: none;
 `
