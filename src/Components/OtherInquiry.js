@@ -9,31 +9,58 @@ const OtherInquiry=({handleShowMobileSideBar})=>{
     const [content, setContent]=useState("");
 
     const submitOtherInquiry=()=>{
-        axios
-        .post('https://api.lim-it.one/api/v1/auth/inquiries/other',{
-            title: title,
-            contents: content
-        },{
-            headers:{
-                Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
-            }
-        })
-        .then(()=>{
+        if(!localStorage.getItem('accessToken')){
             Swal.fire({
-                icon: "success",
-                title: "기타 문의가 접수되었습니다."
+                icon: "info",
+                title: "로그인 후 이용 가능합니다.",
+                text: '로그인 하시겠습니까?',
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    window.location.href = "/login"
+                }
             });
-        })
-        .catch(()=>{
+        }
+        else if(title==='' || content===''){
             Swal.fire({
                 icon: "error",
-                text: "기타 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+                title: "비어있는 칸이 존재합니다."
             });
-        })
+        }
+        else{
+            axios
+            .post('https://api.lim-it.one/api/v1/auth/inquiries/other',{
+                title: title,
+                contents: content
+            },{
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+                }
+            })
+            .then(()=>{
+                Swal.fire({
+                    icon: "success",
+                    title: "기타 문의가 접수되었습니다."
+                });
+            })
+            .catch(()=>{
+                Swal.fire({
+                    icon: "error",
+                    text: "기타 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+                });
+            })
 
-        setTitle('');
-        setContent('');
+            setTitle('');
+            setContent('');
+        }
     }
+
+    const EnterKey = (e) => { 
+        if (e.key === "Enter") {
+            e.preventDefault();
+            submitOtherInquiry();
+        }
+    };
 
     return(
         <ContentContainer>
@@ -46,6 +73,7 @@ const OtherInquiry=({handleShowMobileSideBar})=>{
                         id="title"
                         type="text"
                         value={title}
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setTitle(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
@@ -55,6 +83,7 @@ const OtherInquiry=({handleShowMobileSideBar})=>{
                         id="content"
                         type="text"
                         value={content}
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setContent(e.target.value)}}
                     ></InquiryTextarea>
                 </InquiryElement>

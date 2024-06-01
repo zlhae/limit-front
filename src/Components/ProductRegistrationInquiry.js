@@ -10,33 +10,60 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
     const [modelNumber, setModelNumber]=useState("");
 
     const submitProductRegistrationInquiry=()=>{
-        axios
-        .post('https://api.lim-it.one/api/v1/auth/inquiries/product',{
-            brand: brand,
-            productName: productName,
-            modelNumber: modelNumber
-        },{
-            headers:{
-                Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
-            }
-        })
-        .then(()=>{
+        if(!localStorage.getItem('accessToken')){
             Swal.fire({
-                icon: "success",
-                title: "상품 등록 문의가 접수되었습니다."
+                icon: "info",
+                title: "로그인 후 이용 가능합니다.",
+                text: '로그인 하시겠습니까?',
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    window.location.href = "/login"
+                }
             });
-        })
-        .catch(()=>{
+        }
+        else if(brand==='' || productName==='' || modelNumber===''){
             Swal.fire({
                 icon: "error",
-                text: "상품 등록 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+                title: "비어있는 칸이 존재합니다."
             });
-        })
+        }
+        else{
+            axios
+            .post('https://api.lim-it.one/api/v1/auth/inquiries/product',{
+                brand: brand,
+                productName: productName,
+                modelNumber: modelNumber
+            },{
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+                }
+            })
+            .then(()=>{
+                Swal.fire({
+                    icon: "success",
+                    title: "상품 등록 문의가 접수되었습니다."
+                });
+            })
+            .catch(()=>{
+                Swal.fire({
+                    icon: "error",
+                    text: "상품 등록 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+                });
+            })
 
-        setBrand('');
-        setProductName('');
-        setModelNumber('');
+            setBrand('');
+            setProductName('');
+            setModelNumber('');
+        }
     }
+
+    const EnterKey = (e) => { 
+        if (e.key === "Enter") {
+            e.preventDefault();
+            submitProductRegistrationInquiry();
+        }
+    };
 
     return(
         <ContentContainer>
@@ -49,6 +76,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                         id="brand"
                         value={brand}
                         type="text"
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setBrand(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
@@ -58,6 +86,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                         id="product-name"
                         value={productName}
                         type="text"
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setProductName(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
@@ -67,6 +96,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                         id="model-number"
                         value={modelNumber}
                         type="text"
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setModelNumber(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
