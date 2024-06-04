@@ -20,8 +20,8 @@ const SideFilterBag = () => {
     const [isMaleSelected, setIsMaleSelected] = useState(false);
     const [isFemaleSelected, setIsFemaleSelected] = useState(false);
     const [showResetButton, setShowResetButton] = useState(false);
-    const [isCategoryOpen, setIsCategoryOpen] = useState(true);
-    const [isGenderOpen, setIsGenderOpen] = useState(true);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isGenderOpen, setIsGenderOpen] = useState(false);
 
     useEffect(() => {
         setShowResetButton(
@@ -146,78 +146,103 @@ const SideFilterBag = () => {
     };
 
     return (
-        <Container>
-            <div className='filter_container'>
-                <TopFilterArray>
-                    <select name='array_type' id='aType'>
-                        <option value="popular">인기순</option>
-                        <option value="lately">최신순</option>
-                    
-                    </select>
-                </TopFilterArray>
-                <StatusFilter>
-                    <StatusFilterBox>
-                        <div className='status_filter_text'>
-                            <h1>필터</h1>
-                        </div>
-                        <div className='status_filter_btn'>
-                            <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
-                            <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
-                        </div>
-                    </StatusFilterBox>
-                    <CateFilterBox>
-                        <div className='cate_filter_text'>
-                            <h1>카테고리</h1>
-                            <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
-                        </div>
-                        {isCategoryOpen && (
-                            <div className='cate_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_premiumbag' checked={isPremiumbagSelected} onChange={togglePremiumbag}></input>프리미엄가방</label>
-                                <label><input type='checkbox' name='checkbox_minibag' checked={isMinibagSelected} onChange={toggleMinibag}></input>미니백</label>
-                                <label><input type='checkbox' name='checkbox_backpack' checked={isBackpackSelected} onChange={toggleBackpack}></input>백팩</label>
-                                <label><input type='checkbox' name='checkbox_shoulderbag' checked={isShoulderbagSelected} onChange={toggleShoulderbag}></input>숄더백</label>
-                                <label><input type='checkbox' name='checkbox_totebag' checked={isTotebagSelected} onChange={toggleTotebag}></input>토트백</label>
-                                <label><input type='checkbox' name='checkbox_crossbag' checked={isCrossbagSelected} onChange={toggleCrossbag}></input>크로스백</label>
-                                <label><input type='checkbox' name='checkbox_clutch' checked={isClutchSelected} onChange={toggleClutch}></input>클러치</label>
-                                <label><input type='checkbox' name='checkbox_duffelbag' checked={isDuffelbagSelected} onChange={toggleDuffelbag}></input>더플백</label>
-                                <label><input type='checkbox' name='checkbox_echobag' checked={isEchobagSelected} onChange={toggleEchobag}></input>에코백</label>
-                                <label><input type='checkbox' name='checkbox_carrier' checked={isCarrierSelected} onChange={toggleCarrier}></input>캐리어</label>
-                                <label><input type='checkbox' name='checkbox_bags' checked={isBagsSelected} onChange={toggleBags}></input>기타 가방</label>
-                            </div>
-                        )}
-                    </CateFilterBox>
-                    <GenderFilterBox>
-                        <div className='gender_filter_text'>
-                            <h1>성별</h1>
-                            <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
-                        </div>
-                        {isGenderOpen && (
-                            <div className='gender_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
-                                <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
-                            </div>
-                        )}
-                    </GenderFilterBox>
-                </StatusFilter>
-                {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
-            </div>
-        </Container>
+        <BagContainer>
+            <Container>
+                <div className='filter_container'>
+                    <TopFilterArray>
+                        <select name='array_type' id='aType'>
+                            <option value="popular">인기순</option>
+                            <option value="lately">최신순</option>
+                        
+                        </select>
+                    </TopFilterArray>
+                    <StatusFilter>
+                        <FiltersContainer>
+                            <StatusFilterBox>
+                                <div className='status_filter_text'>
+                                    <h1>필터</h1>
+                                </div>
+                                <div className='status_filter_btn'>
+                                    <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
+                                    <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
+                                </div>
+                            </StatusFilterBox>
+                            <CateFilterBox>
+                                <div className='cate_filter_text'>
+                                    <h1>카테고리</h1>
+                                    <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                </div>
+                                {isCategoryOpen && (
+                                    <div className='cate_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_premiumbag' checked={isPremiumbagSelected} onChange={togglePremiumbag}></input>프리미엄가방</label>
+                                        <label><input type='checkbox' name='checkbox_minibag' checked={isMinibagSelected} onChange={toggleMinibag}></input>미니백</label>
+                                        <label><input type='checkbox' name='checkbox_backpack' checked={isBackpackSelected} onChange={toggleBackpack}></input>백팩</label>
+                                        <label><input type='checkbox' name='checkbox_shoulderbag' checked={isShoulderbagSelected} onChange={toggleShoulderbag}></input>숄더백</label>
+                                        <label><input type='checkbox' name='checkbox_totebag' checked={isTotebagSelected} onChange={toggleTotebag}></input>토트백</label>
+                                        <label><input type='checkbox' name='checkbox_crossbag' checked={isCrossbagSelected} onChange={toggleCrossbag}></input>크로스백</label>
+                                        <label><input type='checkbox' name='checkbox_clutch' checked={isClutchSelected} onChange={toggleClutch}></input>클러치</label>
+                                        <label><input type='checkbox' name='checkbox_duffelbag' checked={isDuffelbagSelected} onChange={toggleDuffelbag}></input>더플백</label>
+                                        <label><input type='checkbox' name='checkbox_echobag' checked={isEchobagSelected} onChange={toggleEchobag}></input>에코백</label>
+                                        <label><input type='checkbox' name='checkbox_carrier' checked={isCarrierSelected} onChange={toggleCarrier}></input>캐리어</label>
+                                        <label><input type='checkbox' name='checkbox_bags' checked={isBagsSelected} onChange={toggleBags}></input>기타 가방</label>
+                                    </div>
+                                )}
+                            </CateFilterBox>
+                            <GenderFilterBox>
+                                <div className='gender_filter_text'>
+                                    <h1>성별</h1>
+                                    <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                </div>
+                                {isGenderOpen && (
+                                    <div className='gender_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
+                                        <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
+                                    </div>
+                                )}
+                            </GenderFilterBox>
+                        </FiltersContainer>
+                    </StatusFilter>
+                    {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
+                </div>
+            </Container>
+        </BagContainer>
     );
 }
+
+const BagContainer = styled.div`
+
+    @media (max-width: 600px) {
+        background-color: white;  
+        width: 100%;
+        margin-top: -55px; 
+    }
+`;
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: 140px; 
+    width: 80%;
+    transition: width 0.3s ease-in-out;
     
+    @media (max-width: 600px) {
+        width: 90%; 
+        margin: 0 auto;  
+        align-items: center;  
+    }
 `;
 
-const TopFilterArray = styled.div` /* 인기순, 최신순 css */
+const TopFilterArray = styled.div` /* 인기순, 최신순 */
     display: flex;
-    margin-bottom: 15px;
+    width: 100%;  
+    order: 2;  
+    justify-content: flex-start;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 
     select {
-        width: 72px;
+        width: auto; 
         height: 30px;
         border: none;
         background-color: transparent;
@@ -235,19 +260,40 @@ const TopFilterArray = styled.div` /* 인기순, 최신순 css */
     }
 `;
 
-const StatusFilter = styled.div`
-margin-bottom: 15px;
+const StatusFilter = styled.div` /* 택배, 직거래, 카테고리, 성별 */
+    margin-bottom: 20px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+    }
 `;
 
-const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
-    margin-top: 10px;
+const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 */
+    margin-top: 5px;
 
     .status_filter_text h1 {
         font-size: 14px;
+        flex: 1;
+
+        @media (max-width: 600px) {
+            display: none;
+        }
+    }
+
+    .status_filter_btn img {
+        display: none;
+
+        @media (max-width: 600px){
+            display: block;
+        }
     }
 
     .status_filter_btn {
         display: flex;
+
+        @media (max-width: 600px) {
+            width: 135px; 
+        }
 
         .status_filter_btn_opt1 {
             font-size: 12px;
@@ -267,6 +313,7 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
             border-radius: 20px;
             border: 1px solid #d9d9d9;
             margin-left: 5px;
+            margin-right: 10px;
             transition: background-color 0.3s;
         }
 
@@ -280,8 +327,15 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
     }
 `;
 
-const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
-    margin-top: 10px;
+const CateFilterBox = styled.div` /* 카테고리 체크박스 */
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .cate_filter_text {
         display: flex;
@@ -334,8 +388,24 @@ const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
     }
 `;
 
+const FiltersContainer = styled.div`
+    display: flex;
+    flex-direction: row;  
+    justify-content: space-between; 
+    flex-wrap: wrap;  
+    width: 100%; 
+    margin-bottom: -15px;  
+`;
+
 const GenderFilterBox = styled.div` /* 성별 체크박스 css */
-    margin-top: 10px;
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .gender_filter_text {
         display: flex;
@@ -388,7 +458,7 @@ const GenderFilterBox = styled.div` /* 성별 체크박스 css */
     }
 `;
 
-const ResetButton = styled.button` /* 초기화 버튼 css */
+const ResetButton = styled.button` /* 초기화 버튼 */
     display: flex;
     border: none;
     background-color: transparent;
@@ -402,10 +472,11 @@ const ResetButton = styled.button` /* 초기화 버튼 css */
     margin-left: auto;
 `;
 
-const ToggleIcon = styled.img` /* +,- 아이콘 css */
+const ToggleIcon = styled.img` /* +,- 아이콘 */
     width: 10px;
     height: 10px;
     cursor: pointer;
 `;
+
 
 export default SideFilterBag;

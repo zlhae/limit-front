@@ -1,34 +1,70 @@
 import styled from "styled-components";
 import { useState } from "react";
+import axios from "axios";
+import Swal from 'sweetalert2';
 import MenuIcon from "../Images/menu-button.svg";
-import CancelIcon from "../Images/cancel-icon.svg";
 
-const OtherInquiry=(props)=>{
-    const [showSideBar, setShowSideBar]=useState(false);
-
-    const handleShowSideBar=()=>{
-        setShowSideBar(!showSideBar);
-    }
-
+const OtherInquiry=({handleShowMobileSideBar})=>{
     const [title, setTitle]=useState("");
     const [content, setContent]=useState("");
 
+    const submitOtherInquiry=()=>{
+        if(!localStorage.getItem('accessToken')){
+            Swal.fire({
+                icon: "info",
+                title: "로그인 후 이용 가능합니다.",
+                text: '로그인 하시겠습니까?',
+            })
+            .then(result=>{
+                if(result.isConfirmed){
+                    window.location.href = "/login"
+                }
+            });
+        }
+        else if(title==='' || content===''){
+            Swal.fire({
+                icon: "error",
+                title: "비어있는 칸이 존재합니다."
+            });
+        }
+        else{
+            axios
+            .post('https://api.lim-it.one/api/v1/auth/inquiries/other',{
+                title: title,
+                contents: content
+            },{
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+                }
+            })
+            .then(()=>{
+                Swal.fire({
+                    icon: "success",
+                    title: "기타 문의가 접수되었습니다."
+                });
+            })
+            .catch(()=>{
+                Swal.fire({
+                    icon: "error",
+                    text: "기타 문의가 접수되지 않았습니다. 다시 시도해주세요.",
+                });
+            })
+
+            setTitle('');
+            setContent('');
+        }
+    }
+
+    const EnterKey = (e) => { 
+        if (e.key === "Enter") {
+            e.preventDefault();
+            submitOtherInquiry();
+        }
+    };
+
     return(
         <ContentContainer>
-            {showSideBar&&<NavigationContainer>
-                <NavigationTitle>고객센터</NavigationTitle>
-                <SideBarClose src={CancelIcon} onClick={handleShowSideBar}></SideBarClose>
-                <CategoryContainer>
-                    <NavigationElement onClick={()=>props.handleMenu(0)}>공지사항</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(1)}>이벤트</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(2)}>서비스 안내</NavigationElement>
-                </CategoryContainer>
-                <CategoryContainer>
-                    <NavigationElement onClick={()=>props.handleMenu(3)}>상품 등록 문의</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(4)}>기타 문의</NavigationElement>
-                </CategoryContainer>
-            </NavigationContainer>}
-            <MenuImg src={MenuIcon} onClick={handleShowSideBar}></MenuImg>
+            <MenuImg src={MenuIcon} onClick={(e)=>{e.stopPropagation(); handleShowMobileSideBar();}}></MenuImg>
             <ContentTitle>기타 문의</ContentTitle>
             <InquiryContainer>
                 <InquiryElement>
@@ -36,6 +72,8 @@ const OtherInquiry=(props)=>{
                     <InquiryInput
                         id="title"
                         type="text"
+                        value={title}
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setTitle(e.target.value)}}
                     ></InquiryInput>
                 </InquiryElement>
@@ -44,10 +82,12 @@ const OtherInquiry=(props)=>{
                     <InquiryTextarea
                         id="content"
                         type="text"
+                        value={content}
+                        onKeyDown = {EnterKey}
                         onChange={(e)=>{setContent(e.target.value)}}
                     ></InquiryTextarea>
                 </InquiryElement>
-                <SubmitButton>제출</SubmitButton>
+                <SubmitButton onClick={submitOtherInquiry}>제출</SubmitButton>
             </InquiryContainer>
         </ContentContainer>
     );
@@ -55,38 +95,6 @@ const OtherInquiry=(props)=>{
 
 const ContentContainer=styled.div`
     flex: 2;
-`
-
-const NavigationContainer=styled.div`
-    position: fixed;
-    left: 10%;
-    background-color: #f5f5f7;
-    width: 125px;
-    height: 500px;
-`
-
-const NavigationTitle=styled.h3`
-    margin: 0px;
-    margin-bottom: 20px;
-    cursor: default;
-    display: inline-block;
-    margin-right: 15px;
-`
-
-const SideBarClose=styled.img`
-    cursor: pointer;
-    width: 15px;
-`
-
-const CategoryContainer=styled.div`
-    margin-bottom: 15px;
-`
-
-const NavigationElement=styled.h5`
-    margin: 0px;
-    margin-bottom: 10px;
-    font-weight: normal;
-    cursor: pointer;
 `
 
 const MenuImg=styled.img`
@@ -107,7 +115,7 @@ const ContentTitle=styled.h3`
 `
 
 const InquiryContainer=styled.div`
-    height: 450px;
+    height: 425px;
 `
 
 const InquiryElement=styled.div`
@@ -136,7 +144,7 @@ const InquiryTextarea=styled.textarea`
     border: 1px solid #979797;
     padding: 10px 0px 10px 10px;
     border-radius: 10px;
-    height: 300px;
+    height: 285px;
     overflow: scroll;
     resize: none;
 `

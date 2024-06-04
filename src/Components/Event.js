@@ -1,16 +1,8 @@
 import styled from "styled-components";
-import { useState } from "react";
 import MenuIcon from "../Images/menu-button.svg";
-import CancelIcon from "../Images/cancel-icon.svg";
 import CsCenterContent from "./CsCenterContent";
 
-const Event=(props)=>{
-    const [showSideBar, setShowSideBar]=useState(false);
-
-    const handleShowSideBar=()=>{
-        setShowSideBar(!showSideBar);
-    }
-    
+const Event=({handleShowMobileSideBar})=>{
     const eventData=[
         {
             id: 0,
@@ -45,20 +37,7 @@ const Event=(props)=>{
 
     return(
         <ContentContainer>
-            {showSideBar&&<NavigationContainer>
-                <NavigationTitle>고객센터</NavigationTitle>
-                <SideBarClose src={CancelIcon} onClick={handleShowSideBar}></SideBarClose>
-                <CategoryContainer>
-                    <NavigationElement onClick={()=>props.handleMenu(0)}>공지사항</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(1)}>이벤트</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(2)}>서비스 안내</NavigationElement>
-                </CategoryContainer>
-                <CategoryContainer>
-                    <NavigationElement onClick={()=>props.handleMenu(3)}>상품 등록 문의</NavigationElement>
-                    <NavigationElement onClick={()=>props.handleMenu(4)}>기타 문의</NavigationElement>
-                </CategoryContainer>
-            </NavigationContainer>}
-            <MenuImg src={MenuIcon} onClick={handleShowSideBar}></MenuImg>
+            <MenuImg src={MenuIcon} onClick={(e)=>{e.stopPropagation(); handleShowMobileSideBar();}}></MenuImg>
             <ContentTitle>이벤트</ContentTitle>
             <CsCenterContent type="이벤트" contentData={eventData}></CsCenterContent>
         </ContentContainer>
@@ -67,38 +46,6 @@ const Event=(props)=>{
 
 const ContentContainer=styled.div`
     flex: 2;
-`
-
-const NavigationContainer=styled.div`
-    position: fixed;
-    left: 10%;
-    background-color: #f5f5f7;
-    width: 125px;
-    height: 500px;
-`
-
-const NavigationTitle=styled.h3`
-    margin: 0px;
-    margin-bottom: 20px;
-    cursor: default;
-    display: inline-block;
-    margin-right: 15px;
-`
-
-const SideBarClose=styled.img`
-    cursor: pointer;
-    width: 15px;
-`
-
-const CategoryContainer=styled.div`
-    margin-bottom: 15px;
-`
-
-const NavigationElement=styled.h5`
-    margin: 0px;
-    margin-bottom: 10px;
-    font-weight: normal;
-    cursor: pointer;
 `
 
 const MenuImg=styled.img`

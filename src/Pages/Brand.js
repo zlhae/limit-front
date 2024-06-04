@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import SubHeader from '../Components/SubHeader';
-import SideFilterOuter from '../Components/SideFilter_outer';
+import SideFilter from '../Components/SideFilter';
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
-const OuterCate = () => {
+const Brand = () => {
 
     return (
         <MainProduct className='main_product'>
@@ -13,13 +13,13 @@ const OuterCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilterOuter />
+                    <SideFilter />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
-                    <ProductNumber>
-                        <h3>상품 23,329개</h3>
+                    <ProductNumber>    
+                    <h3>상품 154,329개</h3>        
                     </ProductNumber>
-                    <ProductListWrap></ProductListWrap>
+                        <ProductListWrap></ProductListWrap>
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
@@ -76,4 +76,4 @@ const ProductNumber = styled.h3`
     }
 `;
 
-export default OuterCate;
+export default Brand;

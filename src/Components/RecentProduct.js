@@ -5,7 +5,7 @@ import TestImage from '../Images/test01.png';
 import ArrowLeftIcon from '../Images/arrow-left.svg';
 import ArrowRightIcon from '../Images/arrow-right.svg'; 
 
-const MainProduct = () => {
+const RecentProduct = () => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleBookmarkClick = () => {
@@ -44,12 +44,12 @@ const MainProduct = () => {
     );
 };
 
-const MainProductListWrap = () => {
+const RecentProductListWrap = () => {
     const productListRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
-    const checkScrollButtons = () => { 
+    const checkScrollButtons = () => {
         const { current } = productListRef;
         if (current) {
             const maxScrollLeft = current.scrollWidth - current.clientWidth;
@@ -84,7 +84,7 @@ const MainProductListWrap = () => {
             <ProductListContainer ref={productListRef}>
                 <ProductGroup>
                 {Array.from({ length: 10 }).map((_, index) => (
-                    <MainProduct key={index} />
+                    <RecentProduct key={index} />
                 ))}
                 </ProductGroup>
             </ProductListContainer>
@@ -255,4 +255,4 @@ const Price = styled.div`
     }
 `;
 
-export default MainProductListWrap;
+export default RecentProductListWrap;

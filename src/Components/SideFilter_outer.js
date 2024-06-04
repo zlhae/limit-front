@@ -100,58 +100,58 @@ const SideFilterOuter = () => {
 
     return (
         <OuterContainer>
-        <Container>
-            <div className='filter_container'>
-                <TopFilterArray>
-                    <select name='array_type' id='aType'>
-                        <option value="popular">인기순</option>
-                        <option value="lately">최신순</option>
-                    </select>
-                </TopFilterArray>
-                <StatusFilter>
-                <FiltersContainer>
-                    <StatusFilterBox>
-                        <div className='status_filter_text'>
-                            <h1>필터</h1>
-                        </div>
-                        <div className='status_filter_btn'>
-                            <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
-                            <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
-                            <img src={LineIcon}/>
-                        </div>
-                    </StatusFilterBox>
-                    <CateFilterBox>
-                        <div className='cate_filter_text'>
-                            <h1>카테고리</h1>
-                            <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
-                        </div>
-                        {isCategoryOpen && (
-                            <div className='cate_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_jacket' checked={isJacketSelected} onChange={toggleJacket}></input>자켓</label>
-                                <label><input type='checkbox' name='checkbox_anorak' checked={isAnorakSelected} onChange={toggleAnorak}></input>아노락</label>
-                                <label><input type='checkbox' name='checkbox_coat' checked={isCoatSelected} onChange={toggleCoat}></input>코트</label>
-                                <label><input type='checkbox' name='checkbox_padding' checked={isPaddingSelected} onChange={togglePadding}></input>패딩</label>
-                                <label><input type='checkbox' name='checkbox_outers' checked={isOutersSelected} onChange={toggleOuters}></input>기타 아우터</label>
-                            </div>
-                        )}
-                    </CateFilterBox>
-                    <GenderFilterBox>
-                        <div className='gender_filter_text'>
-                            <h1>성별</h1>
-                            <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
-                        </div>
-                        {isGenderOpen && (
-                            <div className='gender_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
-                                <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
-                            </div>
-                        )}
-                    </GenderFilterBox>
-                    </FiltersContainer>
-                </StatusFilter>
-                {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
-            </div>
-        </Container>
+            <Container>
+                <div className='filter_container'>
+                    <TopFilterArray>
+                        <select name='array_type' id='aType'>
+                            <option value="popular">인기순</option>
+                            <option value="lately">최신순</option>
+                        </select>
+                    </TopFilterArray>
+                    <StatusFilter>
+                        <FiltersContainer>
+                            <StatusFilterBox>
+                                <div className='status_filter_text'>
+                                    <h1>필터</h1>
+                                </div>
+                                <div className='status_filter_btn'>
+                                    <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
+                                    <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
+                                    <img src={LineIcon}/>
+                                </div>
+                            </StatusFilterBox>
+                            <CateFilterBox>
+                                <div className='cate_filter_text'>
+                                    <h1>카테고리</h1>
+                                    <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                </div>
+                                {isCategoryOpen && (
+                                    <div className='cate_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_jacket' checked={isJacketSelected} onChange={toggleJacket}></input>자켓</label>
+                                        <label><input type='checkbox' name='checkbox_anorak' checked={isAnorakSelected} onChange={toggleAnorak}></input>아노락</label>
+                                        <label><input type='checkbox' name='checkbox_coat' checked={isCoatSelected} onChange={toggleCoat}></input>코트</label>
+                                        <label><input type='checkbox' name='checkbox_padding' checked={isPaddingSelected} onChange={togglePadding}></input>패딩</label>
+                                        <label><input type='checkbox' name='checkbox_outers' checked={isOutersSelected} onChange={toggleOuters}></input>기타 아우터</label>
+                                    </div>
+                                )}
+                            </CateFilterBox>
+                            <GenderFilterBox>
+                                <div className='gender_filter_text'>
+                                    <h1>성별</h1>
+                                    <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                </div>
+                                {isGenderOpen && (
+                                    <div className='gender_filter_checkbox'>
+                                        <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
+                                        <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
+                                    </div>
+                                )}
+                            </GenderFilterBox>
+                        </FiltersContainer>
+                    </StatusFilter>
+                    {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
+                </div>
+            </Container>
         </OuterContainer>
     );
 }

@@ -39,7 +39,7 @@ const Login = () => {
         }
     };
 
-    return(
+    return(  
         <LoginContainer>
             <LoginTitle id = "login-title">로그인</LoginTitle>
             <EmailLoginContainer>  
