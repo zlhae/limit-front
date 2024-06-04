@@ -25,7 +25,7 @@ const Search = () => {
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
-                <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
+                <RecentSearchList>아식스<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
                 <RecentSearchList>미스치프<img alt='search_delete' src={DeleteIcon}></img></RecentSearchList>
@@ -89,13 +89,13 @@ const Search = () => {
     
 }
 
-const Container = styled.div` // 전체 요소 컨테이너
-    width: 65%; // 기존 화면 너비에서 요소 너비 65%
-    margin: 0 auto; // 위 아래에는 margin을 주지 않고, 좌 우는 균등하게 margin을 주어 중앙에 배치
+const Container = styled.div` 
+    width: 65%; 
+    margin: 0 auto; 
 
     @media (max-width: 1100px) {
-        width: 80%;
-    } // 화면 너비가 작을 때 요소 너비 80%로 설정
+        width: 90%;
+    } 
 `;
 
 const CancelButton = styled.div` // 검색 화면 닫기 버튼
@@ -105,20 +105,20 @@ const CancelButton = styled.div` // 검색 화면 닫기 버튼
     cursor: pointer;
 
     @media (max-width: 1100px) {
-        right: 10%;
+        right: 5%;
     } 
 `;
 
 const SearchBox = styled.div` // 검색창 
     input {
-        border-width: 0 0 3px; // 아래 테두리
+        border-width: 0 0 3px; 
         border-color: black;
         width: 100%;
         margin-top: 10%;
         font-size: 17px;
         background-color: transparent;
         outline: none;
-        padding-bottom: 1%; // 글자와 테두리 여백 설정
+        padding-bottom: 1%; 
     }
 `;
 

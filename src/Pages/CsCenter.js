@@ -74,6 +74,7 @@ const CsCenterContainer=styled.div`
 
     @media (max-width: 600px){
         margin: 0px 5%;
+        margin-top: -40px;
     }
 `
 

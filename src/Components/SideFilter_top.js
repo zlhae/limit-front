@@ -20,8 +20,8 @@ const SideFilterTop = () => {
     const [isMaleSelected, setIsMaleSelected] = useState(false);
     const [isFemaleSelected, setIsFemaleSelected] = useState(false);
     const [showResetButton, setShowResetButton] = useState(false);
-    const [isCategoryOpen, setIsCategoryOpen] = useState(true);
-    const [isGenderOpen, setIsGenderOpen] = useState(true);
+    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isGenderOpen, setIsGenderOpen] = useState(false);
 
     useEffect(() => {
         setShowResetButton(
@@ -146,81 +146,92 @@ const SideFilterTop = () => {
     };
 
     return (
-        <Container>
-            <div className='filter_container'>
-                <TopFilterArray>
-                    <select name='array_type' id='aType'>
-                        <option value="popular">인기순</option>
-                        <option value="lately">최신순</option>
-                    
-                    </select>
-                </TopFilterArray>
-                <StatusFilter>
-                    <StatusFilterBox>
-                        <div className='status_filter_text'>
-                            <h1>필터</h1>
-                        </div>
-                        <div className='status_filter_btn'>
-                            <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
-                            <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
-                        </div>
-                    </StatusFilterBox>
-                    <CateFilterBox>
-                        <div className='cate_filter_text'>
-                            <h1>카테고리</h1>
-                            <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
-                        </div>
-                        {isCategoryOpen && (
-                            <div className='cate_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_short_tshirt' checked={isShortTshirtSelected} onChange={toggleShortTshirt}></input>반팔 티셔츠</label>
-                                <label><input type='checkbox' name='checkbox_long_tshirt' checked={isLongTshirtSelected} onChange={toggleLongTshirt}></input>긴팔 티셔츠</label>
-                                <label><input type='checkbox' name='checkbox_cardigan' checked={isCardiganSelected} onChange={toggleCardigan}></input>가디건</label>
-                                <label><input type='checkbox' name='checkbox_shirt' checked={isShirtSelected} onChange={toggleShirt}></input>셔츠</label>
-                                <label><input type='checkbox' name='checkbox_hoodie' checked={isHoodieSelected} onChange={toggleHoodie}></input>후드</label>
-                                <label><input type='checkbox' name='checkbox_hooded_zipup' checked={isHoodedZipupSelected} onChange={toggleHoodedZipup}></input>후드 집업</label>
-                                <label><input type='checkbox' name='checkbox_sweatshirt' checked={isSweatShirtSelected} onChange={toggleSweatShirt}></input>스웨트셔츠</label>
-                                <label><input type='checkbox' name='checkbox_sleeveless' checked={isSleevelessSelected} onChange={toggleSleeveless}></input>슬리브리스</label>
-                                <label><input type='checkbox' name='checkbox_onepiece' checked={isOnepieceSelected} onChange={toggleOnepiece}></input>원피스</label>
-                                <label><input type='checkbox' name='checkbox_knit' checked={isKnitSelected} onChange={toggleKnit}></input>니트</label>
-                                <label><input type='checkbox' name='checkbox_tops' checked={isTopsSelected} onChange={toggleTops}></input>기타 상의</label>
-                            </div>
-                        )}
-                    </CateFilterBox>
-                    <GenderFilterBox>
-                        <div className='gender_filter_text'>
-                            <h1>성별</h1>
-                            <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
-                        </div>
-                        {isGenderOpen && (
-                            <div className='gender_filter_checkbox'>
-                                <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
-                                <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
-                            </div>
-                        )}
-                    </GenderFilterBox>
-                </StatusFilter>
-                {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
-            </div>
-        </Container>
+        <TopContainer>
+            <Container>
+                <div className='filter_container'>
+                    <TopFilterArray>
+                        <select name='array_type' id='aType'>
+                            <option value="popular">인기순</option>
+                            <option value="lately">최신순</option>
+                        </select>
+                    </TopFilterArray>
+                    <StatusFilter>
+                        <FiltersContainer>
+                            <StatusFilterBox>
+                                <div className='status_filter_text'>
+                                    <h1>필터</h1>
+                                </div>
+                                <div className='status_filter_btn'>
+                                    <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
+                                    <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
+                                </div>
+                            </StatusFilterBox>
+                            <CateFilterBox>
+                                <div className='cate_filter_text'>
+                                    <h1>카테고리</h1>
+                                    <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                </div>
+                                {isCategoryOpen && (
+                                    <div className='cate_filter_checkbox'>
+                                        {/* Checkbox inputs here */}
+                                    </div>
+                                )}
+                            </CateFilterBox>
+                            <GenderFilterBox>
+                                <div className='gender_filter_text'>
+                                    <h1>성별</h1>
+                                    <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                </div>
+                                {isGenderOpen && (
+                                    <div className='gender_filter_checkbox'>
+                                        {/* Checkbox inputs here */}
+                                    </div>
+                                )}
+                            </GenderFilterBox>
+                        </FiltersContainer>
+                    </StatusFilter>
+                    {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
+                </div>
+            </Container>
+        </TopContainer>
     );
 }
+
+
+const TopContainer = styled.div`
+
+    @media (max-width: 600px) {
+        background-color: white;  
+        width: 100%;
+        margin-top: -55px; 
+    }
+`;
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    width: 170px; 
+    width: 80%;
+    transition: width 0.3s ease-in-out;
     
-    @media (max-width: 1100px) {
-        width: 120px;
+    @media (max-width: 600px) {
+        width: 90%; 
+        margin: 0 auto;  
+        align-items: center;  
     }
 `;
 
-const TopFilterArray = styled.div` /* 인기순, 최신순 css */
+const TopFilterArray = styled.div` /* 인기순, 최신순 */
     display: flex;
-    margin-bottom: 15px;
+    width: 100%;  
+    order: 2;  
+    justify-content: flex-start;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 
     select {
-        width: 72px;
+        width: auto; 
         height: 30px;
         border: none;
         background-color: transparent;
@@ -238,19 +249,40 @@ const TopFilterArray = styled.div` /* 인기순, 최신순 css */
     }
 `;
 
-const StatusFilter = styled.div`
-margin-bottom: 15px;
+const StatusFilter = styled.div` /* 택배, 직거래, 카테고리, 성별 */
+    margin-bottom: 20px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+    }
 `;
 
-const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
-    margin-top: 10px;
+const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 */
+    margin-top: 5px;
 
     .status_filter_text h1 {
         font-size: 14px;
+        flex: 1;
+
+        @media (max-width: 600px) {
+            display: none;
+        }
+    }
+
+    .status_filter_btn img {
+        display: none;
+
+        @media (max-width: 600px){
+            display: block;
+        }
     }
 
     .status_filter_btn {
         display: flex;
+
+        @media (max-width: 600px) {
+            width: 135px; 
+        }
 
         .status_filter_btn_opt1 {
             font-size: 12px;
@@ -270,6 +302,7 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
             border-radius: 20px;
             border: 1px solid #d9d9d9;
             margin-left: 5px;
+            margin-right: 10px;
             transition: background-color 0.3s;
         }
 
@@ -283,8 +316,15 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
     }
 `;
 
-const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
-    margin-top: 10px;
+const CateFilterBox = styled.div` /* 카테고리 체크박스 */
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .cate_filter_text {
         display: flex;
@@ -337,8 +377,24 @@ const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
     }
 `;
 
+const FiltersContainer = styled.div`
+    display: flex;
+    flex-direction: row;  
+    justify-content: space-between; 
+    flex-wrap: wrap;  
+    width: 100%; 
+    margin-bottom: -15px;  
+`;
+
 const GenderFilterBox = styled.div` /* 성별 체크박스 css */
-    margin-top: 10px;
+    margin-top: 1px;
+    width: 180px;
+
+    @media (max-width: 600px) {
+        flex: 1;
+        width: 140px;
+        margin-left: 10px;
+    }
 
     .gender_filter_text {
         display: flex;
@@ -391,7 +447,7 @@ const GenderFilterBox = styled.div` /* 성별 체크박스 css */
     }
 `;
 
-const ResetButton = styled.button` /* 초기화 버튼 css */
+const ResetButton = styled.button` /* 초기화 버튼 */
     display: flex;
     border: none;
     background-color: transparent;
@@ -405,7 +461,7 @@ const ResetButton = styled.button` /* 초기화 버튼 css */
     margin-left: auto;
 `;
 
-const ToggleIcon = styled.img` /* +,- 아이콘 css */
+const ToggleIcon = styled.img` /* +,- 아이콘 */
     width: 10px;
     height: 10px;
     cursor: pointer;
