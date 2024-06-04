@@ -36,10 +36,10 @@ export default function ModifyProfile() {
         }
     };
 
-    const addressModal = () => { // 주소 입력 모달창 메서드
+    const addressModal = () => { // DB에서 주소찾기 메서드
         RS.fire({
           title: "지역 선택",
-          html: '<input id = "swal-input1" class = "swal2-input" placeholder = "거래 가능한 지역을 입력">',
+          html: '<input id="swal-input1" class="swal2-input" placeholder="거래 가능한 지역을 입력">',
           focusConfirm: false,
           preConfirm: async () => {
             const query = document.getElementById("swal-input1").value;
@@ -49,39 +49,122 @@ export default function ModifyProfile() {
                   params: { query }
                 });
                 const locations = response.data;
-                if (locations.length > 0) {
+                if (locations && Array.isArray(locations) && locations.length > 0) {
                   return locations;
                 } else {
-                  Swal.showValidationMessage('검색 결과가 없습니다.');
+                  Swal.fire({
+                    title: "검색 결과가 없습니다.",
+                    html: '찾으시는 지역이 없으신가요? 그럼 <a href="#" id="new-location-link">여기</a>에서 검색해보세요!',
+                    showConfirmButton: false,
+                    didOpen: () => {
+                      document.getElementById("new-location-link").addEventListener("click", () => {
+                        RS.close();
+                        newLocationModal();
+                      });
+                    }
+                  });
                 }
               } catch (error) {
-                Swal.showValidationMessage('검색 중 오류가 발생했습니다.');
+                Swal.showValidationMessage("검색 중 오류가 발생했습니다.");
               }
             } else {
-              Swal.showValidationMessage('검색어를 입력해주세요.');
+              Swal.showValidationMessage("검색어를 입력해주세요.");
             }
           },
           showCancelButton: true,
           confirmButtonText: "검색",
-          cancelButtonText: "취소",
+          cancelButtonText: "취소"
         }).then((result) => {
           if (result.isConfirmed) {
             const locations = result.value;
-            if (locations) {
+            if (locations && Array.isArray(locations) && locations.length > 0) {
               const locationOptions = locations.map(location => ({
                 id: location.id,
                 name: `${location.region1} ${location.region2} ${location.region3} ${location.region4}`
               }));
-              RS.fire({
-                title: "검색 결과",
-                html: `<ul>${locationOptions.map(loc => `<li>${loc.name}</li>`).join('')}</ul>`,
-                showConfirmButton: false,
-                showCloseButton: true,
-              });
+              showLocationOptions(locationOptions);
             }
           }
         });
-    };
+      };
+      
+      const newLocationModal = async () => { // DB에 없는 주소찾기 메서드
+        const { value: newLocation } = await RS.fire({
+          title: "주소 찾기",
+          html: '<input id="new-location-input" class="swal2-input" placeholder="주소를 입력해주세요">',
+          focusConfirm: false,
+          preConfirm: async () => {
+            const newLocationName = document.getElementById("new-location-input").value;
+            if (newLocationName) {
+              try {
+                const response = await axios.patch("https://api.lim-it.one/api/v1/locations/search", {
+                  query: newLocationName
+                });
+                const location = response.data[0];
+                return location;
+              } catch (error) {
+                Swal.showValidationMessage("오류가 발생하였습니다.");
+              }
+            } else {
+              Swal.showValidationMessage("찾으실 지역명을 입력해주세요.");
+            }
+          },
+          showCancelButton: true,
+          confirmButtonText: "확인",
+          cancelButtonText: "취소"
+        });
+      
+        if (newLocation) {
+          setUserAddress(`${newLocation.region1} ${newLocation.region2} ${newLocation.region3} ${newLocation.region4}`);
+        }
+      };
+      
+      const showLocationOptions = (locationOptions) => { // 검색결과 메서드
+        RS.fire({
+          title: "검색 결과",
+          html: `<style>
+            .location-item {
+              display: flex;
+              align-items: center;
+              padding: 12px 16px;
+              cursor: pointer;
+              transition: background-color 0.3s;
+            }
+            .location-item:hover {
+              background-color: #f0f0f0;
+            }
+            .location-item .region-name {
+              flex-grow: 1;
+              font-size: 16px;
+              font-weight: 500;
+            }
+            .location-item .region-id {
+              font-size: 14px;
+              color: #666;
+            }
+          </style>
+          <div>${locationOptions.map(loc => `
+            <div class="location-item" data-id="${loc.id}">
+              <div class="region-name">${loc.name}</div>
+            </div>
+          `).join('')}</div>`,
+          showConfirmButton: false,
+          showCloseButton: true,
+          didOpen: () => {
+            const locationList = document.querySelectorAll(".location-item");
+            locationList.forEach(item => {
+              item.addEventListener("click", () => {
+                const selectedLocation = {
+                  id: item.dataset.id,
+                  name: item.querySelector(".region-name").textContent
+                };
+                setUserAddress(selectedLocation.name);
+                RS.close();
+              });
+            });
+          }
+        });
+      };      
     
     return (
         <Container>
@@ -99,7 +182,7 @@ export default function ModifyProfile() {
             <DetailInfoBox>
 
                 <SubTitle>프로필 정보</SubTitle>
-                <InfoTitle>프로필 이름</InfoTitle>
+                <InfoTitle>닉네임</InfoTitle>
                 <InfoBox>
                     <InputField type = "text" value = {nickName} onChange = {(e) => setNickName(e.target.value)}/>
                     <ChangeButton>변경</ChangeButton>
@@ -133,7 +216,7 @@ export default function ModifyProfile() {
 
                 <InfoTitle style = {{marginTop: "25px"}}>주소</InfoTitle>
                 <InfoBox>
-                    <UserAddress/>
+                    <UserAddress>{userAddress}</UserAddress>
                     <ChangeButton onClick = {addressModal}>변경</ChangeButton>
                 </InfoBox>
                 <Withdrawal>회원 탈퇴</Withdrawal>
