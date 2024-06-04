@@ -25,7 +25,7 @@ export default function Certification() {
                 try {
                     const response = await axios.post("https://api.lim-it.one/api/v1/auth/cert/email/verify", { certificationToken, email });
 
-                    if (response.status === 201) {
+                    if (response.status === 201 || response.status === 200) {
                         setResponseMessage("인증이 성공적으로 완료되었습니다.\n아래의 링크를 통해 추가적인 회원가입정보를 입력해주십시오.");
                     }
                 } catch (error) {
