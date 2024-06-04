@@ -97,9 +97,7 @@ export default function ModifyProfile() {
             const newLocationName = document.getElementById("new-location-input").value;
             if (newLocationName) {
               try {
-                const response = await axios.patch("https://api.lim-it.one/api/v1/locations/search", {
-                  query: newLocationName
-                });
+                const response = await axios.patch(`https://api.lim-it.one/api/v1/locations/search?query=${newLocationName}`);
                 const location = response.data[0];
                 return location;
               } catch (error) {
