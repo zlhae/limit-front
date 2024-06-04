@@ -36,7 +36,7 @@ export default function Certification() {
                     } 
                 }
             };
-            CertificationEmail();
+            CertificationEmail(); 
         }
     }, [certificationToken, email]);
 
