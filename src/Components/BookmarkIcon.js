@@ -7,7 +7,7 @@ const BookmarkIcon = ({ filled, onClick }) => {
     <div onClick={onClick} style={{ cursor: "pointer" }}>
       {filled ? <BookmarkFilled /> : <BookmarkOutline />}
     </div>
-  );
+  );    
 };
 
 export default BookmarkIcon;

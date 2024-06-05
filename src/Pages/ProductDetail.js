@@ -352,7 +352,7 @@ const SizeInfo = styled.div`
 
     @media (max-width: 850px) {
         font-size: 15px;
-    }
+    } 
 `;
 
 const SizeTable = styled.table`
