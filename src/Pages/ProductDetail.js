@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
-import TestImage from '../Images/test01.png'; // 기본 이미지 경로 설정
-import TestImage2 from '../Images/test2.png'; // 시세 그래프 이미지 경로 설정
+import TestImage from '../Images/test01.png'; 
+import TestImage2 from '../Images/test2.png'; 
 
 const ProductDetail = () => {
     const product = {
@@ -139,19 +139,21 @@ const ProductDetails = styled.div`
 `;
 
 const ProductImage = styled.img`
-    width: 50%;
-    height: 50%;
+    width: 51%;
+    height: 51%;
+   
     border-radius: 10px;
 
     @media (max-width: 850px) {
-        width: 50%;
-        height: 50%;
+        width: 51%;
+        height: 51%;
     }
 `;
 
 const ProductInfo = styled.div`
-    width: 50%;
-    padding: 20px;
+    margin-top: 15px;
+    width: 46%;
+    margin-left: 3%;
     box-sizing: border-box;
 
     h3{
@@ -161,8 +163,8 @@ const ProductInfo = styled.div`
     }
 
     @media (max-width: 850px) {
-        width: 50%;
-        height: 50%;
+        width: 46%;
+        height: 46%;
     }
 `;
 
@@ -336,6 +338,10 @@ const SizeInfo = styled.div`
         font-size: 18px;
         color: #000;
     }
+
+    @media (max-width: 850px) {
+        font-size: 15px;
+    }
 `;
 
 const SizeTable = styled.table`
@@ -349,6 +355,10 @@ const SizeTable = styled.table`
     th {
         background-color: #f2f2f2;
     }
+
+    
+
+
 `;
 
 export default ProductDetail;
