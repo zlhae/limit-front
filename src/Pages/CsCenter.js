@@ -85,13 +85,15 @@ const NavigationContainer=styled.div`
     @media (max-width:600px){
         position: fixed;
         top: 0;
+        left: 0;
         width: 125px;
         height: 100%;
         padding-top: 10%;
+        padding-left: 5%;
         z-index: 100;
         transition: left 0.1s ease-in-out;
         background-color: #f5f5f7;
-        left: ${(props)=> props.$showMobileSideBar ? "5%" : "-100%"};
+        left: ${(props)=> props.$showMobileSideBar ? "0" : "-100%"};
     }
 `
 
