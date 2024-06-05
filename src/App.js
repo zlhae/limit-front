@@ -21,6 +21,7 @@ import SearchID from "./Pages/Search_ID";
 import SearchPW from "./Pages/Search_PW";
 import Certification from "./Pages/certification";
 import SignUpInfo from "./Pages/SignUpInfo";
+import ProductDetail from "./Pages/ProductDetail";
 import SignUpComplete from "./Pages/SignUpComplete";
 import Brand from "./Pages/Brand";
 import Chatting from "./Pages/Chatting";
@@ -51,11 +52,12 @@ function App() {
         <Route path = "/bagcate" element = {<BagCate/>}/>
         <Route path = "/goodscate" element = {<GoodsCate/>}/>
         <Route path = "/brand" element = {<Brand/>}/>
+        <Route path = "/productdetail" element = {<ProductDetail/>}/>
         <Route path = "/chatting" element = {<Chatting/>}/>
       </Routes>
       <Footer></Footer>
     </div>
   );
 }
- 
+
 export default App;

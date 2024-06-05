@@ -1,66 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
-import TestImage from '../Images/test01.png';
 import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import TestImage from '../Images/test01.png';
+import ProductDetail from '../Pages/ProductDetail';
 
-// 상품 정보를 받아오는 함수
-const fetchProductData = async (productId) => {
+
+const fetchProductData = async (brand, category = [], gender = '', page = 0, size = 20, sort = 'ASC') => {
+    const categoryParam = category.map(cat => `category=${cat}`).join('&');
+    const url = `https://api.lim-it.one/api/v1/products?brand=${brand}&gender=${gender}&${categoryParam}&page=${page}&size=${size}&sort=${sort}`;
     try {
-        const response = await axios.get(`https://api.lim-it.one/api/v1/products/${productId}`);
+        const response = await axios.get(url);
+        console.log('API Response:', response.data); // 데이터 확인
         return response.data;
     } catch (error) {
-        console.error('Error fetching product data:', error);
+        console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        return { content: [] };
     }
 };
 
-// 각각의 상품을 표시하는 컴포넌트
-const Product = ({ productId }) => {
+const Product = ({ productId, brand, category, gender, page, size, sort }) => {
     const [product, setProduct] = useState(null);
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const navigate = useNavigate();
 
-    // 북마크 상태 변경
     const handleBookmarkClick = () => {
         setIsBookmarked(!isBookmarked);
     };
 
-    // 상품 데이터 불러오기
+    const handleProductClick = () => {
+        navigate(`/productdetail`);
+    };
+
     useEffect(() => {
         const getProductData = async () => {
-            const data = await fetchProductData(productId);
-            setProduct(data);
+            const data = await fetchProductData(brand, category, gender, page, size, sort);
+            const productData = data.content.find(item => item.id === productId);
+            console.log('Product Data:', productData); // 데이터 확인
+            if (productData) {
+                const formattedProductData = {
+                    price: productData.currentPrice,
+                    nameEng: productData.names.eng,
+                    nameKor: productData.names.kor,
+                    brandNameEng: productData.brandNames.eng,
+                    imageUrl: productData.imageUrl
+                };
+                setProduct(formattedProductData);
+            }
         };
         getProductData();
-    }, [productId]);
+    }, [productId, brand, category, gender, page, size, sort]);
 
-    // 데이터 로딩 중이면 로딩 인디케이터 표시
     if (!product) {
         return <div>Loading...</div>;
     }
 
-    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.currentPrice) + "원";
+    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.price) + "원";
 
     return (
-        <ProductContainer>
+        <ProductContainer onClick={handleProductClick}>
+
             <ThumbBox>
                 <BookmarkWrapper>
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
-                {/* 실제 이미지 URL로 변경 
-                <img src={product.imageUrl || 'default_image_path'} alt='Product Thumbnail' /> */}
-                <img src={TestImage} alt='Product Thumbnail' />
+                <img 
+                    src={TestImage} 
+                    alt='Product Thumbnail' 
+                    onError={(e) => e.target.src = 'default_image_path'} 
+                />
             </ThumbBox>
             <InfoBox>
                 <BrandBookmark>
                     <Brand>
-                        <h1>{product.brandNames.eng}</h1>
+                        <h1>{product.brandNameEng}</h1>
                     </Brand>
                 </BrandBookmark>
                 <Name>
-                    <h2>{product.names.eng}</h2>
+                    <h2>{product.nameEng}</h2>
                 </Name>
                 <KoreaName>
-                    <h3>{product.names.kor}</h3>
+                    <h3>{product.nameKor}</h3>
                 </KoreaName>
                 <Tag>
                     <TagText>택배</TagText>
@@ -74,12 +95,22 @@ const Product = ({ productId }) => {
     );
 };
 
-const ProductListWrap = () => {
+const ProductListWrap = ({ brand = 'adidas', category = [2], gender = '', page = 0, size = 20, sort = 'ASC' }) => {
     return (
         <ProductListContainer>
             <ProductGroup>
-                {/* 임시로 productId를 1~17로 설정, 실제는 동적으로 설정 필요 */}
-                {Array.from({ length: 17 }, (_, i) => <Product key={i} productId={i + 1} />)}
+                {Array.from({ length: 20 }, (_, i) => (
+                    <Product 
+                        key={i} 
+                        productId={i + 1} 
+                        brand={brand} 
+                        category={category}
+                        gender={gender}
+                        page={page} 
+                        size={size} 
+                        sort={sort} 
+                    />
+                ))}
             </ProductGroup>
         </ProductListContainer>
     );
@@ -96,6 +127,7 @@ const ProductListContainer = styled.div`
 
 const ProductContainer = styled.div`
     width: 100%; 
+    cursor: pointer;
     @media (max-width: 600px) {
         width: 100%;  
     }

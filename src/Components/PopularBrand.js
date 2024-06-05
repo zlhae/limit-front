@@ -39,7 +39,7 @@ const TotalContainer = styled.div`
 const BrandThumbBox = styled.div`
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 35px;
+    gap: 30px;
     width: 100%;
 
     @media (max-width: 600px) {

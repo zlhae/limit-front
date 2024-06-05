@@ -4,22 +4,22 @@ import ProductInformation from '../Components/ProductInformation';
 import ImmediatePrice from '../Components/ImmediatePrice';
 import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
-import MockDataImage from '../Images/product-mock-data.png';
+import MockDataImage from '../Images/test01.png';
 
 const Purchase=()=>{
     const [position,setPosition]=useState(1);
 
     const productInformationData={
         image: MockDataImage,
-        number: '1203A507-020',
-        name_en: 'Asics x C.P. Company Gel-Quantum 360 VII Cement Grey',
-        name_ko: '아식스 x C.P. 컴퍼니 젤 퀀텀 360 8 시멘트 그레이',
-        size: 230
+        number: 'FV5299-005',
+        name_en: 'Jordan 4 Retro Bred Reimagined',
+        name_ko: '조던 4 레트로 브레드 리이매진드',
+        size: 220
     }
 
     const immediatePriceData={
-        purchase: 439000,
-        sale: 250000
+        purchase: 293000,
+        sale: 251000
     }
 
     const showSubmitBox=()=>{

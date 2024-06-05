@@ -114,13 +114,13 @@ const ProductListContainer = styled.div`
 
 const ArrowButton = styled.button`
     position: absolute;
-    top: 30%;
+    top: 33.3%;
     transform: translateY(-50%);
     z-index: 10;
     background: url(${(props) => (props.direction === 'left' ? ArrowLeftIcon : ArrowRightIcon)}) no-repeat center center;
     background-size: contain;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border: none;
     cursor: pointer;
     opacity: 0.5;
@@ -133,8 +133,8 @@ const ArrowButton = styled.button`
     ${(props) => (props.direction === 'left' ? 'left: -20px;' : 'right: -20px;')}
 
     @media (max-width: 600px) {
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
 
         ${(props) => (props.direction === 'left' ? 'left: -15px;' : 'right: -15px;')}
     }
