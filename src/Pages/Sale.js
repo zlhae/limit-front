@@ -19,8 +19,8 @@ const Sale=()=>{
     }
 
     const immediatePriceData={
-        purchase: 439000,
-        sale: 250000
+        purchase: 293000,
+        sale: 251000
     }
 
     const showSubmitBox=()=>{
