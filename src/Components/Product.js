@@ -3,9 +3,39 @@ import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
-import TestImage from '../Images/test01.png';
-import ProductDetail from '../Pages/ProductDetail';
+import test1 from '../Images/1.webp';
+import test2 from '../Images/2.webp';
+import test3 from '../Images/3.webp';
+import test4 from '../Images/4.webp';
+import test5 from '../Images/5.webp';
+import test6 from '../Images/6.webp';
+import test7 from '../Images/7.webp';
+import test8 from '../Images/8.webp';
+import test9 from '../Images/9.webp';
+import test10 from '../Images/10.webp';
+import test11 from '../Images/11.webp';
+import test12 from '../Images/12.webp';
+import test13 from '../Images/13.webp';
+import test14 from '../Images/14.webp';
+import test15 from '../Images/15.webp';
+import test16 from '../Images/16.webp';
+import test17 from '../Images/17.webp';
+import test18 from '../Images/18.webp';
+import test19 from '../Images/19.webp';
+import test20 from '../Images/20.webp';
+import test21 from '../Images/21.webp';
+import test22 from '../Images/22.webp';
+import test23 from '../Images/23.webp';
+import test24 from '../Images/24.webp';
+import test25 from '../Images/25.webp';
+import test26 from '../Images/26.webp';
+import test27 from '../Images/27.webp';
 
+const imageArray = [
+    test1, test2, test3, test4, test5, test6, test7, test8, test9, test10,
+    test11, test12, test13, test14, test15, test16, test17, test18, test19,
+    test20, test21, test22, test23, test24, test25, test26, test27
+];
 
 const fetchProductData = async (brand, category = [], gender = '', page = 0, size = 20, sort = 'ASC') => {
     const categoryParam = category.map(cat => `category=${cat}`).join('&');
@@ -40,10 +70,10 @@ const Product = ({ productId, brand, category, gender, page, size, sort }) => {
             console.log('Product Data:', productData); // 데이터 확인
             if (productData) {
                 const formattedProductData = {
-                    price: productData.currentPrice,
-                    nameEng: productData.names.eng,
-                    nameKor: productData.names.kor,
-                    brandNameEng: productData.brandNames.eng,
+                    price: productId === 1 ? 293000 : productData.currentPrice,
+                    nameEng: productId === 1 ? "Jordan1 x Travis Scott x Fragment Retro Low OG SP Military Blue" : productData.names.eng,
+                    nameKor: productId === 1 ? "조던 1 x 트래비스 스캇 x 프라그먼트 레트로 로우 OG SP 밀리터리 블루" : productData.names.kor,
+                    brandNameEng: productId === 1 ? " Nike" : productData.brandNames.eng,
                     imageUrl: productData.imageUrl
                 };
                 setProduct(formattedProductData);
@@ -53,20 +83,21 @@ const Product = ({ productId, brand, category, gender, page, size, sort }) => {
     }, [productId, brand, category, gender, page, size, sort]);
 
     if (!product) {
-        return <div>Loading...</div>;
+        //return <div>Loading...</div>;
+        return <div></div>;
     }
 
     const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.price) + "원";
+    const imageUrl = imageArray[productId - 1] || 'default_image_path';
 
     return (
         <ProductContainer onClick={handleProductClick}>
-
             <ThumbBox>
                 <BookmarkWrapper>
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
                 <img 
-                    src={TestImage} 
+                    src={imageUrl} 
                     alt='Product Thumbnail' 
                     onError={(e) => e.target.src = 'default_image_path'} 
                 />
@@ -99,7 +130,7 @@ const ProductListWrap = ({ brand = 'adidas', category = [2], gender = '', page =
     return (
         <ProductListContainer>
             <ProductGroup>
-                {Array.from({ length: 20 }, (_, i) => (
+                {Array.from({ length: 27 }, (_, i) => (
                     <Product 
                         key={i} 
                         productId={i + 1} 
@@ -154,8 +185,11 @@ const ThumbBox = styled.div`
         width: 100%;
         height: auto;
         border-radius: 10px;
+        background-color: rgba(221, 126, 96, 0.15); /* 배경색과 투명도 설정 */
+
         @media (min-width: 1024px) {
             width: 100%;  
+            
         }
 `;
 

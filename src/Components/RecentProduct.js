@@ -1,11 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
-import TestImage from '../Images/test01.png';
 import ArrowLeftIcon from '../Images/arrow-left.svg';
 import ArrowRightIcon from '../Images/arrow-right.svg'; 
+import a10 from '../Images/a10.webp';
+import a6 from '../Images/a6.webp';
+import a2 from '../Images/a2.webp';
+import test20 from '../Images/20.webp';
+import test21 from '../Images/21.webp';
+import test22 from '../Images/22.webp';
+import test23 from '../Images/23.webp';
+import test24 from '../Images/24.webp';
+import test25 from '../Images/25.webp';
+import test26 from '../Images/26.webp';
 
-const RecentProduct = () => {
+const images = [a10, a6, a2, test20, test21, test22, test23, test24, test25, test26];
+
+const RecentProduct = ({ image, index }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleBookmarkClick = () => {
@@ -18,7 +29,7 @@ const RecentProduct = () => {
                 <BookmarkWrapper>
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
-                <img src={TestImage} alt='Product Thumbnail' />
+                <img src={image} alt={`Product Thumbnail ${index}`} />
             </ThumbBox>
             <InfoBox>
                 <BrandBookmark>
@@ -83,9 +94,9 @@ const RecentProductListWrap = () => {
             {canScrollLeft && <ArrowButton direction="left" onClick={() => scrollProducts('left')} />}
             <ProductListContainer ref={productListRef}>
                 <ProductGroup>
-                {Array.from({ length: 10 }).map((_, index) => (
-                    <RecentProduct key={index} />
-                ))}
+                    {images.map((image, index) => (
+                        <RecentProduct key={index} image={image} index={index} />
+                    ))}
                 </ProductGroup>
             </ProductListContainer>
             {canScrollRight && <ArrowButton direction="right" onClick={() => scrollProducts('right')} />}
@@ -165,6 +176,7 @@ const ThumbBox = styled.div`
         width: 100%;
         height: auto;
         border-radius: 10px;
+        background-color: rgba(114, 184, 223, 0.15); /* 배경색과 투명도 설정 */
     }
 `;
 
@@ -256,3 +268,4 @@ const Price = styled.div`
 `;
 
 export default RecentProductListWrap;
+

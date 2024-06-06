@@ -1,11 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
-import TestImage from '../Images/test01.png';
 import ArrowLeftIcon from '../Images/arrow-left.svg';
 import ArrowRightIcon from '../Images/arrow-right.svg'; 
+import a1 from '../Images/a1.webp';
+import a2 from '../Images/a2.webp';
+import a3 from '../Images/a3.webp';
+import a4 from '../Images/a4.webp';
+import a5 from '../Images/a5.webp';
+import a6 from '../Images/a6.webp';
+import a7 from '../Images/a7.webp';
+import a8 from '../Images/a8.webp';
+import a9 from '../Images/a9.webp';
+import a10 from '../Images/a10.webp';
 
-const MainProduct = () => {
+const images = [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10];
+
+const MainProduct = ({ image, index }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
 
     const handleBookmarkClick = () => {
@@ -18,7 +29,7 @@ const MainProduct = () => {
                 <BookmarkWrapper>
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
-                <img src={TestImage} alt='Product Thumbnail' />
+                <img src={image} alt={`Product Thumbnail ${index}`} />
             </ThumbBox>
             <InfoBox>
                 <BrandBookmark>
@@ -83,9 +94,9 @@ const MainProductListWrap = () => {
             {canScrollLeft && <ArrowButton direction="left" onClick={() => scrollProducts('left')} />}
             <ProductListContainer ref={productListRef}>
                 <ProductGroup>
-                {Array.from({ length: 10 }).map((_, index) => (
-                    <MainProduct key={index} />
-                ))}
+                    {images.map((image, index) => (
+                        <MainProduct key={index} image={image} index={index} />
+                    ))}
                 </ProductGroup>
             </ProductListContainer>
             {canScrollRight && <ArrowButton direction="right" onClick={() => scrollProducts('right')} />}
@@ -165,6 +176,7 @@ const ThumbBox = styled.div`
         width: 100%;
         height: auto;
         border-radius: 10px;
+        background-color: rgba(221, 126, 96, 0.15); /* 배경색과 투명도 설정 */
     }
 `;
 
