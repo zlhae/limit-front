@@ -8,7 +8,7 @@ const DoBid=({type})=>{
 
     const [dummyShow, setDummyShow]=useState(false);
     useEffect(()=>{
-        if(bidPrice>=293000){
+        if(bidPrice>=293000 && type==='purchase'){
             setDummyShow(true);
         }
         else{
