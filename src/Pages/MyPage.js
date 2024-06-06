@@ -12,6 +12,7 @@ import Used_Sale from "../Components/Used_Sale.js";
 import ModifyProfile from '../Components/ModifyProfile.js';
 import Interest_Product from "../Components/Interest_Product.js";
 import InquiryPage from "../Components/InquiryPage.js";
+import SubHeader from '../Components/SubHeader';
 
 const menuTitles = {
     unopened_purchase: "미개봉 구매 내역",
@@ -54,6 +55,8 @@ export default function MyPage() {
     }
 
     return (
+        <>
+        <SubHeader/>
         <MyPageContainer onClick = {() => setMobileMenu(false)}>
             <LeftNavBar mobileMenu = {mobileMenu}>
                 <NaviList style = {{fontSize: "17.5px", fontWeight: "bold", marginBottom: "30px"}} 
@@ -85,6 +88,7 @@ export default function MyPage() {
                 {renderComponent()}
             </RightContainer>   
         </MyPageContainer>
+        </>
     );
 }
 
@@ -92,7 +96,6 @@ const MyPageContainer = styled.div` // 마이페이지 최상위 부모 컨테�
     display: flex;
     width: 80%;
     margin: 0px 10%;
-    margin-top: 70px;
 `;
 
 const LeftNavBar = styled.div` // 마이페이지 좌측 목록 네비바 컨테이너
