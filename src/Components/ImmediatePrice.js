@@ -14,7 +14,7 @@ const ImmediatePrice=({purchase, sale})=>{
         </ImmediatePriceContainer>
     );
 }
-
+ 
 const ImmediatePriceContainer=styled.div`
     display: flex;
     justify-content: space-between;
