@@ -2,8 +2,18 @@ import styled from 'styled-components';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import DeleteIcon from '../Images/delete_btn.svg'
+import { useNavigate } from 'react-router-dom';
 
 const SaleSecondhand=({type})=>{
+    const navigate=useNavigate();
+    const onDummySubmit=()=>{
+        Swal.fire({
+            icon: "success",
+            title: "등록이 완료되었습니다.",
+        })
+        navigate("/")
+    }
+
     const [secondhandImage,setSecondhandImage]=useState([]);
     const handleAddImage=(event)=>{
         const imageList=event.target.files;
@@ -182,14 +192,14 @@ const SaleSecondhand=({type})=>{
                         ></DefectTextarea>
                     </DefectTextareaContainer>
                 </SecondhandComponent>
-                <SecondhandSubmit>중고 상품 등록하기</SecondhandSubmit>
+                <SecondhandSubmit onClick={(e)=>onDummySubmit()}>중고 상품 등록하기</SecondhandSubmit>
             </div>
         </div>
     );
 }
 
 const SecondhandComponent=styled.div`
-    margin-bottom: 30px; 
+    margin-bottom: 30px;
 `
 
 const SecondhandTitle=styled.h5`

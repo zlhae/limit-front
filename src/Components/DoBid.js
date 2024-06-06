@@ -8,7 +8,7 @@ const DoBid=({type})=>{
 
     const [dummyShow, setDummyShow]=useState(false);
     useEffect(()=>{
-        if(bidPrice>=293000){
+        if(bidPrice>=293000 && type==='purchase'){
             setDummyShow(true);
         }
         else{
@@ -17,10 +17,19 @@ const DoBid=({type})=>{
     },[bidPrice])
     const navigate=useNavigate();
     const onClickDummy=()=>{
-        Swal.fire({
-            title: "입찰이 완료되었습니다.",
-        })
-        navigate("/")
+        if(dummyShow===false){
+            Swal.fire({
+                icon: "success",
+                title: "입찰이 완료되었습니다.",
+            })
+            navigate("/")
+        }
+        else{
+            Swal.fire({
+                icon: "error",
+                title: "입찰에 실패하였습니다.",
+            })
+        }
     }
 
     return(

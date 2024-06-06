@@ -6,6 +6,7 @@ const DoImmediate=({type, immediatePriceData})=>{
     const navigate=useNavigate();
     const onClickDummy=()=>{
         Swal.fire({
+            icon: "success",
             title: `즉시${type==="purchase"?"구매":"판매"}가 완료되었습니다.`,
         })
         navigate("/")
