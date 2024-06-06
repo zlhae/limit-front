@@ -71,7 +71,7 @@ const Chatting=()=>{
                 <ChattingList chattingListData={chattingListData}></ChattingList>
                 <ChattingWindow></ChattingWindow>
             </ChattingComponent>
-        </div>  
+        </div>
     )
 }
 

@@ -12,10 +12,10 @@ const Sale=()=>{
 
     const productInformationData={
         image: MockDataImage,
-        number: '1203A507-020',
-        name_en: 'Asics x C.P. Company Gel-Quantum 360 VII Cement Grey',
-        name_ko: '아식스 x C.P. 컴퍼니 젤 퀀텀 360 8 시멘트 그레이',
-        size: 230
+        number: 'DM7866-140',
+        name_en: 'Jordan1 x Travis Scott x Fragment Retro Low OG SP Military Blue',
+        name_ko: '조던 1 x 트래비스 스캇 x 프라그먼트 레트로 로우 OG SP 밀리터리 블루',
+        size: 220
     }
 
     const immediatePriceData={

@@ -11,9 +11,9 @@ const Purchase=()=>{
 
     const productInformationData={
         image: MockDataImage,
-        number: 'FV5299-005',
-        name_en: 'Jordan 4 Retro Bred Reimagined',
-        name_ko: '조던 4 레트로 브레드 리이매진드',
+        number: 'DM7866-140',
+        name_en: 'Jordan1 x Travis Scott x Fragment Retro Low OG SP Military Blue',
+        name_ko: '조던 1 x 트래비스 스캇 x 프라그먼트 레트로 로우 OG SP 밀리터리 블루',
         size: 220
     }
 
