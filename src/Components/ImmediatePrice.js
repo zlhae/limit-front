@@ -12,7 +12,7 @@ const ImmediatePrice=({purchase, sale})=>{
                 <PriceContext>{sale.toLocaleString('ko-KR')}원</PriceContext>
             </PurchaseSaleContaienr>
         </ImmediatePriceContainer>
-    );
+    );  
 }
  
 const ImmediatePriceContainer=styled.div`
