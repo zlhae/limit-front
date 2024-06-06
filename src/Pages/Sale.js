@@ -5,7 +5,7 @@ import ImmediatePrice from '../Components/ImmediatePrice';
 import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
 import SaleSecondhand from '../Components/SaleSecondhand';
-import MockDataImage from '../Images/product-mock-data.png';
+import MockDataImage from '../Images/test01.png';
 
 const Sale=()=>{
     const [position,setPosition]=useState(1);
