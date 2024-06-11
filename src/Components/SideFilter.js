@@ -403,7 +403,7 @@ const StatusFilterBox = styled.div`
 `;
 
 const CateFilterBox = styled.div` 
-    margin-top: 1px;
+    margin-top: 10px;
     width: 180px;
 
     @media (max-width: 600px) {
@@ -475,7 +475,7 @@ const FiltersContainer = styled.div`
 const Line = styled.hr`
     border: 0;
     border-top: 1px solid #e0e0e0;
-    margin: 10px 0;
+    margin: 15px 0;
 `;
 
 const SelectedFilters = styled.div`
@@ -485,7 +485,7 @@ const SelectedFilters = styled.div`
 `;
 
 const GenderFilterBox = styled.div` 
-    margin-top: 1px;
+    margin-top: 10px;
     width: 180px;
 
     @media (max-width: 600px) {
