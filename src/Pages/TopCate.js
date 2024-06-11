@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SubHeader from '../Components/SubHeader';
-import SideFilter from '../Components/SideFilter';
+import SideFilter from '../Components/SideFilter'; // SideFilter를 불러옴
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
-const TotalCate = () => {
+const TopCate = () => {
+    const topCategories = ['반팔 티셔츠', '긴팔 티셔츠', '가디건', '셔츠', '후드', '후드 집업', '스웨트셔츠', '슬리브리스', '원피스', '니트', '기타 상의'];
 
     return (
         <MainProduct className='main_product'>
@@ -13,22 +14,20 @@ const TotalCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilter />
+                    <SideFilter selectedCategory="top" categories={topCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
-                    <ProductNumber>    
-                    <h3>상품 154,329개</h3>        
+                    <ProductNumber>
+                        <h3>상품 15,123개</h3>
                     </ProductNumber>
-                        <ProductListWrap></ProductListWrap>
+                    <ProductListWrap />
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 }
 
-const MainProduct = styled.div`
-
-`;
+const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`
     margin-top: -20px;
@@ -76,4 +75,4 @@ const ProductNumber = styled.h3`
     }
 `;
 
-export default TotalCate;
+export default TopCate;

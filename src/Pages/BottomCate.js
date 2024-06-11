@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SubHeader from '../Components/SubHeader';
-import SideFilterBottom from '../Components/SideFilter_bottom';
+import SideFilter from '../Components/SideFilter'; // SideFilter를 불러옴
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
 const BottomCate = () => {
+    const bottomCategories = ['바지', '반바지', '스커트', '레깅스', '기타 하의'];
 
     return (
         <MainProduct className='main_product'>
@@ -13,22 +14,20 @@ const BottomCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilterBottom />
+                    <SideFilter selectedCategory="bottom" categories={bottomCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>
-                        <h3> 상품 23,334개</h3>
+                        <h3>상품 12,345개</h3>
                     </ProductNumber>
-                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap />
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 }
 
-const MainProduct = styled.div`
-
-`;
+const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`
     margin-top: -20px;
