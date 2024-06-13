@@ -6,7 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const OuterCate = () => {
     const outerCategories = ['자켓', '아노락', '코트', '패딩', '기타 아우터'];
-    const allCategories = { outer: outerCategories };
+    const allCategories = { 아우터: outerCategories };
 
     return (
         <MainProduct className='main_product'>

@@ -484,6 +484,26 @@ const StatusFilterBox = styled.div`
             color: white;
             border: 1px solid black;
         }
+
+        .status_filter_btn_opt2 {
+            @media (max-width: 600px) {
+                position: relative;
+                margin-right: 15px; // 직거래 버튼과 세로선 사이의 간격
+            }
+
+            @media (max-width: 600px) {
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    right: -10px;
+                    transform: translateY(-50%);
+                    width: 1px;
+                    height: 25px;
+                    background-color: #d9d9d9;
+                }
+            }
+        }
     }
 `;
 
@@ -562,13 +582,13 @@ const CateFilterBox = styled.div`
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px;
-            border: 1px solid #d9d9d9;
+            padding: 4.5px;
+            border: 1px solid #e0e0e0;
             border-radius: 20px;
             background-color: transparent;
             font-weight: 100;
-            width: 70px;
-            height: 17px;
+            width: 60px;
+            height: 16px;
             margin-top: -5px;
             
         }
@@ -687,14 +707,15 @@ const GenderFilterBox = styled.div`
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px;
-            border: 1px solid #d9d9d9;
+            padding: 4.5px;
+            border: 1px solid #e0e0e0;
             border-radius: 20px;
             background-color: transparent;
             font-weight: 100;
-            width: 70px;
-            height: 17px;
+            width: 40px;
+            height: 16px;
             margin-top: -5px;
+            margin-left: -77px;
         }
 
         .mobile-gender-button {
@@ -704,6 +725,7 @@ const GenderFilterBox = styled.div`
         .gender-toggle-icon {
             display: none;
         }
+
     }
 `;
 
@@ -749,6 +771,8 @@ const ToggleButton = styled.button`
         display: block;
         font-size: 12px;
         font-weight: 400;
+
+        
     }
 `;
 

@@ -6,7 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const BagCate = () => {
     const bagCategories = ['프리미엄가방', '미니백', '백팩', '숄더백', '토트백', '크로스백', '클러치', '더플백', '에코백', '캐리어', '기타 가방'];
-    const allCategories = { bag: bagCategories };
+    const allCategories = { 가방: bagCategories };
 
     return (
         <MainProduct className='main_product'>

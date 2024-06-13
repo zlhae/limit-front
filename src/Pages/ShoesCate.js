@@ -6,7 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const ShoesCate = () => {
     const shoesCategories = ['스니커즈', '샌들/슬리퍼', '플랫', '로퍼', '더비/레이스업', '힐/펌프스', '부츠', '기타 신발'];
-    const allCategories = { shoes: shoesCategories };
+    const allCategories = { 신발: shoesCategories };
 
     return (
         <MainProduct className='main_product'>

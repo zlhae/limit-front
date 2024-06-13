@@ -6,7 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const BottomCate = () => {
     const bottomCategories = ['바지', '반바지', '스커트', '레깅스', '기타 하의'];
-    const allCategories = { bottom: bottomCategories };
+    const allCategories = { 하의: bottomCategories };
 
     return (
         <MainProduct className='main_product'>

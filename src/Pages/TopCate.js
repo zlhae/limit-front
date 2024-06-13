@@ -6,7 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const TopCate = () => {
     const topCategories = ['반팔 티셔츠', '긴팔 티셔츠', '가디건', '셔츠', '후드', '후드 집업', '스웨트셔츠', '슬리브리스', '원피스', '니트', '기타 상의'];
-    const allCategories = { top: topCategories };
+    const allCategories = { 상의: topCategories };
 
     return (
         <MainProduct className='main_product'>
