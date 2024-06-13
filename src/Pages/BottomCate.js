@@ -6,6 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const BottomCate = () => {
     const bottomCategories = ['바지', '반바지', '스커트', '레깅스', '기타 하의'];
+    const allCategories = { bottom: bottomCategories };
 
     return (
         <MainProduct className='main_product'>
@@ -14,7 +15,7 @@ const BottomCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilter selectedCategory="bottom" categories={bottomCategories} />
+                    <SideFilter selectedCategory="bottom" categories={bottomCategories} allCategories={allCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>

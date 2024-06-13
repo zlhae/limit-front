@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MinusIcon from '../Images/icon-minus.svg';
 import PlusIcon from '../Images/icon-plus.svg';
+import Modal from './Modal';
 
 const SideFilter = ({ selectedCategory, categories, allCategories }) => {
     const [filters, setFilters] = useState({
@@ -14,6 +15,8 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
     });
     const [openCategories, setOpenCategories] = useState({});
     const [showResetButton, setShowResetButton] = useState(false);
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
 
     useEffect(() => {
         const mediaQuery = window.matchMedia("(max-width: 600px)");
@@ -55,7 +58,7 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                 allCategories[category].forEach(item => {
                     initialSelectedCategories[item] = false;
                 });
-                initialOpenCategories[category] = false; // 초기 상태는 닫힌 상태로 설정
+                initialOpenCategories[category] = false;
             });
         }
         setFilters(prevState => ({ ...prevState, ...initialSelectedCategories }));
@@ -71,7 +74,6 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
         setFilters(prevState => {
             const newFilters = { ...prevState, [category]: !prevState[category] };
             if (newFilters[category]) {
-                // 부모 체크박스가 체크되면 자식 체크박스 해제
                 if (allCategories && allCategories[category]) {
                     allCategories[category].forEach(item => {
                         newFilters[item] = false;
@@ -86,7 +88,6 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
         setFilters(prevState => {
             const newFilters = { ...prevState, [item]: !prevState[item] };
             if (newFilters[item]) {
-                // 자식 체크박스가 체크되면 부모 체크박스 해제
                 newFilters[parentCategory] = false;
             }
             return newFilters;
@@ -98,6 +99,18 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
             ...prevState,
             [category]: !prevState[category],
         }));
+    };
+
+    const selectAllChildFilters = (category) => {
+        setFilters(prevState => {
+            const newFilters = { ...prevState };
+            if (allCategories && allCategories[category]) {
+                allCategories[category].forEach(item => {
+                    newFilters[item] = true;
+                });
+            }
+            return newFilters;
+        });
     };
 
     const resetFilters = () => {
@@ -206,6 +219,31 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
         return selectedGenders.join(', ');
     };
 
+    const renderCategoryButtons = () => {
+        if (allCategories) {
+            return Object.keys(allCategories).map(category => (
+                <div key={category}>
+                    <ButtonGroup>
+                        <CategoryHeader>
+                            <h1>{category}</h1>
+                            <SelectAllButton onClick={() => selectAllChildFilters(category)}>모두 선택</SelectAllButton>
+                        </CategoryHeader>
+                        {allCategories[category].map((item, index) => (
+                            <Button
+                                key={index}
+                                selected={filters[item]}
+                                onClick={() => toggleChildFilter(item, category)}
+                            >
+                                {item}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </div>
+            ));
+        }
+        return null;
+    };
+
     return (
         <TotalContainer>
             <Container>
@@ -231,23 +269,38 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                                 <Line />
                                 <div className='cate_filter_text'>
                                     <h1>카테고리</h1>
-                                    <ToggleIcon onClick={() => setFilters(prevState => ({ ...prevState, isCategoryOpen: !prevState.isCategoryOpen }))} src={filters.isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                    <ToggleIcon
+                                        onClick={() => setFilters(prevState => ({ ...prevState, isCategoryOpen: !prevState.isCategoryOpen }))}
+                                        src={filters.isCategoryOpen ? MinusIcon : PlusIcon}
+                                        alt="카테고리 펼치기/접기 아이콘"
+                                        className="category-toggle-icon"
+                                    />
+                                    <ToggleButton onClick={() => setIsCategoryModalOpen(true)} className="mobile-category-button">
+                                        카테고리
+                                    </ToggleButton>
                                 </div>
-                                {filters.isCategoryOpen ? (
+                                {filters.isCategoryOpen && (
                                     <div className='cate_filter_checkbox'>
                                         {renderCategoryFilters()}
                                     </div>
-                                ) : (
-                                    <SelectedFilters>{getSelectedCategories()}</SelectedFilters>
                                 )}
+                                {!filters.isCategoryOpen && <SelectedFilters>{getSelectedCategories()}</SelectedFilters>}
                             </CateFilterBox>
                             <GenderFilterBox>
                                 <Line />
                                 <div className='gender_filter_text'>
                                     <h1>성별</h1>
-                                    <ToggleIcon onClick={() => setFilters(prevState => ({ ...prevState, isGenderOpen: !prevState.isGenderOpen }))} src={filters.isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                    <ToggleIcon
+                                        onClick={() => setFilters(prevState => ({ ...prevState, isGenderOpen: !prevState.isGenderOpen }))}
+                                        src={filters.isGenderOpen ? MinusIcon : PlusIcon}
+                                        alt="성별 펼치기/접기 아이콘"
+                                        className="gender-toggle-icon"
+                                    />
+                                    <ToggleButton onClick={() => setIsGenderModalOpen(true)} className="mobile-gender-button">
+                                        성별
+                                    </ToggleButton>
                                 </div>
-                                {filters.isGenderOpen ? (
+                                {filters.isGenderOpen && (
                                     <div className='gender_filter_checkbox'>
                                         <label>
                                             <input
@@ -268,24 +321,58 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                                             여성
                                         </label>
                                     </div>
-                                ) : (
-                                    <SelectedFilters>{getSelectedGenders()}</SelectedFilters>
                                 )}
+                                {!filters.isGenderOpen && <SelectedFilters>{getSelectedGenders()}</SelectedFilters>}
                             </GenderFilterBox>
                         </FiltersContainer>
                     </StatusFilter>
                     {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
                 </div>
             </Container>
+            <Modal
+                isOpen={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                onReset={resetFilters}
+                selectedFilters={getSelectedCategories()}
+            >
+                <div>
+                    {renderCategoryButtons()}
+                </div>
+            </Modal>
+            <Modal
+                isOpen={isGenderModalOpen}
+                onClose={() => setIsGenderModalOpen(false)}
+                onReset={resetFilters}
+                selectedFilters={getSelectedGenders()}
+            >
+                <div>
+                    <ButtonGroup>
+                        <Button
+                            selected={filters.male}
+                            onClick={() => toggleParentFilter('male')}
+                        >
+                            남성
+                        </Button>
+                        <Button
+                            selected={filters.female}
+                            onClick={() => toggleParentFilter('female')}
+                        >
+                            여성
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            </Modal>
         </TotalContainer>
     );
 };
 
 const TotalContainer = styled.div`
+
     @media (max-width: 600px) {
         background-color: white;  
         width: 100%;
-        margin-top: -55px; 
+        margin-top: -50px; 
+        border-bottom: 1px solid #e0e0e0;
     }
 `;
 
@@ -298,7 +385,6 @@ const Container = styled.div`
     @media (max-width: 600px) {
         width: 90%; 
         margin: 0 auto;  
-        align-items: center;  
     }
 `;
 
@@ -325,19 +411,16 @@ const TopFilterArray = styled.div`
         background-size: 17px; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-arrows-sort' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M3 9l4-4l4 4m-4 -4v14' /%3E%3Cpath d='M21 15l-4 4l-4-4m4 4v-14' /%3E%3C/svg%3E");
         outline: none;
-    }
+        cursor: pointer;
 
-    @media (max-width: 600px) {
-        display: none;
+        @media (max-width: 600px) {
+            display: none;
+        }
     }
 `;
 
 const StatusFilter = styled.div`
     margin-bottom: 20px;
-
-    @media (max-width: 600px) {
-        flex: 1;
-    }
 `;
 
 const StatusFilterBox = styled.div` 
@@ -374,8 +457,9 @@ const StatusFilterBox = styled.div`
             width: 70px;
             padding: 5px;
             border-radius: 20px;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #e0e0e0;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
 
         .status_filter_btn_opt2 {
@@ -385,18 +469,19 @@ const StatusFilterBox = styled.div`
             width: 70px;
             padding: 5px;
             border-radius: 20px;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #e0e0e0;
             margin-left: 5px;
             margin-right: 10px;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
 
         .status_filter_btn_opt1:active,
         .status_filter_btn_opt1.selected,
         .status_filter_btn_opt2:active,
         .status_filter_btn_opt2.selected {
-            background-color: #transparent;
-            font-weight: bold;
+            background-color: black;
+            color: white;
             border: 1px solid black;
         }
     }
@@ -409,7 +494,7 @@ const CateFilterBox = styled.div`
     @media (max-width: 600px) {
         flex: 1;
         width: 140px;
-        margin-left: 10px;
+        margin-left: 5px;
     }
 
     .cate_filter_text {
@@ -420,6 +505,12 @@ const CateFilterBox = styled.div`
         h1 {
             font-size: 14px;
             font-weight: bold;
+
+            @media (max-width: 600px) {
+                font-weight: lighter;
+                font-size: 13px;
+                display: none;  
+            }
         }
     }
 
@@ -461,6 +552,35 @@ const CateFilterBox = styled.div`
         background-size: 100% 100%;
         background-position: 50%;
     }
+
+    @media (max-width: 600px) {
+        .cate_filter_checkbox {
+            display: none;
+        }
+
+        .cate_filter_text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            border: 1px solid #d9d9d9;
+            border-radius: 20px;
+            background-color: transparent;
+            font-weight: 100;
+            width: 70px;
+            height: 17px;
+            margin-top: -5px;
+            
+        }
+
+        .mobile-category-button {
+            display: block;
+        }
+
+        .category-toggle-icon {
+            display: none;
+        }
+    }
 `;
 
 const FiltersContainer = styled.div`
@@ -476,12 +596,20 @@ const Line = styled.hr`
     border: 0;
     border-top: 1px solid #e0e0e0;
     margin: 15px 0;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const SelectedFilters = styled.div`
     font-size: 13px;
     color: #666;
     margin-top: 5px;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const GenderFilterBox = styled.div` 
@@ -502,7 +630,13 @@ const GenderFilterBox = styled.div`
         h1 {
             font-size: 14px;
             font-weight: bold;
-        }
+
+            @media (max-width: 600px) {
+                font-weight: lighter;
+                font-size: 13px;
+                 display: none;  
+            }
+        }        
     }
 
     .gender_filter_checkbox label {
@@ -543,6 +677,34 @@ const GenderFilterBox = styled.div`
         background-size: 100% 100%;
         background-position: 50%;
     }
+
+    @media (max-width: 600px) {
+        .gender_filter_checkbox {
+            display: none;
+        }
+
+        .gender_filter_text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            border: 1px solid #d9d9d9;
+            border-radius: 20px;
+            background-color: transparent;
+            font-weight: 100;
+            width: 70px;
+            height: 17px;
+            margin-top: -5px;
+        }
+
+        .mobile-gender-button {
+            display: block;
+        }
+
+        .gender-toggle-icon {
+            display: none;
+        }
+    }
 `;
 
 const ResetButton = styled.button` 
@@ -557,12 +719,72 @@ const ResetButton = styled.button`
     color: #979797;
     font-weight: bold;
     margin-left: auto;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const ToggleIcon = styled.img`
     width: 10px;
     height: 10px;
     cursor: pointer;
+
+    @media (max-width: 600px) {
+        display: none;
+        
+    }
+`;
+
+const ToggleButton = styled.button`
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
+
+    @media (max-width: 600px) {
+        display: block;
+        font-size: 12px;
+        font-weight: 400;
+    }
+`;
+
+const ButtonGroup = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+`;
+
+const Button = styled.button`
+    padding: 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    background-color: ${({ selected }) => (selected ? 'black' : 'transparent')};
+    color: ${({ selected }) => (selected ? 'white' : 'black')};
+    cursor: pointer;
+    font-size: 14px;
+`;
+
+const CategoryHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 7px;
+`;
+
+const SelectAllButton = styled.button`
+    height: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #e0e0e0;
+    color: black;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
 `;
 
 export default SideFilter;

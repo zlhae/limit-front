@@ -6,6 +6,7 @@ import ProductListWrap from '../Components/Product';
 
 const GoodsCate = () => {
     const goodsCategories = ['비니', '버킷햇', '볼캡', '기타 모자', '머플러', '스카프', '넥타이', '장갑', '양말', '기타 패션잡화'];
+    const allCategories = { goods: goodsCategories };
 
     return (
         <MainProduct className='main_product'>
@@ -14,7 +15,7 @@ const GoodsCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilter selectedCategory="goods" categories={goodsCategories} />
+                    <SideFilter selectedCategory="goods" categories={goodsCategories} allCategories={allCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>

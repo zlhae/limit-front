@@ -25,6 +25,10 @@ const Tabs = styled.div`
     align-items: center;
     margin-bottom: 70px;
     border-bottom: 1px solid #e0e0e0;
+
+    @media (max-width: 600px) {
+        border-bottom: none;
+    }
 `;
 
 const LiTabs = styled.ul`
@@ -44,7 +48,7 @@ const TabName = styled.li`
     color: black;
 
     @media (max-width: 600px) {
-        font-size: 14px;
+        font-size: 15px;
     }
 `;
 
@@ -54,20 +58,23 @@ const TabLink = styled(NavLink).attrs({
     text-decoration: none;
     color: black;
     position: relative;
-    padding-bottom: 9px;
-
+    padding-bottom: 8px;
+    
     &.active {
-        
-    }
+        font-weight: bold;
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -3px;
+            width: 100%;
+            height: 2px;
+            background-color: black;
 
-    &.active::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -3px;  /* 부모 요소의 border-bottom과 겹치게 설정 */
-        width: 100%;
-        height: 2px;
-        background-color: black;
+            @media (max-width: 600px) {
+                bottom: 3px;
+            }
+        }
     }
 `;
 
