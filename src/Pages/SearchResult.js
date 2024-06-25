@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter';
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
-import adidas_brand from '../Images/adidas_brand.jpeg';
-import adidas from '../Images/adidas.jpg';
 
-const Brand = () => {
-
+const SearchResult = () => {
     const allCategories = {
         아우터: ['자켓', '아노락', '코트', '패딩', '기타 아우터'],
         상의: ['반팔 티셔츠', '긴팔 티셔츠', '가디건', '셔츠', '후드', '후드 집업', '스웨트셔츠', '슬리브리스', '원피스', '니트', '기타 상의'],
@@ -19,16 +16,15 @@ const Brand = () => {
 
     return (
         <MainProduct className='main_product'>
-            <ImageWrapper>
-                <img src={adidas_brand} alt="Adidas Brand" />
-                <LogoContainer>
-                    <LogoImage>
-                        <img src={adidas} alt="Adidas Logo" />
-                    </LogoImage>
-                    <BrandName>Adidas</BrandName>
-                    <BrandNameKorean>아디다스</BrandNameKorean>
-                </LogoContainer>
-            </ImageWrapper>
+            <div className='sub_header'>
+                <SubHeader />
+            </div>
+            <SearchBox>
+                <input
+                    type='text'
+                    placeholder='브랜드명, 상품명, 모델 번호 등'  
+                />
+            </SearchBox>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
                     <SideFilter allCategories={allCategories} />
@@ -46,72 +42,19 @@ const Brand = () => {
 
 const MainProduct = styled.div``;
 
-const ImageWrapper = styled.div`
-    position: relative;
-    img {
-        width: 100%;
-        height: auto;
-    }
-`;
-
-const LogoContainer = styled.div`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-`;
-
-const LogoImage = styled.div`
-    width: 15vw; /* 로고 크기를 뷰포트 너비의 10%로 설정 */
-    height: 15vw; /* 로고 크기를 뷰포트 너비의 10%로 설정 */
-    max-width: 170px; /* 최대 크기를 100px로 설정 */
-    max-height: 170px; /* 최대 크기를 100px로 설정 */
-
-    img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-    }
-`;
-
-const BrandName = styled.div`
-    font-size: 1.5vw; /* 글자 크기를 뷰포트 너비의 2%로 설정 */
-    font-weight: bold;
-    margin-top: 3px;
-    color: black;
-    max-font-size: 13px; /* 최대 글자 크기 설정 */
-
-    @media (max-width: 600px) {
-        font-size: 3vw; 
-    }
-`;
-
-const BrandNameKorean = styled.div`
-    font-size: 1vw; 
-    margin-top: 3px;
-    color: black;
-    max-font-size: 13px; /* 최대 글자 크기 설정 */
-
-    @media (max-width: 600px) {
-        font-size: 2vw; 
-        margin-top: -2px;
-    }
-`;
-
 const ProductContainer = styled.div`
-    margin-top: 30px;
     display: flex;
     width: 100%;
+    margin-top: 20px; /* 검색 박스와 사이드 필터 사이의 여백 추가 */
 
     @media (max-width: 600px) {
         flex-direction: column;
-        margin-top: 47px;
+        margin-top: -50px;
     }
 `;
 
 const SideFilterWrapper = styled.div`
-    margin-left: 10%; 
+    margin-left: 10%;
     width: 210px;
 
     @media (max-width: 600px) {
@@ -121,9 +64,30 @@ const SideFilterWrapper = styled.div`
     }
 `;
 
+const SearchBox = styled.div`
+width: 50%;
+margin: 0 auto;
+margin-top: -30px; /* 검색 박스를 전체 화면에서 위로 올리기 */
+
+input {
+    border-width: 0 0 3px;
+    border-color: black;
+    width: 100%;
+    font-size: 17px;
+    background-color: transparent;
+    outline: none;
+    padding-bottom: 1%;
+}
+
+@media (max-width: 600px) {
+    width: 90%;
+    margin-top: 0;
+}
+`;
+
 const ProductWrapper = styled.div`
     flex-grow: 1;
-    margin-right: 10%; 
+    margin-right: 10%;
     display: flex;
     flex-direction: column;
 
@@ -142,8 +106,9 @@ const ProductNumber = styled.h3`
         margin-left: 5%;
         font-size: 10px;
         color: #656565;
+        margin-top: 70px;
         margin-bottom: 25px;
     }
 `;
 
-export default Brand;
+export default SearchResult;

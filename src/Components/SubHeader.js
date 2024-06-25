@@ -20,11 +20,12 @@ const SubHeader = () => {
 
 const Tabs = styled.div`
     background-color: white;
-    height: 30px;
+    height: 40px;
     display: flex;
     align-items: center;
     margin-bottom: 70px;
     border-bottom: 1px solid #e0e0e0;
+    margin-top: -3px;
 
     @media (max-width: 600px) {
         border-bottom: none;
@@ -33,7 +34,7 @@ const Tabs = styled.div`
 
 const LiTabs = styled.ul`
     display: flex;
-    height: 30px;
+    height: 23px;
     padding: 0px 10%;
 
     @media (max-width: 600px) {
@@ -58,7 +59,7 @@ const TabLink = styled(NavLink).attrs({
     text-decoration: none;
     color: black;
     position: relative;
-    padding-bottom: 8px;
+    padding-bottom: 9px;
     
     &.active {
         font-weight: bold;

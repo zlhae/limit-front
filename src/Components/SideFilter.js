@@ -17,6 +17,7 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
     const [showResetButton, setShowResetButton] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
+    const [selectAllState, setSelectAllState] = useState({});
 
     useEffect(() => {
         const mediaQuery = window.matchMedia("(max-width: 600px)");
@@ -59,6 +60,7 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                     initialSelectedCategories[item] = false;
                 });
                 initialOpenCategories[category] = false;
+                setSelectAllState(prevState => ({ ...prevState, [category]: false }));
             });
         }
         setFilters(prevState => ({ ...prevState, ...initialSelectedCategories }));
@@ -105,9 +107,11 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
         setFilters(prevState => {
             const newFilters = { ...prevState };
             if (allCategories && allCategories[category]) {
+                const isSelectAll = !selectAllState[category];
                 allCategories[category].forEach(item => {
-                    newFilters[item] = true;
+                    newFilters[item] = isSelectAll;
                 });
+                setSelectAllState(prevState => ({ ...prevState, [category]: isSelectAll }));
             }
             return newFilters;
         });
@@ -131,6 +135,7 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                 allCategories[category].forEach(item => {
                     resetCategories[item] = false;
                 });
+                setSelectAllState(prevState => ({ ...prevState, [category]: false }));
             });
         }
         setFilters(resetCategories);
@@ -226,7 +231,9 @@ const SideFilter = ({ selectedCategory, categories, allCategories }) => {
                     <ButtonGroup>
                         <CategoryHeader>
                             <h1>{category}</h1>
-                            <SelectAllButton onClick={() => selectAllChildFilters(category)}>모두 선택</SelectAllButton>
+                            <SelectAllButton onClick={() => selectAllChildFilters(category)}>
+                                {selectAllState[category] ? '모두 해제' : '모두 선택'}
+                            </SelectAllButton>
                         </CategoryHeader>
                         {allCategories[category].map((item, index) => (
                             <Button
@@ -771,8 +778,6 @@ const ToggleButton = styled.button`
         display: block;
         font-size: 12px;
         font-weight: 400;
-
-        
     }
 `;
 
