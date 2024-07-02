@@ -4,6 +4,8 @@ import SubHeader from '../Components/SubHeader';
 import TestImage from '../Images/test01.png';
 import { useNavigate } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
+import SameProductListWrap from '../Components/SameProduct';
+
 import {
     Chart as ChartJS,
     LineElement,
@@ -138,6 +140,10 @@ const ProductDetail = () => {
 
     const onClickSale = () => {
         navigate('/sale');
+    }
+
+    const onClickMore = () => {
+        navigate('/moreproduct')
     }
 
     const handleSizeChange = (event) => {
@@ -281,6 +287,11 @@ const ProductDetail = () => {
                         </SizeTable>
                     </SizeTableWrapper>
                 </SizeInfo>
+                <DividerMobile2></DividerMobile2>
+                <SameproductWrapper>
+                <h3>중고 상품 둘러보기</h3>
+                </SameproductWrapper>
+                <SameProductListWrap></SameProductListWrap>
             </ProductContainer>
             <FixedButtonContainer>
                 <ActionButton1 onClick={onClickPurchase}>
@@ -342,7 +353,8 @@ const ProductDetails = styled.div`
 const ProductImageContainer = styled.div`
     width: 51%;
     position: sticky;
-    top: 0;
+    top: 15px;
+    
    
     box-sizing: border-box;
 
@@ -372,6 +384,19 @@ const DividerMobile = styled.div`  // 추가된 코드
     width: 100%;
     background-color: #ddd;
     margin: 20px 0;
+
+    @media (max-width: 600px) {
+        display: block;
+    }
+`;
+
+const DividerMobile2 = styled.div`  // 추가된 코드
+    display: none;
+    height: 1px;
+    width: 90%;
+    background-color: #ddd;
+    margin: 0 auto;
+    margin-top: 20px;
 
     @media (max-width: 600px) {
         display: block;
@@ -433,6 +458,42 @@ const ProductInfo = styled.div`
         margin-left: 5%;
         margin-right: 5%;
         margin-top: 40px;
+    }
+`;
+
+const SameproductWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    h3 {
+        font-size: 18px;
+    }
+
+    @media (max-width: 650px) {
+       margin-left: 5%;
+       h3 {
+        font-size: 15px;
+       } 
+        
+    }
+    
+`;
+
+const MoreLink = styled.a`
+    font-size: 13px;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 20px;
+    
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+        margin-right: 5%;
     }
 `;
 
@@ -631,6 +692,7 @@ const AdditionalImage = styled.img`
     border-radius: 0;
     background-color: rgba(221, 126, 96, 0.15);
     margin-right: 1%;
+    margin-top: 1%;
 
     @media (max-width: 600px) {
         width: 14%;
@@ -758,6 +820,10 @@ const SizeTable = styled.table`
     }
     th {
         background-color: #f2f2f2;
+    }
+
+    td {
+        min-width: 60px;
     }
 
     th:first-child, td:first-child {

@@ -170,10 +170,10 @@ const ProductGroup = styled.div`
     gap: 20px;
     width: 100%;
     @media (max-width: 1024px) {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
     @media (max-width: 600px) {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
         gap: 15px;
         margin-top: -15px;
     }
