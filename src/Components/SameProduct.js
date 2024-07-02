@@ -15,7 +15,7 @@ const images = [
     { src: test1, type: 'direct' },
     { src: test1, type: 'parcel' },
     { src: test1, type: 'direct' },
-    { src: test1, type: 'direct' },
+    { src: test1, type: 'direct' },   
 ];
 
 const SameProduct = ({ image, index }) => {
