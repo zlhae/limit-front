@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const DoImmediate=({type, immediatePriceData})=>{
+const DoImmediate=({type, productId, productOptionId, immediatePriceData})=>{
     const navigate=useNavigate();
     const onClickDummy=()=>{
         Swal.fire({
@@ -16,7 +16,7 @@ const DoImmediate=({type, immediatePriceData})=>{
         <div>
             <ImmediateElement>
                 <ImmediateTitle>즉시 {type==="purchase"?"구매":"판매"}가</ImmediateTitle>
-                <ImmediateContext>{(type==="purchase"?immediatePriceData.purchase:immediatePriceData.sale).toLocaleString('ko-KR')}원</ImmediateContext>
+                <ImmediateContext>{immediatePriceData}원</ImmediateContext>
             </ImmediateElement>
             <ImmediateSubmit type={type} onClick={onClickDummy}>즉시 {type==="purchase"?"구매":"판매"}하기</ImmediateSubmit>
         </div>

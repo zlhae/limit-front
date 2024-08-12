@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
-const ProductInformation=({image,number,name_en,name_ko,size})=>{
+const ProductInformation=({productInformationData})=>{
     return(
         <ProductInformationContainer>
             <ProductInformationImgContainer>
-                <ProductInformationImg src={image} alt='상품 이미지'></ProductInformationImg>
+                <ProductInformationImg src={productInformationData.imageUrl} alt='상품 이미지'></ProductInformationImg>
             </ProductInformationImgContainer>
             <ProductInformationTextContainer>
-                <ProductInformationTextBold>{number}</ProductInformationTextBold>
-                <ProductInformationTextRegular>{name_en}</ProductInformationTextRegular>
-                <ProductInformationTextRegular>{name_ko}</ProductInformationTextRegular>
-                <ProductInformationTextBold>{size}</ProductInformationTextBold>
+                <ProductInformationTextBold>{productInformationData.modelNumber}</ProductInformationTextBold>
+                <ProductInformationTextRegular>{productInformationData.name_eng}</ProductInformationTextRegular>
+                <ProductInformationTextRegular>{productInformationData.name_kor}</ProductInformationTextRegular>
+                <ProductInformationTextBold>{productInformationData.size}</ProductInformationTextBold>
             </ProductInformationTextContainer>
         </ProductInformationContainer>
     );
@@ -29,9 +29,10 @@ const ProductInformationImgContainer=styled.div`
     margin-right: 15px;
 `
 const ProductInformationImg=styled.img`
+    display: block;
     width: 110px;
     height: 110px;
-    background-color: #dd7e6029;
+    background-color: #f5f5f7;
     border-radius: 15px;
 `
 
