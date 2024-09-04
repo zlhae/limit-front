@@ -83,7 +83,7 @@ export default function ModifyProfile() {
                 name: `${location.region1} ${location.region2} ${location.region3} ${location.region4}`
               }));
               showLocationOptions(locationOptions);
-            }
+            } 
           }
         });
       };
