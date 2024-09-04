@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SubHeader from '../Components/SubHeader';
-import SideFilterShoes from '../Components/SideFilter_shoes';
+import SideFilter from '../Components/SideFilter'; // SideFilter를 불러옴
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
 const ShoesCate = () => {
+    const shoesCategories = ['스니커즈', '샌들/슬리퍼', '플랫', '로퍼', '더비/레이스업', '힐/펌프스', '부츠', '기타 신발'];
+    const allCategories = { 신발: shoesCategories };
 
     return (
         <MainProduct className='main_product'>
@@ -13,22 +15,20 @@ const ShoesCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilterShoes />
+                    <SideFilter selectedCategory="shoes" categories={shoesCategories} allCategories={allCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>
-                        <h3> 상품 92,004개</h3>
+                        <h3>상품 10,987개</h3>
                     </ProductNumber>
-                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap />
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 }
 
-const MainProduct = styled.div`
-
-`;
+const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`
     margin-top: -20px;

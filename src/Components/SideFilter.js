@@ -2,107 +2,253 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MinusIcon from '../Images/icon-minus.svg';
 import PlusIcon from '../Images/icon-plus.svg';
+import Modal from './Modal';
 
-const SideFilter = () => {
-    const [isDeliverySelected, setIsDeliverySelected] = useState(false);
-    const [isDirectTradeSelected, setIsDirectTradeSelected] = useState(false);
-    const [isOuterSelected, setIsOuterSelected] = useState(false);
-    const [isTopSelected, setIsTopSelected] = useState(false);
-    const [isBottomSelected, setIsBottomSelected] = useState(false);
-    const [isShoesSelected, setIsShoesSelected] = useState(false);
-    const [isBagSelected, setIsBagSelected] = useState(false);
-    const [isGoodsSelected, setIsGoodsSelected] = useState(false);
-    const [isMaleSelected, setIsMaleSelected] = useState(false);
-    const [isFemaleSelected, setIsFemaleSelected] = useState(false);
+const SideFilter = ({ selectedCategory, categories, allCategories }) => {
+    const [filters, setFilters] = useState({
+        delivery: false,
+        directTrade: false,
+        male: false,
+        female: false,
+        isCategoryOpen: true,
+        isGenderOpen: true,
+    });
+    const [openCategories, setOpenCategories] = useState({});
     const [showResetButton, setShowResetButton] = useState(false);
-    const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-    const [isGenderOpen, setIsGenderOpen] = useState(false);
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
+    const [selectAllState, setSelectAllState] = useState({});
 
     useEffect(() => {
-        setShowResetButton(
-            isDeliverySelected ||
-            isDirectTradeSelected ||
-            isOuterSelected ||
-            isTopSelected ||
-            isBottomSelected ||
-            isShoesSelected ||
-            isBagSelected ||
-            isGoodsSelected ||
-            isMaleSelected ||
-            isFemaleSelected
-        );
-    }, [
-        isDeliverySelected,
-        isDirectTradeSelected,
-        isOuterSelected,
-        isTopSelected,
-        isBottomSelected,
-        isShoesSelected,
-        isBagSelected,
-        isGoodsSelected,
-        isMaleSelected,
-        isFemaleSelected
-    ]);
+        const mediaQuery = window.matchMedia("(max-width: 600px)");
 
-    const toggleDelivery = () => {
-        setIsDeliverySelected(prevState => !prevState);  
+        const handleViewportChange = (e) => {
+            if (e.matches) {
+                setFilters((prevState) => ({
+                    ...prevState,
+                    isCategoryOpen: false,
+                    isGenderOpen: false,
+                }));
+            } else {
+                setFilters((prevState) => ({
+                    ...prevState,
+                    isCategoryOpen: true,
+                    isGenderOpen: true,
+                }));
+            }
+        };
+
+        mediaQuery.addListener(handleViewportChange);
+
+        handleViewportChange(mediaQuery);
+
+        return () => {
+            mediaQuery.removeListener(handleViewportChange);
+        };
+    }, []);
+
+    useEffect(() => {
+        let initialSelectedCategories = {};
+        let initialOpenCategories = {};
+        if (categories) {
+            categories.forEach(item => {
+                initialSelectedCategories[item] = false;
+            });
+        } else if (allCategories) {
+            Object.keys(allCategories).forEach(category => {
+                allCategories[category].forEach(item => {
+                    initialSelectedCategories[item] = false;
+                });
+                initialOpenCategories[category] = false;
+                setSelectAllState(prevState => ({ ...prevState, [category]: false }));
+            });
+        }
+        setFilters(prevState => ({ ...prevState, ...initialSelectedCategories }));
+        setOpenCategories(initialOpenCategories);
+    }, [categories, allCategories]);
+
+    useEffect(() => {
+        const hasActiveFilter = Object.values(filters).some(value => value === true);
+        setShowResetButton(hasActiveFilter);
+    }, [filters]);
+
+    const toggleParentFilter = (category) => {
+        setFilters(prevState => {
+            const newFilters = { ...prevState, [category]: !prevState[category] };
+            if (newFilters[category]) {
+                if (allCategories && allCategories[category]) {
+                    allCategories[category].forEach(item => {
+                        newFilters[item] = false;
+                    });
+                }
+            }
+            return newFilters;
+        });
     };
 
-    const toggleDirectTrade = () => {
-        setIsDirectTradeSelected(prevState => !prevState); 
+    const toggleChildFilter = (item, parentCategory) => {
+        setFilters(prevState => {
+            const newFilters = { ...prevState, [item]: !prevState[item] };
+            if (newFilters[item]) {
+                newFilters[parentCategory] = false;
+            }
+            return newFilters;
+        });
     };
 
-    const toggleOuter = () => {
-        setIsOuterSelected(prevState => !prevState);
+    const toggleCategoryOpen = (category) => {
+        setOpenCategories(prevState => ({
+            ...prevState,
+            [category]: !prevState[category],
+        }));
     };
 
-    const toggleTop = () => {
-        setIsTopSelected(prevState => !prevState);
-    };
-
-    const toggleBottom = () => {
-        setIsBottomSelected(prevState => !prevState);
-    };
-
-    const toggleShoes = () => {
-        setIsShoesSelected(prevState => !prevState);
-    };
-
-    const toggleBag = () => {
-        setIsBagSelected(prevState => !prevState);
-    };
-
-    const toggleGoods = () => {
-        setIsGoodsSelected(prevState => !prevState);
-    };
-
-    const toggleMale = () => {
-        setIsMaleSelected(prevState => !prevState);
-    };
-
-    const toggleFemale = () => {
-        setIsFemaleSelected(prevState => !prevState);
+    const selectAllChildFilters = (category) => {
+        setFilters(prevState => {
+            const newFilters = { ...prevState };
+            if (allCategories && allCategories[category]) {
+                const isSelectAll = !selectAllState[category];
+                allCategories[category].forEach(item => {
+                    newFilters[item] = isSelectAll;
+                });
+                setSelectAllState(prevState => ({ ...prevState, [category]: isSelectAll }));
+            }
+            return newFilters;
+        });
     };
 
     const resetFilters = () => {
-        setIsDeliverySelected(false);
-        setIsDirectTradeSelected(false);
-        setIsOuterSelected(false);
-        setIsTopSelected(false);
-        setIsBottomSelected(false);
-        setIsShoesSelected(false);
-        setIsBagSelected(false);
-        setIsGoodsSelected(false);
-        setIsMaleSelected(false);
-        setIsFemaleSelected(false);
+        let resetCategories = {
+            delivery: false,
+            directTrade: false,
+            male: false,
+            female: false,
+            isCategoryOpen: filters.isCategoryOpen,
+            isGenderOpen: filters.isGenderOpen,
+        };
+        if (categories) {
+            categories.forEach(item => {
+                resetCategories[item] = false;
+            });
+        } else if (allCategories) {
+            Object.keys(allCategories).forEach(category => {
+                allCategories[category].forEach(item => {
+                    resetCategories[item] = false;
+                });
+                setSelectAllState(prevState => ({ ...prevState, [category]: false }));
+            });
+        }
+        setFilters(resetCategories);
     };
 
-    const toggleCategory = () => {
-        setIsCategoryOpen(prevState => !prevState);
+    const renderCategoryFilters = () => {
+        const categoryLabels = {
+            outer: '아우터',
+            top: '상의',
+            bottom: '하의',
+            shoes: '신발',
+            bag: '가방',
+            goods: '패션잡화'
+        };
+
+        if (categories && categories.length > 0) {
+            return categories.map((item, index) => (
+                <label key={index}>
+                    <input
+                        type='checkbox'
+                        name={`checkbox_${item}`}
+                        checked={filters[item] || false}
+                        onChange={() => toggleParentFilter(item)}
+                    ></input>
+                    {item}
+                </label>
+            ));
+        } else if (allCategories) {
+            return Object.keys(allCategories).map(category => (
+                <div key={category}>
+                    <div className='cate_filter_text' onClick={() => toggleCategoryOpen(category)}>
+                        <label>
+                            <input
+                                type='checkbox'
+                                name={`checkbox_${category}`}
+                                checked={filters[category] || false}
+                                onChange={() => toggleParentFilter(category)}
+                            ></input>
+                            {categoryLabels[category] || category}
+                        </label>
+                    </div>
+                    {openCategories[category] && (
+                        <div style={{ marginLeft: '20px' }}>
+                            {allCategories[category].map((item, index) => (
+                                <label key={index}>
+                                    <input
+                                        type='checkbox'
+                                        name={`checkbox_${item}`}
+                                        checked={filters[item] || false}
+                                        onChange={() => toggleChildFilter(item, category)}
+                                    ></input>
+                                    {item}
+                                </label>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ));
+        }
+        return null;
     };
 
-    const toggleGender = () => {
-        setIsGenderOpen(prevState => !prevState);
+    const getSelectedCategories = () => {
+        let selected = [];
+        if (categories) {
+            selected = categories.filter(item => filters[item]);
+        } else if (allCategories) {
+            Object.keys(allCategories).forEach(category => {
+                if (filters[category]) {
+                    selected.push(category);
+                }
+                allCategories[category].forEach(item => {
+                    if (filters[item]) {
+                        selected.push(item);
+                    }
+                });
+            });
+        }
+        return selected.join(', ');
+    };
+
+    const getSelectedGenders = () => {
+        const selectedGenders = [];
+        if (filters.male) selectedGenders.push('남성');
+        if (filters.female) selectedGenders.push('여성');
+        return selectedGenders.join(', ');
+    };
+
+    const renderCategoryButtons = () => {
+        if (allCategories) {
+            return Object.keys(allCategories).map(category => (
+                <div key={category}>
+                    <ButtonGroup>
+                        <CategoryHeader>
+                            <h1>{category}</h1>
+                            <SelectAllButton onClick={() => selectAllChildFilters(category)}>
+                                {selectAllState[category] ? '모두 해제' : '모두 선택'}
+                            </SelectAllButton>
+                        </CategoryHeader>
+                        {allCategories[category].map((item, index) => (
+                            <Button
+                                key={index}
+                                selected={filters[item]}
+                                onClick={() => toggleChildFilter(item, category)}
+                            >
+                                {item}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </div>
+            ));
+        }
+        return null;
     };
 
     return (
@@ -113,7 +259,6 @@ const SideFilter = () => {
                         <select name='array_type' id='aType'>
                             <option value="popular">인기순</option>
                             <option value="lately">최신순</option>
-                        
                         </select>
                     </TopFilterArray>
                     <StatusFilter>
@@ -123,130 +268,118 @@ const SideFilter = () => {
                                     <h1>필터</h1>
                                 </div>
                                 <div className='status_filter_btn'>
-                                    <button className={`status_filter_btn_opt1 ${isDeliverySelected ? 'selected' : ''}`} onClick={toggleDelivery}>택배</button>
-                                    <button className={`status_filter_btn_opt2 ${isDirectTradeSelected ? 'selected' : ''}`} onClick={toggleDirectTrade}>직거래</button>
+                                    <button className={`status_filter_btn_opt1 ${filters.delivery ? 'selected' : ''}`} onClick={() => toggleParentFilter('delivery')}>택배</button>
+                                    <button className={`status_filter_btn_opt2 ${filters.directTrade ? 'selected' : ''}`} onClick={() => toggleParentFilter('directTrade')}>직거래</button>
                                 </div>
                             </StatusFilterBox>
                             <CateFilterBox>
+                                <Line />
                                 <div className='cate_filter_text'>
                                     <h1>카테고리</h1>
-                                    <ToggleIcon onClick={toggleCategory} src={isCategoryOpen ? MinusIcon : PlusIcon} alt="카테고리 펼치기/접기 아이콘" />
+                                    <ToggleIcon
+                                        onClick={() => setFilters(prevState => ({ ...prevState, isCategoryOpen: !prevState.isCategoryOpen }))}
+                                        src={filters.isCategoryOpen ? MinusIcon : PlusIcon}
+                                        alt="카테고리 펼치기/접기 아이콘"
+                                        className="category-toggle-icon"
+                                    />
+                                    <ToggleButton onClick={() => setIsCategoryModalOpen(true)} className="mobile-category-button">
+                                        카테고리
+                                    </ToggleButton>
                                 </div>
-                                {isCategoryOpen && (
+                                {filters.isCategoryOpen && (
                                     <div className='cate_filter_checkbox'>
-                                        <label><input type='checkbox' name='checkbox_outer' checked={isOuterSelected} onChange={toggleOuter}></input>아우터</label>
-                                        {isOuterSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_jacket'></ChildCheckbox>자켓</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_anorak'></ChildCheckbox>아노락</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_coat'></ChildCheckbox>코트</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_padding'></ChildCheckbox>패딩</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_outers'></ChildCheckbox>기타 아우터</label>
-                                            </>
-                                        )}
-                                        <label><input type='checkbox' name='checkbox_top' checked={isTopSelected} onChange={toggleTop}></input>상의</label>
-                                        {isTopSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_short_tshirt'></ChildCheckbox>반팔 티셔츠</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_long_tshirt'></ChildCheckbox>긴팔 티셔츠</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_cardigan'></ChildCheckbox>가디건</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_shirt'></ChildCheckbox>셔츠</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_hoodie'></ChildCheckbox>후드</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_hooded_zipup'></ChildCheckbox>후드 집업</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_sweatshirt'></ChildCheckbox>스웨트셔츠</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_sleeveless'></ChildCheckbox>슬리브리스</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_onepiece'></ChildCheckbox>원피스</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_knit'></ChildCheckbox>니트</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_tops'></ChildCheckbox>기타 상의</label>
-                                            </>
-                                        )}
-                                        <label><input type='checkbox' name='checkbox_bottom' checked={isBottomSelected} onChange={toggleBottom}></input>하의</label>
-                                        {isBottomSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_pants'></ChildCheckbox>바지</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_short_pants'></ChildCheckbox>반바지</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_skirt'></ChildCheckbox>스커트</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_leggings'></ChildCheckbox>레깅스</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_bottoms'></ChildCheckbox>기타 하의</label>
-
-                                            </>
-                                        )}
-                                        <label><input type='checkbox' name='checkbox_shoes' checked={isShoesSelected} onChange={toggleShoes}></input>신발</label>
-                                        {isShoesSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_sneakers'></ChildCheckbox>스니커즈</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_sandals_slippers'></ChildCheckbox>샌들/슬리퍼</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_flat'></ChildCheckbox>플랫</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_looper'></ChildCheckbox>로퍼</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_derby_raceup'></ChildCheckbox>더비/레이스업</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_heels_pumps'></ChildCheckbox>힐/펌프스</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_boots'></ChildCheckbox>부츠</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_footwear'></ChildCheckbox>기타 신발</label>
-
-                                            </>
-                                        )}
-                                        <label><input type='checkbox' name='checkbox_bag' checked={isBagSelected} onChange={toggleBag}></input>가방</label>
-                                        {isBagSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_premiumbag'></ChildCheckbox>프리미엄가방</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_minibag'></ChildCheckbox>미니백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_backpack'></ChildCheckbox>백팩</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_shoulderbag'></ChildCheckbox>숄더백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_totebag'></ChildCheckbox>토트백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_crossbag'></ChildCheckbox>크로스백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_clutch'></ChildCheckbox>클러치</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_duffelbag'></ChildCheckbox>더플백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_echobag'></ChildCheckbox>에코백</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_carrier'></ChildCheckbox>캐리어</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_bags'></ChildCheckbox>기타 가방</label>
-
-                                            </>
-                                        )}
-                                        <label><input type='checkbox' name='checkbox_goods' checked={isGoodsSelected} onChange={toggleGoods}></input>패션잡화</label>
-                                        {isGoodsSelected && (
-                                            <>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_beanie'></ChildCheckbox>비니</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_buckethat'></ChildCheckbox>버킷햇</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_ballcap'></ChildCheckbox>볼캡</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_caps'></ChildCheckbox>기타 모자</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_muffler'></ChildCheckbox>머플러</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_scarf'></ChildCheckbox>스카프</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_tie'></ChildCheckbox>넥타이</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_gloves'></ChildCheckbox>장갑</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_socks'></ChildCheckbox>양말</label>
-                                                <label><ChildCheckbox type='checkbox' name='checkbox_fashion_goods'></ChildCheckbox>기타 패션잡화</label>
-                                            </>
-                                        )}
+                                        {renderCategoryFilters()}
                                     </div>
                                 )}
+                                {!filters.isCategoryOpen && <SelectedFilters>{getSelectedCategories()}</SelectedFilters>}
                             </CateFilterBox>
                             <GenderFilterBox>
+                                <Line />
                                 <div className='gender_filter_text'>
                                     <h1>성별</h1>
-                                    <ToggleIcon onClick={toggleGender} src={isGenderOpen ? MinusIcon : PlusIcon} alt="성별 펼치기/접기 아이콘" />
+                                    <ToggleIcon
+                                        onClick={() => setFilters(prevState => ({ ...prevState, isGenderOpen: !prevState.isGenderOpen }))}
+                                        src={filters.isGenderOpen ? MinusIcon : PlusIcon}
+                                        alt="성별 펼치기/접기 아이콘"
+                                        className="gender-toggle-icon"
+                                    />
+                                    <ToggleButton onClick={() => setIsGenderModalOpen(true)} className="mobile-gender-button">
+                                        성별
+                                    </ToggleButton>
                                 </div>
-                                {isGenderOpen && (
+                                {filters.isGenderOpen && (
                                     <div className='gender_filter_checkbox'>
-                                        <label><input type='checkbox' name='checkbox_male' checked={isMaleSelected} onChange={toggleMale}></input>남성</label>
-                                        <label><input type='checkbox' name='checkbox_female' checked={isFemaleSelected} onChange={toggleFemale}></input>여성</label>
+                                        <label>
+                                            <input
+                                                type='checkbox'
+                                                name='checkbox_male'
+                                                checked={filters.male || false}
+                                                onChange={() => toggleParentFilter('male')}
+                                            ></input>
+                                            남성
+                                        </label>
+                                        <label>
+                                            <input
+                                                type='checkbox'
+                                                name='checkbox_female'
+                                                checked={filters.female || false}
+                                                onChange={() => toggleParentFilter('female')}
+                                            ></input>
+                                            여성
+                                        </label>
                                     </div>
                                 )}
+                                {!filters.isGenderOpen && <SelectedFilters>{getSelectedGenders()}</SelectedFilters>}
                             </GenderFilterBox>
                         </FiltersContainer>
                     </StatusFilter>
                     {showResetButton && <ResetButton onClick={resetFilters}>초기화</ResetButton>}
                 </div>
             </Container>
+            <Modal
+                isOpen={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                onReset={resetFilters}
+                selectedFilters={getSelectedCategories()}
+            >
+                <div>
+                    {renderCategoryButtons()}
+                </div>
+            </Modal>
+            <Modal
+                isOpen={isGenderModalOpen}
+                onClose={() => setIsGenderModalOpen(false)}
+                onReset={resetFilters}
+                selectedFilters={getSelectedGenders()}
+            >
+                <div>
+                    <ButtonGroup>
+                        <Button
+                            selected={filters.male}
+                            onClick={() => toggleParentFilter('male')}
+                        >
+                            남성
+                        </Button>
+                        <Button
+                            selected={filters.female}
+                            onClick={() => toggleParentFilter('female')}
+                        >
+                            여성
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            </Modal>
         </TotalContainer>
     );
-}
+};
 
 const TotalContainer = styled.div`
 
     @media (max-width: 600px) {
         background-color: white;  
         width: 100%;
-        margin-top: -55px; 
+        margin-top: -50px; 
+        border-bottom: 1px solid #e0e0e0;
     }
 `;
 
@@ -259,22 +392,18 @@ const Container = styled.div`
     @media (max-width: 600px) {
         width: 90%; 
         margin: 0 auto;  
-        align-items: center;  
     }
 `;
 
-const TopFilterArray = styled.div` /* 인기순, 최신순 css */
+const TopFilterArray = styled.div`
     display: flex;
     width: 100%;  
     order: 2;  
     justify-content: flex-start;
 
-    @media (max-width: 600px) {
-        display: none;
-    }
-
     select {
-        width: auto; 
+        color: black;
+        width: auto;
         height: 30px;
         border: none;
         background-color: transparent;
@@ -289,18 +418,19 @@ const TopFilterArray = styled.div` /* 인기순, 최신순 css */
         background-size: 17px; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-arrows-sort' width='24' height='24' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M3 9l4-4l4 4m-4 -4v14' /%3E%3Cpath d='M21 15l-4 4l-4-4m4 4v-14' /%3E%3C/svg%3E");
         outline: none;
+        cursor: pointer;
+
+        @media (max-width: 600px) {
+            display: none;
+        }
     }
 `;
 
 const StatusFilter = styled.div`
     margin-bottom: 20px;
-
-    @media (max-width: 600px) {
-        flex: 1;
-    }
 `;
 
-const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
+const StatusFilterBox = styled.div` 
     margin-top: 5px;
 
     .status_filter_text h1 {
@@ -328,45 +458,70 @@ const StatusFilterBox = styled.div` /* 택배, 직거래 버튼 css */
         }
 
         .status_filter_btn_opt1 {
+            color: black;
             font-size: 12px;
             background-color: transparent;
             width: 70px;
             padding: 5px;
             border-radius: 20px;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #e0e0e0;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
 
         .status_filter_btn_opt2 {
+            color: black;
             font-size: 12px;
             background-color: transparent;
             width: 70px;
             padding: 5px;
             border-radius: 20px;
-            border: 1px solid #d9d9d9;
+            border: 1px solid #e0e0e0;
             margin-left: 5px;
             margin-right: 10px;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
 
         .status_filter_btn_opt1:active,
         .status_filter_btn_opt1.selected,
         .status_filter_btn_opt2:active,
         .status_filter_btn_opt2.selected {
-            background-color: #d9d9d9;
-            font-weight: bold;
+            background-color: black;
+            color: white;
+            border: 1px solid black;
+        }
+
+        .status_filter_btn_opt2 {
+            @media (max-width: 600px) {
+                position: relative;
+                margin-right: 15px; // 직거래 버튼과 세로선 사이의 간격
+            }
+
+            @media (max-width: 600px) {
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    right: -10px;
+                    transform: translateY(-50%);
+                    width: 1px;
+                    height: 25px;
+                    background-color: #d9d9d9;
+                }
+            }
         }
     }
 `;
 
-const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
-    margin-top: 1px;
+const CateFilterBox = styled.div` 
+    margin-top: 10px;
     width: 180px;
 
     @media (max-width: 600px) {
         flex: 1;
         width: 140px;
-        margin-left: 10px;
+        margin-left: 5px;
     }
 
     .cate_filter_text {
@@ -377,6 +532,12 @@ const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
         h1 {
             font-size: 14px;
             font-weight: bold;
+
+            @media (max-width: 600px) {
+                font-weight: lighter;
+                font-size: 13px;
+                display: none;  
+            }
         }
     }
 
@@ -412,11 +573,40 @@ const CateFilterBox = styled.div` /* 카테고리 체크박스 css */
     }
 
     .cate_filter_checkbox input[type="checkbox"]:checked::before {
-        background-color: #d9d9d9; 
+        background-color: #transparent; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cline x1='0.353553' y1='2.64645' x2='3.35355' y2='5.64645' stroke='black'/%3E%3Cline x1='2.64645' y1='5.64645' x2='7.64645' y2='0.646447' stroke='black'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-size: 100% 100%;
         background-position: 50%;
+    }
+
+    @media (max-width: 600px) {
+        .cate_filter_checkbox {
+            display: none;
+        }
+
+        .cate_filter_text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4.5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            background-color: transparent;
+            font-weight: 100;
+            width: 60px;
+            height: 16px;
+            margin-top: -5px;
+            
+        }
+
+        .mobile-category-button {
+            display: block;
+        }
+
+        .category-toggle-icon {
+            display: none;
+        }
     }
 `;
 
@@ -429,12 +619,28 @@ const FiltersContainer = styled.div`
     margin-bottom: -15px;  
 `;
 
-const ChildCheckbox = styled.input` /* 카테고리 자식 체크박스 css */
-    margin-left: 25px; 
+const Line = styled.hr`
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+    margin: 15px 0;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
-const GenderFilterBox = styled.div` /* 성별 체크박스 css */
-    margin-top: 1px;
+const SelectedFilters = styled.div`
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
+`;
+
+const GenderFilterBox = styled.div` 
+    margin-top: 10px;
     width: 180px;
 
     @media (max-width: 600px) {
@@ -451,7 +657,13 @@ const GenderFilterBox = styled.div` /* 성별 체크박스 css */
         h1 {
             font-size: 14px;
             font-weight: bold;
-        }
+
+            @media (max-width: 600px) {
+                font-weight: lighter;
+                font-size: 13px;
+                 display: none;  
+            }
+        }        
     }
 
     .gender_filter_checkbox label {
@@ -486,15 +698,45 @@ const GenderFilterBox = styled.div` /* 성별 체크박스 css */
     }
 
     .gender_filter_checkbox input[type="checkbox"]:checked::before {
-        background-color: #d9d9d9; 
+        background-color: #transparent; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cline x1='0.353553' y1='2.64645' x2='3.35355' y2='5.64645' stroke='black'/%3E%3Cline x1='2.64645' y1='5.64645' x2='7.64645' y2='0.646447' stroke='black'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-size: 100% 100%;
         background-position: 50%;
     }
+
+    @media (max-width: 600px) {
+        .gender_filter_checkbox {
+            display: none;
+        }
+
+        .gender_filter_text {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4.5px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            background-color: transparent;
+            font-weight: 100;
+            width: 40px;
+            height: 16px;
+            margin-top: -5px;
+            margin-left: -77px;
+        }
+
+        .mobile-gender-button {
+            display: block;
+        }
+
+        .gender-toggle-icon {
+            display: none;
+        }
+
+    }
 `;
 
-const ResetButton = styled.button` /* 초기화 버튼 css */
+const ResetButton = styled.button` 
     display: flex;
     border: none;
     background-color: transparent;
@@ -506,12 +748,72 @@ const ResetButton = styled.button` /* 초기화 버튼 css */
     color: #979797;
     font-weight: bold;
     margin-left: auto;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
-const ToggleIcon = styled.img` /* +,- 아이콘 css */
+const ToggleIcon = styled.img`
     width: 10px;
     height: 10px;
     cursor: pointer;
+
+    @media (max-width: 600px) {
+        display: none;
+        
+    }
+`;
+
+const ToggleButton = styled.button`
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
+
+    @media (max-width: 600px) {
+        display: block;
+        font-size: 12px;
+        font-weight: 400;
+    }
+`;
+
+const ButtonGroup = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+`;
+
+const Button = styled.button`
+    padding: 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    background-color: ${({ selected }) => (selected ? 'black' : 'transparent')};
+    color: ${({ selected }) => (selected ? 'white' : 'black')};
+    cursor: pointer;
+    font-size: 14px;
+`;
+
+const CategoryHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 7px;
+`;
+
+const SelectAllButton = styled.button`
+    height: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #e0e0e0;
+    color: black;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 10px;
 `;
 
 export default SideFilter;

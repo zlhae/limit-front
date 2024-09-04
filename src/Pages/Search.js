@@ -1,16 +1,36 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '../Images/icon-search-delete.svg';
-import CloseIcon from '../Images/icon-search-close.svg'
+import CloseIcon from '../Images/icon-search-close.svg';
 
 const Search = () => {
+    const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            navigate('/searchresult', { state: { query: searchTerm } });
+        }
+    };
+
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
     return (
-        <Container> 
+        <Container>
             <CancelButton>
                 <img alt='search_close' src={CloseIcon}></img>
             </CancelButton>
             <SearchBox>
-                <input type='text' placeholder='브랜드명, 상품명, 모델 번호 등'></input>
+                <input
+                    type='text'
+                    placeholder='브랜드명, 상품명, 모델 번호 등'
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                />
             </SearchBox>
             <RecentSearchContainer>
                 <RecentSearchText>
@@ -85,8 +105,6 @@ const Search = () => {
             </TopSearchContainer>
         </Container>
     );
-
-    
 }
 
 const Container = styled.div` 
@@ -98,7 +116,7 @@ const Container = styled.div`
     } 
 `;
 
-const CancelButton = styled.div` // 검색 화면 닫기 버튼
+const CancelButton = styled.div` 
     position: absolute; 
     top: 100px; 
     right: 10%; 
@@ -109,7 +127,7 @@ const CancelButton = styled.div` // 검색 화면 닫기 버튼
     } 
 `;
 
-const SearchBox = styled.div` // 검색창 
+const SearchBox = styled.div`
     input {
         border-width: 0 0 3px; 
         border-color: black;
@@ -122,19 +140,19 @@ const SearchBox = styled.div` // 검색창
     }
 `;
 
-const RecentSearchContainer = styled.div` // 최근 검색어, 전체 지우기 버튼 위치
+const RecentSearchContainer = styled.div`
     margin-top: 2%;
     display: flex;
     align-items: center;
 `;
 
-const RecentSearchText = styled.div` // 최근 검색어 텍스트
+const RecentSearchText = styled.div`
     h3 {
         font-size: 16px;
     }
 `;
 
-const RecentSearchButton = styled.div` // 전체 지우기 버튼
+const RecentSearchButton = styled.div`
     button {
         margin-left: 5px;
         background-color: transparent;
@@ -145,26 +163,26 @@ const RecentSearchButton = styled.div` // 전체 지우기 버튼
     }
 `;
 
-const RecentSearchListContainer = styled.div` // 최근 검색어 항목 전체 컨테이너
+const RecentSearchListContainer = styled.div`
     display: flex;
-    flex-wrap: wrap; // 여러 줄 나열
+    flex-wrap: wrap;
     gap: 7px;
     & > *:nth-child(n) {
-        margin-bottom: 3px; // 줄이 넘어갈 때마다 각 줄의 간격 
+        margin-bottom: 3px;
     }
 `;
 
-const RecentSearchList = styled.span` // 최근 검색어 항목
+const RecentSearchList = styled.span`
     font-size: 13px;
     background-color: transparent;
     padding: 8px;
     border-radius: 20px;
-    border: solid 1px #d9d9d9; // 테두리 두께, 색상 설정
+    border: solid 1px #d9d9d9;
     overflow: hidden;
-    white-space: nowrap; // 너비를 초과하면 자동으로 줄 바꿈
-    text-overflow: ellipsis; // 글자 수 너비 초과하면 ... 표시
+    white-space: nowrap;
+    text-overflow: ellipsis;
     align-self: flex-start;
-    display: inline-flex; // 최근 검색어 항목과 버튼 이미지를 수평으로 배치
+    display: inline-flex;
     align-items: center;
     cursor: pointer;
 
@@ -174,11 +192,11 @@ const RecentSearchList = styled.span` // 최근 검색어 항목
     }
 `;
 
-const TopSearchContainer = styled.div` // 인기 검색어, 날짜 컨테이너
+const TopSearchContainer = styled.div`
     margin-top: 5%;
 `;
 
-const TopSearchTitle = styled.div` // 인기 검색어 텍스트
+const TopSearchTitle = styled.div`
     display: flex;
     align-items: center;
 
@@ -187,20 +205,20 @@ const TopSearchTitle = styled.div` // 인기 검색어 텍스트
     }
 `;
 
-const TopSearchDate = styled.div` // 현재 날짜 표시
+const TopSearchDate = styled.div`
     margin-left: 10px;
     font-size: 14px;
     background-color: transparent;
     color: #979797;
 `;
 
-const TopSearchList = styled.div` // 인기 검색어 순위 
+const TopSearchList = styled.div`
     cursor: pointer;
 
     ul {
-        list-style-type: none; // 점 등 마커 없애기
-        padding: 0; // 패딩 없애서 인기 검색어 바로 밑에 정렬
-        margin: 0; // 인기 검색어 텍스트와 인기 검색어 항목 마진
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
     }
 
     li {

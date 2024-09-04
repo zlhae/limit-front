@@ -25,6 +25,8 @@ import ProductDetail from "./Pages/ProductDetail";
 import SignUpComplete from "./Pages/SignUpComplete";
 import Brand from "./Pages/Brand";
 import Chatting from "./Pages/Chatting";
+import SearchaResult from "./Pages/SearchResult";
+import MoreProduct from "./Pages/MoreProduct";
 
 function App() {
   return (
@@ -54,6 +56,8 @@ function App() {
         <Route path = "/brand" element = {<Brand/>}/>
         <Route path = "/productdetail" element = {<ProductDetail/>}/>
         <Route path = "/chatting" element = {<Chatting/>}/>
+        <Route path = "/searchresult" element = {<SearchaResult/>}/>
+        <Route path = "/moreproduct" element = {<MoreProduct/>}/>
       </Routes>
       <Footer></Footer>  
     </div>

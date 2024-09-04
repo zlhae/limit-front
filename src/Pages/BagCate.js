@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SubHeader from '../Components/SubHeader';
-import SideFilterBag from '../Components/SideFilter_bag';
+import SideFilter from '../Components/SideFilter'; // SideFilter를 불러옴
 import styled from 'styled-components';
 import ProductListWrap from '../Components/Product';
 
 const BagCate = () => {
+    const bagCategories = ['프리미엄가방', '미니백', '백팩', '숄더백', '토트백', '크로스백', '클러치', '더플백', '에코백', '캐리어', '기타 가방'];
+    const allCategories = { 가방: bagCategories };
 
     return (
         <MainProduct className='main_product'>
@@ -13,22 +15,20 @@ const BagCate = () => {
             </div>
             <ProductContainer className='product_container'>
                 <SideFilterWrapper className='side_filter'>
-                    <SideFilterBag />
+                    <SideFilter selectedCategory="bag" categories={bagCategories} allCategories={allCategories} />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
                     <ProductNumber>
-                        <h3> 상품 23,334개</h3>
+                        <h3>상품 9,876개</h3>
                     </ProductNumber>
-                    <ProductListWrap></ProductListWrap>
+                    <ProductListWrap />
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 }
 
-const MainProduct = styled.div`
-
-`;
+const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`
     margin-top: -20px;

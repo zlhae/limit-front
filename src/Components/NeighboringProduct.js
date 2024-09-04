@@ -259,7 +259,7 @@ const Price = styled.div`
 
     h3 {
         font-size: 15px;
-        margin-top: 8px;
+        margin-top: 8px; 
 
         @media (max-width: 600px) {
             font-size: 14px; 

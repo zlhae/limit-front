@@ -16,7 +16,7 @@ const DoBid=({type})=>{
         }
     },[bidPrice])
     const navigate=useNavigate();
-    const onClickDummy=()=>{
+    const onClickDummy=()=>{ 
         if(dummyShow===false){
             Swal.fire({
                 icon: "success",
