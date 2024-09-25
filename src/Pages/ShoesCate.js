@@ -14,7 +14,7 @@ const ShoesCate = () => {
     const categoryNameMap = {
         7: '스니커즈',  
         8: '부츠',
-        9: '샌들/슬리퍼',
+        9: '샌들/슬리퍼',      
     };
 
     const categoryNames = selectedCategories.map((id) => categoryNameMap[id]);
