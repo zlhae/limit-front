@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { fetchWithAuth } from './authService';
 import axios from 'axios';
 
-const PopularBrand = () => {
-    const [brands, setBrands] = useState([]); // 브랜드 데이터를 저장할 상태
-    const [error, setError] = useState(null); // 오류 상태 추가
 
+const PopularBrand = () => {
+    const [brands, setBrands] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true); // loading 상태 추가
+  
     // API 호출하여 브랜드 데이터를 가져오는 함수
     const fetchBrands = async () => {
-        try {
-            const response = await axios.get('https://api.lim-it.one/api/v1/brands', {
-                headers: {
-                    'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MjcxNjc4NDAsImV4cCI6MTc2MTcyNzg0MCwic3ViIjoiMzIifQ.9Gh-fEJ-LjV6sWuWV0HTBGrlbQDQc_P3iOoMIMKBvo4',  // 올바른 인증 토큰을 넣어주세요
-                    'accept': '*/*'
-                }
-            });
-            console.log('API 응답:', response.data); // 응답 데이터 확인
-            setBrands(response.data); // API 응답 데이터를 상태에 저장
-        } catch (error) {
-            console.error('브랜드 데이터를 가져오는 중 오류 발생:', error.message);
-            setError(error.message); // 에러 메시지 상태에 저장
-        }
+      setLoading(true); // API 호출 전 로딩 시작
+      try {
+        const response = await fetchWithAuth('https://api.lim-it.one/api/v1/brands');
+        setBrands(response.data);
+        setLoading(false); // 데이터 로딩이 완료되면 로딩 종료
+      } catch (error) {
+        console.error('브랜드 데이터를 가져오는 중 오류 발생:', error.message);
+        setError('데이터를 불러오는 중 문제가 발생했습니다.');
+        setLoading(false); // 에러 발생 시에도 로딩 종료
+      }
     };
-
-    // 컴포넌트가 마운트될 때 API 호출
+  
     useEffect(() => {
-        fetchBrands();
+      fetchBrands();
     }, []);
-
     return (
         <TotalContainer>
-            {error ? (
-                <p>브랜드 데이터를 가져오는 중 오류 발생: {error}</p> // 에러 메시지 표시
+            {loading ? (
+                <p>브랜드 데이터를 불러오는 중입니다...</p>
+            ) : error ? (
+                <p>오류 발생: {error}</p>
             ) : (
                 <BrandThumbBox>
                     {brands.length > 0 ? (
@@ -45,7 +45,7 @@ const PopularBrand = () => {
                                             onError={(e) => e.target.src = 'default-image-path.jpg'} // 이미지 로드 실패 시 대체 이미지 설정
                                         />
                                     ) : (
-                                        <NoImageText>{brand.nameKor} / {brand.nameEng}</NoImageText> // 이미지 없을 때 한국/영어 이름 표시
+                                        <NoImageText>{brand.nameKor} / {brand.nameEng}</NoImageText> // 이미지 없을 때 이름 표시
                                     )}
                                 </ImgWrapper>
                                 <BrandName>
@@ -55,7 +55,7 @@ const PopularBrand = () => {
                             </BrandContainer>
                         ))
                     ) : (
-                        <p>브랜드 데이터를 불러오는 중입니다...</p> // 로딩 상태 메시지
+                        <p>브랜드 데이터가 없습니다.</p>
                     )}
                 </BrandThumbBox>
             )}
@@ -63,8 +63,8 @@ const PopularBrand = () => {
     );
 };
 
-const NoImageText = styled.div`
-`;
+// 스타일 코드
+const NoImageText = styled.div``;
 
 const TotalContainer = styled.div`
     width: 80%;
@@ -81,8 +81,6 @@ const BrandThumbBox = styled.div`
     grid-template-columns: repeat(5, 1fr);
     gap: 30px;
     width: 100%;
-
-
     @media (max-width: 600px) {
         gap: 15px;
     }
@@ -93,8 +91,7 @@ const ImgWrapper=styled.div`
     width: 100%;
     height: 150px;
     margin: 15px;
-    
-`
+`;
 
 const BrandContainer = styled.div`
     display: flex;
@@ -103,7 +100,6 @@ const BrandContainer = styled.div`
 `;
 
 const StyledImage = styled.img`
-    
     position: absolute;
     top: 0;
     left: 0;
@@ -122,7 +118,6 @@ const BrandName = styled.div`
 
 const EnglishName = styled.div`
     font-size: 15px;
-
     @media (max-width: 600px) {
         font-size: 13px;
     }
@@ -131,7 +126,6 @@ const EnglishName = styled.div`
 const KoreanName = styled.div`
     font-size: 12px;
     color: #979797;
-
     @media (max-width: 600px) {
         display: none;
     }
