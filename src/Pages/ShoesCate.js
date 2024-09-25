@@ -12,7 +12,7 @@ const ShoesCate = () => {
     const [selectedCategories, setSelectedCategories] = useState([7, 8, 9]); // 기본으로 신발 카테고리들
 
     const categoryNameMap = {
-        7: '스니커즈',
+        7: '스니커즈',  
         8: '부츠',
         9: '샌들/슬리퍼',
     };
