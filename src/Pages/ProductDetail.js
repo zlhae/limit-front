@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Line } from 'react-chartjs-2';
-import axios from 'axios';
 
 import {
     Chart as ChartJS,
@@ -38,6 +38,32 @@ const fetchProductDetail = async (id) => {
     }
 };
 
+const fetchProductPriceHistory = async (productId, period = 'P1Y') => {
+    const url = `https://api.lim-it.one/api/v1/trades/transactions/prices?productId=${productId}&period=${period}`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error('상품 시세 데이터를 가져오는 중 오류 발생:', error);
+        return { prices: [] };
+    }
+};
+
+// 체결 내역 데이터를 가져오는 함수
+const fetchTradeHistory = async (productId) => {
+    const url = `https://api.lim-it.one/api/v1/trades/transactions/prices?productId=${productId}`;
+    try {
+        const response = await axios.get(url);
+        console.log('체결 내역:', response.data); // 데이터가 제대로 오는지 확인
+        return response.data.prices;
+    } catch (error) {
+        console.error('체결 내역 데이터를 가져오는 중 오류 발생:', error);
+        return [];
+    }
+};
+
+
+
 const ProductDetail = () => {
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
@@ -45,6 +71,22 @@ const ProductDetail = () => {
     const [chartData, setChartData] = useState(null);
     const [selectedPrice, setSelectedPrice] = useState({ buyPrice: null, sellPrice: null });
     const [showModal, setShowModal] = useState(false);
+    const [fullTradeHistory, setFullTradeHistory] = useState([]);
+
+// 모달 열기 함수
+const handleShowMoreTrades = async () => {
+    const data = await fetchTradeHistory(productId);  // 상품 ID에 해당하는 전체 체결 내역 가져오기
+    if (data.length > 0) {
+        setFullTradeHistory(data); // 가져온 데이터를 상태로 저장
+    }
+    setShowModal(true);  // 모달 열기
+};
+
+
+// 모달 닫기 함수
+const handleCloseModal = () => {
+    setShowModal(false);
+};
 
     useEffect(() => {
         const getProductDetail = async () => {
@@ -66,6 +108,28 @@ const ProductDetail = () => {
         };
         getProductDetail();
     }, [productId]);
+
+    useEffect(() => {
+        const getProductPriceHistory = async () => {
+            const data = await fetchProductPriceHistory(productId, 'P1Y');
+            if (data.prices.length > 0) {
+                setChartData({
+                    labels: data.prices.map(price => price.tradeTime),  // 거래 날짜
+                    datasets: [{
+                        label: 'Price',
+                        data: data.prices.map(price => price.price),  // 가격 데이터
+                        fill: false,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        tension: 0.1
+                    }]
+                });
+            } else {
+                console.log('시세 데이터가 없습니다.');
+            }
+        };
+        getProductPriceHistory();
+    }, [productId]);
+    
 
     const chartOptions = {
         responsive: true,
@@ -180,8 +244,8 @@ const ProductDetail = () => {
                             </InfoItem>
                             <InfoItem>
                                 <div><strong>발매가:</strong></div>
-                                <div>{product.originalPrice?.toLocaleString()}원</div>
-                            </InfoItem>
+                                <div>{product.releasePrice?.toLocaleString()}원</div>
+                            </InfoItem>                         
                         </OtherInfo>
                         <BrandInfo>
                             <BrandLogo src={`https://${product.brandLogoUrl}`} alt="Brand Logo" />
@@ -190,11 +254,11 @@ const ProductDetail = () => {
                         <DividerMobile></DividerMobile>
                         <ButtonContainer>
                             <ActionButton1 onClick={onClickPurchase}>
-                                살래요
+                                구매
                                 {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
                             </ActionButton1>
                             <ActionButton2 onClick={onClickSale}>
-                                팔래요
+                                판매
                                 {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
                             </ActionButton2>
                         </ButtonContainer>
@@ -261,37 +325,42 @@ const ProductDetail = () => {
             </ProductContainer>
             <FixedButtonContainer>
                 <ActionButton1 onClick={onClickPurchase}>
-                    살래요
+                    구매
                     {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
                 </ActionButton1>
                 <ActionButton2 onClick={onClickSale}>
-                    팔래요
+                    판매
                     {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
                 </ActionButton2>
             </FixedButtonContainer>
             {showModal && (
-                <Modal>
-                    <ModalContent>
-                        <CloseButton onClick={() => setShowModal(false)}>X</CloseButton>
-                        <h3>전체 체결 내역</h3>
-                        <ScrollableContent>
-                            {tradeHistory.map((trade, index) => (
-                                <TradeItem key={index}>
-                                    <div>{trade.size}</div>
-                                    <div>{trade.price.toLocaleString()}원</div>
-                                    <div>{trade.date}</div>
-                                    {trade.fastDelivery && <div>빠른배송</div>}
-                                </TradeItem>
-                            ))}
-                        </ScrollableContent>
-                    </ModalContent>
-                </Modal>
-            )}
+    <Modal>
+        <ModalContent>
+            <CloseButton onClick={handleCloseModal}>X</CloseButton>
+            <h3>전체 체결 내역</h3>
+            <ScrollableContent>
+                {fullTradeHistory.length > 0 ? (
+                    fullTradeHistory.map((trade, index) => (
+                        <TradeItem key={index}>
+                            <div>{trade.tradeTime}</div>  {/* 거래 날짜 */}
+                            <div>{trade.price.toLocaleString()}원</div>  {/* 가격 */}
+                        </TradeItem>
+                    ))
+                ) : (
+                    <p>체결 내역이 없습니다.</p>
+                )}
+            </ScrollableContent>
+        </ModalContent>
+    </Modal>
+)}
+
+
         </Container>
     );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+`;
 
 const ProductContainer = styled.div`
     width: 80%;
@@ -406,12 +475,12 @@ const ProductInfo = styled.div`
     box-sizing: border-box;
 
     h3 {
-        font-size: 15px;
+        font-size: 17px;
         font-weight: lighter;
         margin-top: -20px;
 
         @media (max-width: 650px) {
-            font-size: 13px;
+            font-size: 15px;
         }
     }
 
@@ -437,22 +506,6 @@ const SameproductWrapper = styled.div`
        h3 {
         font-size: 15px;
        } 
-    }
-`;
-
-const MoreLink = styled.a`
-    font-size: 13px;
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    margin-top: 20px;
-
-    &:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 650px) {
-        margin-right: 5%;
     }
 `;
 

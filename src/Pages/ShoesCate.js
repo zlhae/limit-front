@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Replaced useHistory with useNavigate
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
-//import SideFilter from '../Components/SideFilter'; 
 import ProductListWrap from '../Components/Product';
 import SideFilter from '../Components/SideFilter'; 
 
 const ShoesCate = () => {
+    const navigate = useNavigate(); // Replaced useHistory with useNavigate
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
-    const [selectedCategories, setSelectedCategories] = useState([7, 8, 9]); // 기본으로 신발 카테고리들
+    const [selectedCategories, setSelectedCategories] = useState([7, 8, 9]); // 기본 신발 카테고리들
 
     const categoryNameMap = {
         7: '스니커즈',  
@@ -21,12 +22,10 @@ const ShoesCate = () => {
 
     const allCategories = { 신발: Object.values(categoryNameMap) };  
 
-    // 선택된 카테고리로 상품 데이터를 가져오는 함수
-    const fetchProducts = async (selectedCategories) => {
+    // URL이 바뀔 때마다 상품 데이터를 가져오는 함수
+    const fetchProducts = async (categoryParam) => {
         try {
-            const categoryParam = selectedCategories.length > 0 ? selectedCategories.map(cat => `category=${cat}`).join('&') : '';
             const url = `https://api.lim-it.one/api/v1/products?${categoryParam}`;
-            
             const response = await axios.get(url);
             
             setProducts(response.data.content);
@@ -36,9 +35,22 @@ const ShoesCate = () => {
         }
     };
 
+    // URL 파라미터에 맞춰 상품을 필터링
     useEffect(() => {
-        fetchProducts(selectedCategories);
+        const params = new URLSearchParams(window.location.search);
+        const categoryParam = params.get('category') || selectedCategories.map(cat => `category=${cat}`).join('&');
+        
+        fetchProducts(categoryParam);
     }, [selectedCategories]);
+
+    // 카테고리 체크박스 클릭 시 URL을 변경
+    const handleCategoryChange = (newCategories) => {
+        setSelectedCategories(newCategories);
+        
+        // 카테고리 ID를 URL 파라미터로 추가
+        const categoryParam = newCategories.map(cat => `category=${cat}`).join('&');
+        navigate(`?${categoryParam}`);  // Replaced history.push with navigate
+    };
 
     return (
         <MainProduct className='main_product'>
@@ -51,7 +63,7 @@ const ShoesCate = () => {
                         selectedCategory="shoes" 
                         categories={categoryNames} 
                         allCategories={allCategories} 
-                        setSelectedCategories={setSelectedCategories} // 필터에서 선택된 카테고리를 업데이트하는 함수 전달
+                        setSelectedCategories={handleCategoryChange} // 필터에서 선택된 카테고리를 업데이트하는 함수 전달
                     />
                 </SideFilterWrapper>
                 <ProductWrapper className='product'>
@@ -65,6 +77,7 @@ const ShoesCate = () => {
     );
 };
 
+// 스타일 컴포넌트 정의
 const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`

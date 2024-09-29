@@ -5,69 +5,49 @@ import LoadingImage from '../Images/Loading.svg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// 상품 데이터를 가져오는 함수
-const fetchProductData = async (brand = '', category = [], gender = '', page = 0, size = 829, sort = 'ASC') => {
-    let categoryParam = '';
-    if (category.length > 0) {
-        categoryParam = category.map(cat => `category=${cat}`).join('&');
-    }
-
+// 상품 데이터 가져오는 함수
+const fetchProductData = async (brand = '', category = [], gender = '', page = 0, size = 100, sort = 'ASC') => {
+    const categoryParam = category.length > 0 ? category.map(cat => `category=${cat}`).join('&') : '';
     const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${gender}&page=${page}&size=${size}&sort=${sort}`;
-
     try {
         const response = await axios.get(url);
-        console.log('API Response:', response.data); // 데이터 확인용
+        console.log('API Response:', response.data); // 데이터 확인
         return response.data;
     } catch (error) {
         console.error('상품 데이터를 가져오는 중 오류 발생:', error);
-        return { content: [] };  // 오류 시 빈 데이터 반환
+        return { content: [] };
     }
 };
 
-// 찜한 상품을 localStorage에서 가져오는 함수
-const getSavedBookmarks = () => {
-    const saved = localStorage.getItem('bookmarkedItems');
-    return saved ? JSON.parse(saved) : [];
-};
-
-// 찜한 상품을 localStorage에 저장하는 함수
-const saveBookmarks = (bookmarks) => {
-    localStorage.setItem('bookmarkedItems', JSON.stringify(bookmarks));
-};
-
-// 개별 상품 컴포넌트
 const Product = ({ product }) => {
     const navigate = useNavigate();
-    const [isBookmarked, setIsBookmarked] = useState(false);  // 찜 상태
-    const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
+    const [isBookmarked, setIsBookmarked] = useState(false);
 
-    // localStorage에서 찜 상태 불러오기
+    // localStorage에서 찜 상태를 불러오는 useEffect
     useEffect(() => {
-        const bookmarkedItems = getSavedBookmarks();
+        const bookmarkedItems = JSON.parse(localStorage.getItem('bookmarkedItems')) || [];
         if (bookmarkedItems.includes(product.id)) {
             setIsBookmarked(true);
         }
     }, [product.id]);
 
-    // 찜 상태 변경 핸들러
     const handleBookmarkClick = (e) => {
-        e.stopPropagation(); // 부모 클릭 이벤트 방지
-        const bookmarkedItems = getSavedBookmarks();
+        e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
+        const bookmarkedItems = JSON.parse(localStorage.getItem('bookmarkedItems')) || [];
         let updatedBookmarks;
-
+        
         if (isBookmarked) {
-            // 이미 찜한 상태라면 찜 취소
+            // 이미 찜한 상태 -> 찜 취소
             updatedBookmarks = bookmarkedItems.filter(id => id !== product.id);
         } else {
-            // 찜하지 않은 상태라면 찜 추가
+            // 찜하지 않은 상태 -> 찜 추가
             updatedBookmarks = [...bookmarkedItems, product.id];
         }
 
-        saveBookmarks(updatedBookmarks); // 업데이트된 찜 목록을 localStorage에 저장
-        setIsBookmarked(!isBookmarked);  // 찜 상태 업데이트
+        localStorage.setItem('bookmarkedItems', JSON.stringify(updatedBookmarks)); // 업데이트된 찜 목록을 localStorage에 저장
+        setIsBookmarked(!isBookmarked); // 찜 상태 업데이트
     };
 
-    // 상품 클릭 시 상세 페이지로 이동
     const handleProductClick = () => {
         navigate(`/productdetail/${product.id}`);
     };
@@ -81,7 +61,7 @@ const Product = ({ product }) => {
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
                 <img 
-                    src={imageSrc} 
+                    src={`https://${product.imageUrl}`} 
                     alt='Product Thumbnail' 
                     onError={(e) => e.target.src = LoadingImage}  // 이미지 로드 실패 시 대체 이미지 표시
                 />
@@ -110,17 +90,19 @@ const Product = ({ product }) => {
     );
 };
 
-// 전체 상품 리스트를 보여주는 컴포넌트
-const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 829, sort = 'ASC' }) => {
+// ProductListWrap 수정
+const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 100, sort = 'ASC' }) => {
     const [products, setProducts] = useState([]);
 
-    // 상품 데이터를 불러오는 useEffect
     useEffect(() => {
         const getProductData = async () => {
+            if (category.length === 0) {
+                console.error('카테고리가 전달되지 않았습니다.');
+                return;
+            }
             const data = await fetchProductData(brand, category, gender, page, size, sort);
-            setProducts(data.content);  // API 응답에서 상품 데이터 저장
+            setProducts(data.content);
         };
-
         getProductData();
     }, [brand, category, gender, page, size, sort]);
 
@@ -131,7 +113,7 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
                     products.map(product => (
                         <Product 
                             key={product.id} 
-                            product={product}
+                            product={product} 
                         />
                     ))
                 ) : (
@@ -142,7 +124,6 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
     );
 };
 
-// 스타일 컴포넌트들
 const ProductListContainer = styled.div`
     display: flex;
     justify-content: center;

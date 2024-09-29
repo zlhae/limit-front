@@ -19,10 +19,10 @@ const SideFilter = ({ selectedCategory, categories, allCategories, setProducts }
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
     const [selectAllState, setSelectAllState] = useState({});
-
+    
     // 1. API 호출 함수 추가 (필터된 상품 데이터 가져오기)
     const fetchProductData = async (categoryFilter = [], genderFilter = '') => {
-        const categoryParam = categoryFilter.map(cat => `category=${cat}`).join('&');
+        const categoryParam = categoryFilter.map(cat => `shop_category_id=${cat}`).join('&');  // 카테고리 ID를 URL에 추가
         const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${genderFilter}`;
 
         try {
@@ -87,12 +87,12 @@ const SideFilter = ({ selectedCategory, categories, allCategories, setProducts }
     }, [filters]);
 
     // 2. 부모 카테고리 필터 토글 함수 수정
-    const toggleParentFilter = (category) => {
+    const toggleParentFilter = (categoryId) => {
         setFilters(prevState => {
-            const newFilters = { ...prevState, [category]: !prevState[category] };
+            const newFilters = { ...prevState, [categoryId]: !prevState[categoryId] };
             const selectedCategories = Object.keys(newFilters).filter(key => newFilters[key]);
 
-            // 카테고리 필터 변경 시 API 호출
+            // 선택된 카테고리와 성별을 기준으로 API 호출
             fetchProductData(selectedCategories, filters.male ? 'male' : filters.female ? 'female' : '');
 
             return newFilters;

@@ -23,10 +23,11 @@ import Certification from "./Pages/certification";
 import SignUpInfo from "./Pages/SignUpInfo";
 import ProductDetail from "./Pages/ProductDetail";
 import SignUpComplete from "./Pages/SignUpComplete";
-import Brand from "./Pages/Brand";
+
 import Chatting from "./Pages/Chatting";
 import SearchaResult from "./Pages/SearchResult";
 import MoreProduct from "./Pages/MoreProduct";
+import Brand from "./Pages/Brand";
 
 function App() {
   return (
@@ -53,7 +54,7 @@ function App() {
         <Route path = "/shoescate" element = {<ShoesCate/>}/>
         <Route path = "/bagcate" element = {<BagCate/>}/>
         <Route path = "/goodscate" element = {<GoodsCate/>}/>
-        <Route path = "/brand" element = {<Brand/>}/>
+        <Route path = "/brand/:brandId" element={<Brand/>} />
         <Route path = "/productdetail/:productId" element = {<ProductDetail/>}/>
         <Route path = "/chatting" element = {<Chatting/>}/>
         <Route path = "/searchresult" element = {<SearchaResult/>}/>

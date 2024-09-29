@@ -1,31 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { fetchWithAuth } from './authService';
+import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
-
+import styled from 'styled-components';
+import { getAccessToken } from '../Utils/authService';
 
 const PopularBrand = () => {
     const [brands, setBrands] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true); // loading 상태 추가
-  
-    // API 호출하여 브랜드 데이터를 가져오는 함수
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
     const fetchBrands = async () => {
-      setLoading(true); // API 호출 전 로딩 시작
-      try {
-        const response = await fetchWithAuth('https://api.lim-it.one/api/v1/brands');
-        setBrands(response.data);
-        setLoading(false); // 데이터 로딩이 완료되면 로딩 종료
-      } catch (error) {
-        console.error('브랜드 데이터를 가져오는 중 오류 발생:', error.message);
-        setError('데이터를 불러오는 중 문제가 발생했습니다.');
-        setLoading(false); // 에러 발생 시에도 로딩 종료
-      }
+        setLoading(true);
+        try {
+            const token = getAccessToken();
+            const response = await axios.get('https://api.lim-it.one/api/v1/brands', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setBrands(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('브랜드 데이터를 가져오는 중 오류 발생:', error.message);
+            setError('데이터를 불러오는 중 문제가 발생했습니다.');
+            setLoading(false);
+        }
     };
-  
+
     useEffect(() => {
-      fetchBrands();
+        fetchBrands();
     }, []);
+
+    const handleBrandClick = (brandId) => {
+        navigate(`/brand/${brandId}`);
+    };
+
     return (
         <TotalContainer>
             {loading ? (
@@ -35,17 +45,17 @@ const PopularBrand = () => {
             ) : (
                 <BrandThumbBox>
                     {brands.length > 0 ? (
-                        brands.slice(0, 10).map((brand) => (
-                            <BrandContainer key={brand.id}>
+                        brands.map((brand) => (
+                            <BrandContainer key={brand.id} onClick={() => handleBrandClick(brand.id)}> 
                                 <ImgWrapper>
                                     {brand.logoUrl ? (
                                         <StyledImage 
                                             src={brand.logoUrl.startsWith('http') ? brand.logoUrl : `https://${brand.logoUrl}`} 
                                             alt={`${brand.nameEng} logo`} 
-                                            onError={(e) => e.target.src = 'default-image-path.jpg'} // 이미지 로드 실패 시 대체 이미지 설정
+                                            onError={(e) => e.target.src = 'default-image-path.jpg'}
                                         />
                                     ) : (
-                                        <NoImageText>{brand.nameKor} / {brand.nameEng}</NoImageText> // 이미지 없을 때 이름 표시
+                                        <NoImageText>{brand.nameKor} / {brand.nameEng}</NoImageText>
                                     )}
                                 </ImgWrapper>
                                 <BrandName>
@@ -63,8 +73,8 @@ const PopularBrand = () => {
     );
 };
 
-// 스타일 코드
-const NoImageText = styled.div``;
+const NoImageText = styled.div`
+`;
 
 const TotalContainer = styled.div`
     width: 80%;
@@ -81,53 +91,103 @@ const BrandThumbBox = styled.div`
     grid-template-columns: repeat(5, 1fr);
     gap: 30px;
     width: 100%;
-    @media (max-width: 600px) {
+
+    @media (max-width: 840px) {
         gap: 15px;
+    }
+
+    @media (max-width: 720px) {
+        gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+        gap: 10px;
     }
 `;
 
-const ImgWrapper=styled.div`
+const ImgWrapper = styled.div`
     position: relative;
     width: 100%;
     height: 150px;
-    margin: 15px;
 `;
 
 const BrandContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    cursor: pointer;
 `;
 
 const StyledImage = styled.img`
     position: absolute;
     top: 0;
     left: 0;
-    transform: translate(50,50);
     width: 100%;
     height: 100%;
     border-radius: 10px;
     object-fit: cover;
-    margin: auto;
+
+    @media (max-width: 960px) {
+        width: 100%;  
+        height: auto; 
+        object-fit: contain; 
+    }
+
+    @media (max-width: 600px) {
+        width: 100%;  
+        height: auto; 
+        object-fit: contain; 
+    }
 `;
 
 const BrandName = styled.div`
     text-align: center;
-    margin-top: 5px;
+    margin-top: 10px;
+
+    @media (max-width: 960px) {
+        margin-top: -15px;
+    }
+
+    @media (max-width: 840px) {
+        margin-top: -20px;
+    }
+
+    @media (max-width: 720px) {
+        margin-top: -45px;
+    }
+
+    @media (max-width: 600px) {
+        margin-top: -55px;
+    }
+
+    @media (max-width: 480px) {
+        margin-top: -70px;
+    }
+
+    @media (max-width: 380px) {
+        margin-top: -80px;
+    }
 `;
 
 const EnglishName = styled.div`
     font-size: 15px;
+    font-weight: bold;
+
     @media (max-width: 600px) {
+        font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
         font-size: 13px;
     }
 `;
 
 const KoreanName = styled.div`
-    font-size: 12px;
-    color: #979797;
+    font-size: 13px;
+    color: #6D6D6D;
+
     @media (max-width: 600px) {
-        display: none;
+        font-size: 12px;
     }
 `;
 

@@ -1,283 +1,181 @@
+// 수정할 것 : 요즘 많이 거래된 상품 순으로 정렬
+
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
-import { ReactComponent as BookmarkFilled } from '../Images/icon-bookmark-full.svg';
-import { ReactComponent as BookmarkOutline } from '../Images/icon-bookmark.svg';
+import BookmarkIcon from './BookmarkIcon';
+import { getSavedBookmarks, saveBookmarks } from '../Utils/Bookmarks';
 import ArrowLeftIcon from '../Images/arrow-left.svg';
-import ArrowRightIcon from '../Images/arrow-right.svg';
-import testProduct1 from '../Images/testProduct1.webp';
-import testProduct2 from '../Images/testProduct2.webp';
+import ArrowRightIcon from '../Images/arrow-right.svg'; 
+import LoadingImage from '../Images/Loading.svg';
 
-const images = [testProduct2, testProduct1, testProduct1, testProduct1, testProduct1];
+const MainProduct = ({ product, index }) => {
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
+    const navigate = useNavigate();
 
-const MainProduct = ({ productId, accessToken }) => {
-  const [dipsbuttonclicked, setDipsbuttonclicked] = useState(false);
-  const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        const savedBookmarks = getSavedBookmarks();
+        setIsBookmarked(savedBookmarks.includes(product.id));
+    }, [product.id]);
 
-  // 컴포넌트가 마운트될 때 찜 상태를 서버에서 불러옴
-  const fetchBookmarkStatus = async () => {
-    try {
-      const response = await fetch(`https://api.lim-it.one/api/v1/products/${productId}/wishes`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`, // 토큰을 통해 사용자 인증
-        },
-      });
+    const handleBookmarkClick = (e) => {
+        e.stopPropagation();
+        const savedBookmarks = getSavedBookmarks();
+        let updatedBookmarks = [...savedBookmarks];
 
-      if (response.ok) {
-        const result = await response.json();
-        setDipsbuttonclicked(result.wish); // 서버에서 받아온 찜 상태를 로컬 상태로 설정
-      } else {
-        console.error('Failed to fetch bookmark status');
-      }
-    } catch (error) {
-      console.error('Error fetching bookmark status:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        if (isBookmarked) {
+            updatedBookmarks = updatedBookmarks.filter(id => id !== product.id); 
+        } else {
+            updatedBookmarks.push(product.id); 
+        }
 
-  // 컴포넌트가 처음 렌더링될 때 찜 상태를 서버에서 가져옴
-  useEffect(() => {
-    fetchBookmarkStatus();
-  }, [productId]);
-
-  // 찜 상태 업데이트 함수
-  const dipsButtonClicked = async () => {
-    if (dipsbuttonclicked) {
-      // 찜 해제 요청
-      callRemoveWishAPI().then((response) => {
-        console.log('Removed from wishlist', response);
-        setDipsbuttonclicked(false); // UI 업데이트
-      });
-    } else {
-      // 찜 추가 요청
-      callAddWishAPI().then((response) => {
-        console.log('Added to wishlist', response);
-        setDipsbuttonclicked(true); // UI 업데이트
-      });
-    }
-  };
-
-  // 찜 추가 API 호출
-  const callAddWishAPI = async () => {
-    try {
-      const response = await fetch(`https://api.lim-it.one/api/v1/products/${productId}/wishes`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`, // 토큰을 통해 인증
-        },
-      });
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Failed to add to wishlist');
-      }
-    } catch (error) {
-      console.error('Error adding to wishlist:', error);
-    }
-  };
-
-  // 찜 해제 API 호출
-  const callRemoveWishAPI = async () => {
-    try {
-      const response = await fetch(`https://api.lim-it.one/api/v1/products/${productId}/wishes`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error('Failed to remove from wishlist');
-      }
-    } catch (error) {
-      console.error('Error removing from wishlist:', error);
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>; // 로딩 중 메시지
-  }
-
-  return (
-    <ProductContainer>
-      <ThumbBox>
-        {/* 클릭 이벤트를 처리할 수 있는 div로 수정 */}
-        <div onClick={dipsButtonClicked} style={{ cursor: 'pointer' }}>
-          {dipsbuttonclicked ? <BookmarkFilled /> : <BookmarkOutline />}
-        </div>
-        <img src={`https://api.lim-it.one/images/${productId}`} alt={`Product ${productId}`} />
-      </ThumbBox>
-      <InfoBox>
-        <BrandBookmark>
-          <Brand>
-            <h1>Asics</h1>
-          </Brand>
-        </BrandBookmark>
-        <Name>
-          <h2>Asics Unlimited Gel-Kayano 14 Carrier Grey Black</h2>
-        </Name>
-        <KoreaName>
-          <h3>아식스 언리미티드 젤 카야노 14 캐리어 그레이 블랙</h3>
-        </KoreaName>
-        <Tag>
-          <TagText>택배</TagText>
-          <TagText>직거래</TagText>
-        </Tag>
-        <Price>
-          <h3>310,000원</h3>
-        </Price>
-      </InfoBox>
-    </ProductContainer>
-  );
-};
-
-// 상품 리스트 컴포넌트 (스크롤 가능)
-const MainProductListWrap = ({ accessToken }) => {
-  const productListRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  // 스크롤 버튼 활성화 여부 결정
-  const checkScrollButtons = () => {
-    const { current } = productListRef;
-    if (current) {
-      const maxScrollLeft = current.scrollWidth - current.clientWidth;
-      setCanScrollLeft(current.scrollLeft > 0);
-      setCanScrollRight(current.scrollLeft < maxScrollLeft);
-    }
-  };
-
-  useEffect(() => {
-    const { current } = productListRef;
-    if (current) {
-      current.addEventListener('scroll', checkScrollButtons);
-    }
-    return () => {
-      if (current) {
-        current.removeEventListener('scroll', checkScrollButtons);
-      }
+        setIsBookmarked(!isBookmarked);
+        saveBookmarks(updatedBookmarks); 
     };
-  }, []);
 
-  // 스크롤 버튼 클릭 시 이동
-  const scrollProducts = (direction) => {
-    if (productListRef.current) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
-      productListRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      setTimeout(checkScrollButtons, 200); // 스크롤 후 버튼 상태 재확인
-    }
-  };
+    const handleProductClick = () => {
+        navigate(`/productdetail/${product.id}`);
+    };
 
-  return (
-    <ProductListWrap>
-      {canScrollLeft && <ArrowButton direction="left" onClick={() => scrollProducts('left')} />}
-      <ProductListContainer ref={productListRef}>
-        <ProductGroup>
-          {images.map((image, index) => (
-            <MainProduct
-              key={index}
-              image={image}
-              index={index}
-              productId={index + 1} // 실제 productId로 변경 필요
-              accessToken={accessToken} // 전달받은 토큰 사용
-            />
-          ))}
-        </ProductGroup>
-      </ProductListContainer>
-      {canScrollRight && <ArrowButton direction="right" onClick={() => scrollProducts('right')} />}
-    </ProductListWrap>
-  );
+    const handleImageError = () => {
+        setImageSrc(LoadingImage);
+    };
+
+    return (
+        <ProductContainer onClick={handleProductClick}>
+            <ThumbBox>
+                <BookmarkWrapper>
+                    <BookmarkIcon
+                        filled={isBookmarked}
+                        onClick={handleBookmarkClick} 
+                    />
+                </BookmarkWrapper>
+                <img 
+                    src={imageSrc} 
+                    alt={`Product Thumbnail ${index}`} 
+                    onError={handleImageError} 
+                />
+            </ThumbBox>
+            <InfoBox>
+                <BrandBookmark>
+                    <Brand>
+                        <h1>{product.brandNames.eng}</h1>
+                    </Brand>
+                </BrandBookmark>
+                <Name>
+                    <h2>{product.names.eng}</h2>
+                </Name>
+                <KoreaName>
+                    <h3>{product.names.kor}</h3>
+                </KoreaName>
+                <Tag>
+                    <TagText>택배</TagText>
+                    <TagText>직거래</TagText>
+                </Tag>
+                <Price>
+                    <h3>{product.currentPrice.toLocaleString()}원</h3>
+                </Price>
+            </InfoBox>
+        </ProductContainer>
+    );
 };
 
-const TouchableOpacity = styled.div`
+const MainProductListWrap = () => {
+    const productListRef = useRef(null);
+    const [products, setProducts] = useState([]);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
 
-`;
+    const fetchRecentProducts = async () => {
+        try {
+            const response = await axios.get('https://api.lim-it.one/api/v1/products', {
+                params: {
+                    sort: 'releaseDate,desc',
+                    size: 30,
+                },
+            });
+            setProducts(response.data.content);
+        } catch (error) {
+            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        }
+    };
 
-const ProductListWrap = styled.div`
-    width: 80%;
-    margin: 0 auto;
-    position: relative;
+    const checkScrollButtons = () => {
+        const { current } = productListRef;
+        if (current) {
+            const maxScrollLeft = current.scrollWidth - current.clientWidth;
+            setCanScrollLeft(current.scrollLeft > 0);
+            setCanScrollRight(current.scrollLeft < maxScrollLeft);
+        }
+    };
 
-    @media (max-width: 600px) {
-        width: 90%;
-    }
-`;
+    useEffect(() => {
+        fetchRecentProducts(); 
+    }, []);
 
-const ProductListContainer = styled.div`
-    display: flex;
-    overflow-x: scroll;
-    
-    &::-webkit-scrollbar {
-        display: none;
-    }
-`;
+    useEffect(() => {
+        const { current } = productListRef;
+        if (current) {
+            current.addEventListener('scroll', checkScrollButtons);
+        }
+        return () => {
+            if (current) {
+                current.removeEventListener('scroll', checkScrollButtons);
+            }
+        };
+    }, []);
 
-const ArrowButton = styled.button`
-    position: absolute;
-    top: 33.3%;
-    transform: translateY(-50%);
-    z-index: 10;
-    background: url(${(props) => (props.direction === 'left' ? ArrowLeftIcon : ArrowRightIcon)}) no-repeat center center;
-    background-size: contain;
-    width: 50px;
-    height: 50px;
-    border: none;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.3s;
+    const scrollProducts = (direction) => {
+        if (productListRef.current) {
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            productListRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            setTimeout(checkScrollButtons, 200);
+        }
+    };
 
-    &:hover {
-        opacity: 1;
-    }
-
-    ${(props) => (props.direction === 'left' ? 'left: -20px;' : 'right: -20px;')}
-
-    @media (max-width: 600px) {
-        width: 40px;
-        height: 40px;
-
-        ${(props) => (props.direction === 'left' ? 'left: -15px;' : 'right: -15px;')}
-    }
-`;
-
-const ProductGroup = styled.div`
-    display: flex;
-    gap: 20px;
-
-    @media (max-width: 600px) {
-        gap: 15px;
-    }
-`;
+    return (
+        <ProductListWrap>
+            {canScrollLeft && <ArrowButton direction="left" onClick={() => scrollProducts('left')} />}
+            <ProductListContainer ref={productListRef}>
+                <ProductGroup>
+                    {products.map((product, index) => (
+                        <MainProduct key={product.id} product={product} index={index} />
+                    ))}
+                </ProductGroup>
+            </ProductListContainer>
+            {canScrollRight && <ArrowButton direction="right" onClick={() => scrollProducts('right')} />}
+        </ProductListWrap>
+    );
+};
 
 const ProductContainer = styled.div`
-    min-width: 250px;
-    width: 100%;
+    width: 225px;  
+    max-width: 225px;
+    cursor: pointer;
+
 
     @media (max-width: 600px) {
-        min-width: 200px;
+        width: 150px;
+        max-width: 150x;
     }
 `;
 
-const ThumbBox = styled.div` 
+const ThumbBox = styled.div`
     position: relative;
-    
-        
+
     img {
         width: 100%;
         height: auto;
         border-radius: 10px;
-        background-color: rgba(221, 126, 96, 0.15); /* 0.8은 80% 불투명, 20% 투명 */
+        background-color: rgba(114, 184, 223, 0.15);
     }
 `;
 
-const BookmarkWrapper = styled.span` 
+const BookmarkWrapper = styled.span`
     position: absolute;
-    bottom: 7px; 
+    bottom: 7px;
     right: 10px;
 `;
 
@@ -290,15 +188,15 @@ const BrandBookmark = styled.div`
     padding: 0;
 `;
 
-const Brand = styled.div` 
+const Brand = styled.div`
 
     h1 {
         font-size: 15px;
         font-weight: bold;
-        margin-top: -10px;
+        margin-top: -3px;
 
         @media (max-width: 600px) {
-            font-size: 14px; 
+            font-size: 14px;
         }
     }
 `;
@@ -310,13 +208,12 @@ const Name = styled.div`
         font-weight: 500;
         margin-top: -10px;
         overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        text-overflow: ellipsis;
-
+        white-space: nowrap; 
+        text-overflow: ellipsis; 
+        display: block; 
+        
         @media (max-width: 600px) {
-            font-size: 12px; 
+            font-size: 12px;
         }
     }
 `;
@@ -330,10 +227,10 @@ const KoreaName = styled.div`
         color: #6D6D6D;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap; 
+        white-space: nowrap;
 
         @media (max-width: 600px) {
-            font-size: 11px; 
+            font-size: 11px;
         }
     }
 `;
@@ -354,11 +251,65 @@ const Price = styled.div`
 
     h3 {
         font-size: 15px;
-        margin-top: 8px;
+        margin-top: 10px;
 
         @media (max-width: 600px) {
-            font-size: 14px; 
+            font-size: 14px;
         }
+    }
+`;
+
+const ProductListWrap = styled.div`
+    width: 80%;
+    margin: 0 auto;
+    position: relative;
+
+    @media (max-width: 600px) {
+        width: 90%;
+    }
+`;
+
+const ArrowButton = styled.button`
+    position: absolute;
+    top: 33.3%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: url(${(props) => (props.direction === 'left' ? ArrowLeftIcon : ArrowRightIcon)}) no-repeat center center;
+    background-size: contain;
+    width: 50px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    ${(props) => (props.direction === 'left' ? 'left: -25px;' : 'right: -25px;')}
+
+    &:hover {
+        opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+        width: 40px;
+        height: 40px;
+        ${(props) => (props.direction === 'left' ? 'left: -20px;' : 'right: -20px;')}
+    }
+`;
+
+const ProductListContainer = styled.div`
+    display: flex;
+    overflow-x: scroll;
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`;
+
+const ProductGroup = styled.div`
+    display: flex;
+    gap: 15px;
+    
+    @media (max-width: 600px) {
+        gap: 10px;
     }
 `;
 
