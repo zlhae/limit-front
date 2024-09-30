@@ -1,4 +1,4 @@
-// 수정할 것 : 인기 검색어, 검색 정확도 개선 
+// 수정할 것 : 인기 검색어, 검색 정확도 개선
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

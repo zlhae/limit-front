@@ -1,6 +1,8 @@
+// 수정할 것 : 전체
+
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import axios from 'axios';
+import styled from 'styled-components';
 import MinusIcon from '../Images/icon-minus.svg';
 import PlusIcon from '../Images/icon-plus.svg';
 import Modal from './Modal';
@@ -19,15 +21,14 @@ const SideFilter = ({ selectedCategory, categories, allCategories, setProducts }
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isGenderModalOpen, setIsGenderModalOpen] = useState(false);
     const [selectAllState, setSelectAllState] = useState({});
-    
-    // 1. API 호출 함수 추가 (필터된 상품 데이터 가져오기)
+
     const fetchProductData = async (categoryFilter = [], genderFilter = '') => {
-        const categoryParam = categoryFilter.map(cat => `shop_category_id=${cat}`).join('&');  // 카테고리 ID를 URL에 추가
+        const categoryParam = categoryFilter.map(cat => `shop_category_id=${cat}`).join('&');  
         const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${genderFilter}`;
 
         try {
             const response = await axios.get(url);
-            setProducts(response.data.content);  // 가져온 데이터를 부모 컴포넌트의 상태에 업데이트
+            setProducts(response.data.content);  
         } catch (error) {
             console.error('상품 데이터를 가져오는 중 오류 발생:', error);
         }
@@ -86,27 +87,23 @@ const SideFilter = ({ selectedCategory, categories, allCategories, setProducts }
         setShowResetButton(hasActiveFilter);
     }, [filters]);
 
-    // 2. 부모 카테고리 필터 토글 함수 수정
     const toggleParentFilter = (categoryId) => {
         setFilters(prevState => {
             const newFilters = { ...prevState, [categoryId]: !prevState[categoryId] };
             const selectedCategories = Object.keys(newFilters).filter(key => newFilters[key]);
 
-            // 선택된 카테고리와 성별을 기준으로 API 호출
             fetchProductData(selectedCategories, filters.male ? 'male' : filters.female ? 'female' : '');
 
             return newFilters;
         });
     };
 
-    // 3. 자식 카테고리 필터 토글 함수 수정
     const toggleChildFilter = (item, parentCategory) => {
         setFilters(prevState => {
             const newFilters = { ...prevState, [item]: !prevState[item] };
 
             const selectedCategories = Object.keys(newFilters).filter(key => newFilters[key]);
 
-            // 자식 필터 변경 시에도 API 호출
             fetchProductData(selectedCategories, filters.male ? 'male' : filters.female ? 'female' : '');
 
             return newFilters;
@@ -513,7 +510,7 @@ const StatusFilterBox = styled.div`
         .status_filter_btn_opt2 {
             @media (max-width: 600px) {
                 position: relative;
-                margin-right: 15px; // 직거래 버튼과 세로선 사이의 간격
+                margin-right: 15px; 
             }
 
             @media (max-width: 600px) {

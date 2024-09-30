@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import styled from 'styled-components';
 
 const SubHeader = () => {
     return (
@@ -63,6 +63,7 @@ const TabLink = styled(NavLink).attrs({
     
     &.active {
         font-weight: bold;
+
         &::after {
             content: '';
             position: absolute;

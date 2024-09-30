@@ -1,3 +1,5 @@
+// 수정할 것 : 카테고리 버튼, 성별 버튼 위치
+
 import React from 'react';
 import styled from 'styled-components';
 

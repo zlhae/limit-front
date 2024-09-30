@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import BookmarkIcon from './BookmarkIcon';
 import { getSavedBookmarks, saveBookmarks, isProductBookmarked } from '../Utils/Bookmarks'; 
+import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
 
 const Product = ({ searchResults }) => {
@@ -224,7 +224,7 @@ const Price = styled.div`
     h3 {
         font-size: 15px;
         margin-top: 8px;
-        
+
         @media (max-width: 600px) {
             font-size: 14px; 
         }

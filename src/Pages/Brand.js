@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import SubHeader from '../Components/SubHeader';
-import SideFilter from '../Components/SideFilter';
+// 수정할 것 : 사이드바, 상품 갯수
+
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
-import ProductListWrap from '../Components/Product';
-import adidas_brand from '../Images/adidas_brand.jpeg';
-import adidas from '../Images/adidas.jpg';
+import { getAccessToken } from '../Utils/authService';
+import SideFilter from '../Components/SideFilter';
+import ProductListWrap from '../Components/BrandProduct';
 
 const Brand = () => {
 
@@ -17,37 +19,113 @@ const Brand = () => {
         패션잡화: ['비니', '버킷햇', '볼캡', '기타 모자', '머플러', '스카프', '넥타이', '장갑', '양말', '기타 패션잡화']
     };
 
+    const { brandId } = useParams(); 
+    const [brandData, setBrandData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [products, setProducts] = useState([]);
+
+    const fetchBrandData = async () => {
+        const token = getAccessToken(); 
+        console.log("브랜드 ID:", brandId);
+        console.log("토큰 확인:", token);
+
+        if (!token) {
+            setError('인증 토큰이 없습니다.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`https://api.lim-it.one/api/v1/brands`, {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+
+            const brand = response.data.find((b) => b.id === parseInt(brandId)); 
+            if (brand) {
+                setBrandData(brand); 
+            } else {
+                setError('해당 브랜드를 찾을 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('브랜드 데이터를 가져오는 중 오류 발생:', error);
+            setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchProducts = async () => {
+        const token = getAccessToken();
+        console.log("토큰 확인 (상품):", token);
+
+        if (!token) {
+            setError('인증 토큰이 없습니다.');
+            return;
+        }
+
+        try {
+            const response = await axios.get(`https://api.lim-it.one/api/v1/products?brandId=${brandId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setProducts(response.data.content);
+        } catch (error) {
+            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchBrandData();
+        fetchProducts(); 
+    }, [brandId]);
+
+    if (loading) {
+        return <p>로딩 중...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
     return (
-        <MainProduct className='main_product'>
+        <MainProduct>
             <ImageWrapper>
-                <img src={adidas_brand} alt="Adidas Brand" />
+                <img src={`https://${brandData.imageUrl}`} alt={`${brandData.nameEng} 배경 이미지`} />
                 <LogoContainer>
                     <LogoImage>
-                        <img src={adidas} alt="Adidas Logo" />
+                        <img src={`https://${brandData.logoUrl}`} alt={`${brandData.nameEng} 로고`} />
                     </LogoImage>
-                    <BrandName>Adidas</BrandName>
-                    <BrandNameKorean>아디다스</BrandNameKorean>
+                    <BrandInfo>
+                        <BrandName>{brandData.nameEng}</BrandName>
+                        <BrandNameKorean>{brandData.nameKor}</BrandNameKorean>
+                    </BrandInfo>
                 </LogoContainer>
             </ImageWrapper>
-            <ProductContainer className='product_container'>
-                <SideFilterWrapper className='side_filter'>
+            <ProductContainer>
+                <SideFilterWrapper>
                     <SideFilter allCategories={allCategories} />
                 </SideFilterWrapper>
-                <ProductWrapper className='product'>
+                <ProductWrapper>
                     <ProductNumber>
-                        <h3>상품 154,329개</h3>
+                        <h3>상품 {products.length}개</h3> 
                     </ProductNumber>
-                    <ProductListWrap />
+                    <ProductListWrap brandId={brandId} products={products} setProducts={setProducts} /> 
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
-}
+};
 
-const MainProduct = styled.div``;
+const MainProduct = styled.div`'
+`;
 
 const ImageWrapper = styled.div`
     position: relative;
+
     img {
         width: 100%;
         height: auto;
@@ -55,18 +133,21 @@ const ImageWrapper = styled.div`
 `;
 
 const LogoContainer = styled.div`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+    display: inline-flex;
+    flex-direction: row;
+    margin-top: 20px;
+    margin-left: 10%;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 const LogoImage = styled.div`
-    width: 15vw; /* 로고 크기를 뷰포트 너비의 10%로 설정 */
-    height: 15vw; /* 로고 크기를 뷰포트 너비의 10%로 설정 */
-    max-width: 170px; /* 최대 크기를 100px로 설정 */
-    max-height: 170px; /* 최대 크기를 100px로 설정 */
+    width: 8vw; 
+    height: 8vw; 
+    max-width: 100px; 
+    max-height: 100px;
 
     img {
         width: 100%;
@@ -75,28 +156,31 @@ const LogoImage = styled.div`
     }
 `;
 
-const BrandName = styled.div`
-    font-size: 1.5vw; /* 글자 크기를 뷰포트 너비의 2%로 설정 */
-    font-weight: bold;
-    margin-top: 3px;
-    color: black;
-    max-font-size: 13px; /* 최대 글자 크기 설정 */
+const BrandInfo = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5vw;
+    margin-left: 20px;
 
-    @media (max-width: 600px) {
-        font-size: 3vw; 
+    @media (max-width: 720px) {
+        margin-top: 0.8vw;
+    }
+`;
+
+const BrandName = styled.div`
+    font-size: 25px;
+    font-weight: bold; 
+    color: black;
+
+    @media (max-width: 720px) {
+        font-size: 20px;
     }
 `;
 
 const BrandNameKorean = styled.div`
-    font-size: 1vw; 
-    margin-top: 3px;
-    color: black;
-    max-font-size: 13px; /* 최대 글자 크기 설정 */
-
-    @media (max-width: 600px) {
-        font-size: 2vw; 
-        margin-top: -2px;
-    }
+    font-size: 15px; 
+    margin-top: 2px;
+    color: #6d6d6d;
 `;
 
 const ProductContainer = styled.div`
@@ -137,7 +221,7 @@ const ProductNumber = styled.h3`
     margin-top: 30px;
     font-size: 12px;
     color: #656565;
-    
+
     @media (max-width: 600px) {
         margin-left: 5%;
         font-size: 10px;

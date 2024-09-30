@@ -1,3 +1,5 @@
+// 수정할 것 : 사이드바, 상품 갯수
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -43,15 +45,13 @@ const OuterCate = () => {
     }, []);
 
     return (
-        <MainProduct className='main_product'>
-            <div className='sub_header'>
+        <MainProduct>
                 <SubHeader />
-            </div>
-            <ProductContainer className='product_container'>
-                <SideFilterWrapper className='side_filter'>
+            <ProductContainer>
+                <SideFilterWrapper>
                     <SideFilter selectedCategory="outer" categories={categoryNames} allCategories={allCategories} />
                 </SideFilterWrapper>
-                <ProductWrapper className='product'>
+                <ProductWrapper>
                     <ProductNumber>
                         <h3>상품 {totalProducts}개</h3>
                     </ProductNumber>
@@ -62,7 +62,8 @@ const OuterCate = () => {
     );
 };
 
-const MainProduct = styled.div``;
+const MainProduct = styled.div`
+`;
 
 const ProductContainer = styled.div`
     margin-top: -20px;

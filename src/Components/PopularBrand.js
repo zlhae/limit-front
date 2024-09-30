@@ -73,9 +73,6 @@ const PopularBrand = () => {
     );
 };
 
-const NoImageText = styled.div`
-`;
-
 const TotalContainer = styled.div`
     width: 80%;
     margin: 0 auto;
@@ -105,17 +102,17 @@ const BrandThumbBox = styled.div`
     }
 `;
 
-const ImgWrapper = styled.div`
-    position: relative;
-    width: 100%;
-    height: 150px;
-`;
-
 const BrandContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+`;
+
+const ImgWrapper = styled.div`
+    position: relative;
+    width: 100%;
+    height: 150px;
 `;
 
 const StyledImage = styled.img`
@@ -138,6 +135,9 @@ const StyledImage = styled.img`
         height: auto; 
         object-fit: contain; 
     }
+`;
+
+const NoImageText = styled.div`
 `;
 
 const BrandName = styled.div`

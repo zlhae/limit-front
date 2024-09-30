@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import ad1 from '../Images/ad1.webp'; 
 import ad2 from '../Images/ad2.webp'; 
-import BannerArrow from '../Images/BannerArrow.svg';
+import BannerArrow from '../Images/arrow-banner.svg';
 import MainProductListWrap from '../Components/MainProduct';
 import PopularBrand from '../Components/PopularBrand';
 import RecentProductListWrap from '../Components/RecentProduct';
@@ -82,7 +82,8 @@ const Main = () => {
     );
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+`;
 
 const BannerContainer = styled.div`
     width: 100%; 
@@ -93,21 +94,6 @@ const BannerContainer = styled.div`
     position: relative; 
     height: 35vw; 
     margin-bottom: 50px;
-`;
-
-const BannerImageBox = styled.div`
-    width: 100%; 
-    height: 100%;
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-
-    img {
-        width: 100%;
-        height: 100%; 
-        object-fit: cover; 
-        cursor: pointer;
-    }
 `;
 
 const ArrowButton = styled.div`
@@ -136,6 +122,21 @@ const ArrowButton = styled.div`
             width: 20px; 
             height: auto;
         }
+    }
+`;
+
+const BannerImageBox = styled.div`
+    width: 100%; 
+    height: 100%;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+
+    img {
+        width: 100%;
+        height: 100%; 
+        object-fit: cover; 
+        cursor: pointer;
     }
 `;
 

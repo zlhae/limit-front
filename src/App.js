@@ -26,7 +26,6 @@ import SignUpComplete from "./Pages/SignUpComplete";
 
 import Chatting from "./Pages/Chatting";
 import SearchaResult from "./Pages/SearchResult";
-import MoreProduct from "./Pages/MoreProduct";
 import Brand from "./Pages/Brand";
 
 function App() {
@@ -58,7 +57,6 @@ function App() {
         <Route path = "/productdetail/:productId" element = {<ProductDetail/>}/>
         <Route path = "/chatting" element = {<Chatting/>}/>
         <Route path = "/searchresult" element = {<SearchaResult/>}/>
-        <Route path = "/moreproduct" element = {<MoreProduct/>}/>
       </Routes>
       <Footer></Footer>  
     </div>
