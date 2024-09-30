@@ -1,5 +1,3 @@
-// 수정할 것 : 인기 검색어, 검색 정확도 개선
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -12,6 +10,27 @@ const Search = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [recentSearches, setRecentSearches] = useState([]);
     const [searchResults, setSearchResults] = useState([]); 
+    const [topSearches, setTopSearches] = useState([]);
+
+    const fetchTopSearches = async () => {
+        const accessToken = localStorage.getItem('accessToken');
+    
+        if (!accessToken) {
+            console.error('AccessToken이 없습니다. 로그인 필요.');
+            return;
+        }
+    
+        try {
+            const response = await axios.get('https://api.lim-it.one/api/v1/search-logs/top', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            setTopSearches(response.data);
+        } catch (error) {
+            console.error('인기 검색어 가져오기 중 오류 발생:', error);
+        }
+    };    
 
     const saveRecentSearch = (searchName) => {
         let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
@@ -67,6 +86,7 @@ const Search = () => {
 
     useEffect(() => {
         fetchRecentSearches();
+        fetchTopSearches();
     }, []);
 
     const deleteRecentSearch = (searchName) => {
@@ -123,14 +143,12 @@ const Search = () => {
                 </TopSearchTitle>
                 <TopSearchList>
                     <ul>
-                        <li onClick={() => handleTopSearchClick('미스치프')}>
-                            <span className='top_search_ranking'>1</span>
-                            <span className='top_search_ranking_list'>미스치프</span>
-                        </li>
-                        <li onClick={() => handleTopSearchClick('아식스')}>
-                            <span className='top_search_ranking'>2</span>
-                            <span className='top_search_ranking_list'>아식스</span>
-                        </li>
+                        {topSearches.map((search, index) => (
+                            <li key={index} onClick={() => handleTopSearchClick(search.searchName)}>
+                                <span className='top_search_ranking'>{search.rank}</span>
+                                <span className='top_search_ranking_list'>{search.searchName}</span>
+                            </li>
+                        ))}
                     </ul>
                 </TopSearchList>
             </TopSearchContainer>
