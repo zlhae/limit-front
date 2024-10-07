@@ -1,15 +1,11 @@
-// 수정할 것 : 사이드바, 상품 갯수
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
-import { getAccessToken } from '../Utils/authService';
 import SideFilter from '../Components/SideFilter';
 import ProductListWrap from '../Components/BrandProduct';
 
 const Brand = () => {
-
     const allCategories = {
         아우터: ['자켓', '아노락', '코트', '패딩', '기타 아우터'],
         상의: ['반팔 티셔츠', '긴팔 티셔츠', '가디건', '셔츠', '후드', '후드 집업', '스웨트셔츠', '슬리브리스', '원피스', '니트', '기타 상의'],
@@ -26,24 +22,9 @@ const Brand = () => {
     const [products, setProducts] = useState([]);
 
     const fetchBrandData = async () => {
-        const token = getAccessToken(); 
-        console.log("브랜드 ID:", brandId);
-        console.log("토큰 확인:", token);
-
-        if (!token) {
-            setError('인증 토큰이 없습니다.');
-            setLoading(false);
-            return;
-        }
-
         try {
-            const response = await axios.get(`https://api.lim-it.one/api/v1/brands`, {
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                },
-            });
-
-            const brand = response.data.find((b) => b.id === parseInt(brandId)); 
+            const response = await axios.get(`https://api.lim-it.one/api/v1/brands`);
+            const brand = response.data.find((b) => b.id === parseInt(brandId));
             if (brand) {
                 setBrandData(brand); 
             } else {
@@ -58,20 +39,8 @@ const Brand = () => {
     };
 
     const fetchProducts = async () => {
-        const token = getAccessToken();
-        console.log("토큰 확인 (상품):", token);
-
-        if (!token) {
-            setError('인증 토큰이 없습니다.');
-            return;
-        }
-
         try {
-            const response = await axios.get(`https://api.lim-it.one/api/v1/products?brandId=${brandId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await axios.get(`https://api.lim-it.one/api/v1/products?brandId=${brandId}`);
             setProducts(response.data.content);
         } catch (error) {
             console.error('상품 데이터를 가져오는 중 오류 발생:', error);
@@ -231,3 +200,4 @@ const ProductNumber = styled.h3`
 `;
 
 export default Brand;
+

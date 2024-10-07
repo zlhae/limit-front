@@ -11,26 +11,23 @@ const Search = () => {
     const [recentSearches, setRecentSearches] = useState([]);
     const [searchResults, setSearchResults] = useState([]); 
     const [topSearches, setTopSearches] = useState([]);
+    
+    const getTodayDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    };
 
     const fetchTopSearches = async () => {
-        const accessToken = localStorage.getItem('accessToken');
-    
-        if (!accessToken) {
-            console.error('AccessToken이 없습니다. 로그인 필요.');
-            return;
-        }
-    
         try {
-            const response = await axios.get('https://api.lim-it.one/api/v1/search-logs/top', {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
+            const response = await axios.get('https://api.lim-it.one/api/v1/search-logs/top');
             setTopSearches(response.data);
         } catch (error) {
             console.error('인기 검색어 가져오기 중 오류 발생:', error);
         }
-    };    
+    };
 
     const saveRecentSearch = (searchName) => {
         let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
@@ -51,7 +48,7 @@ const Search = () => {
                     params: {
                         name: searchName.trim(),
                         page: 0,
-                        size: 829,
+                        size: 1000,
                         sort: 'ASC'
                     }
                 });
@@ -111,7 +108,7 @@ const Search = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
-                <img src={SearchIcon} alt="Search" onClick={() => handleSearch(searchTerm)}/>
+                <img src={SearchIcon} alt="Search" onClick={() => handleSearch(searchTerm)} />
             </SearchBox>
             <RecentSearchContainer>
                 <RecentSearchText>
@@ -139,7 +136,7 @@ const Search = () => {
             <TopSearchContainer>
                 <TopSearchTitle>
                     <h3>인기 검색어</h3>
-                    <TopSearchDate>2024/03/28 기준</TopSearchDate>
+                    <TopSearchDate>{getTodayDate()} 기준</TopSearchDate>
                 </TopSearchTitle>
                 <TopSearchList>
                     <ul>

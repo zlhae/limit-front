@@ -1,5 +1,3 @@
-// 수정할 것 : 사이드바, 상품 갯수
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -10,6 +8,7 @@ import ProductListWrap from '../Components/Product';
 const BagCate = () => {
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
+    const [selectedCategories, setSelectedCategories] = useState([]); 
 
     const categoryNameMap = {
         26: '미니백',
@@ -21,43 +20,56 @@ const BagCate = () => {
     };
 
     const bagCategories = [26, 27, 28, 29, 30, 31];
-
     const categoryNames = bagCategories.map((id) => categoryNameMap[id]);
 
-    const allCategories = { 가방: categoryNames };  
-
-    const fetchProducts = async () => {
+    const fetchProducts = async (categories) => {
         try {
-            const categoryParam = bagCategories.map(cat => `category=${cat}`).join('&');
+            const filteredCategories = categories.length > 0 ? categories : bagCategories;
+
+            const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
             const url = `https://api.lim-it.one/api/v1/products?${categoryParam}`;
-            
+
             const response = await axios.get(url);
 
-            console.log("API Response:", response.data); 
-            
             setProducts(response.data.content);
-            setTotalProducts(response.data.totalElements);
+            setTotalProducts(response.data.content.length);
         } catch (error) {
             console.error('상품 데이터를 가져오는 중 오류 발생:', error);
         }
     };
 
     useEffect(() => {
-        fetchProducts();
+        fetchProducts([]); 
     }, []);
+
+    const handleCategoryChange = (categoryId, isChecked) => {
+        if (isChecked) {
+            setSelectedCategories((prev) => [...prev, categoryId]); 
+        } else {
+            setSelectedCategories((prev) => prev.filter((id) => id !== categoryId)); 
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts(selectedCategories);
+    }, [selectedCategories]);
 
     return (
         <MainProduct>
-                <SubHeader />
+            <SubHeader />
             <ProductContainer>
                 <SideFilterWrapper>
-                    <SideFilter selectedCategory="bag" categories={categoryNames} allCategories={allCategories} />
+                    <SideFilter 
+                        categories={categoryNames}
+                        allCategories={bagCategories}
+                        onCategoryChange={handleCategoryChange} 
+                    />
                 </SideFilterWrapper>
                 <ProductWrapper>
                     <ProductNumber>
                         <h3>상품 {totalProducts}개</h3>
                     </ProductNumber>
-                    <ProductListWrap category={bagCategories} products={products} />  
+                    <ProductListWrap category={selectedCategories.length > 0 ? selectedCategories : bagCategories} products={products} />  
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>

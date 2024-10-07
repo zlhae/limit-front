@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 import styled from 'styled-components';
-import { getAccessToken } from '../Utils/authService';
 
 const PopularBrand = () => {
     const [brands, setBrands] = useState([]);
@@ -13,12 +12,7 @@ const PopularBrand = () => {
     const fetchBrands = async () => {
         setLoading(true);
         try {
-            const token = getAccessToken();
-            const response = await axios.get('https://api.lim-it.one/api/v1/brands', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await axios.get('https://api.lim-it.one/api/v1/brands');
             setBrands(response.data);
             setLoading(false);
         } catch (error) {

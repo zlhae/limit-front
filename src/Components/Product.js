@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
 
-const fetchProductData = async (brand = '', category = [], gender = '', page = 0, size = 829, sort = 'ASC') => {
+const fetchProductData = async (brandId, category = [], gender = '', page = 0, size = 1000, sort = 'ASC') => {
     let categoryParam = '';
     if (category.length > 0) {
         categoryParam = category.map(cat => `category=${cat}`).join('&');
@@ -109,10 +109,8 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
             const data = await fetchProductData(brand, category, gender, page, size, sort);
             setProducts(data.content);
         };
-    
-        // API 호출이 의존성 배열에 맞게 한 번만 실행되도록 보장
         getProductData();
-    }, [brand, category, gender, page, size, sort]); 
+    }, [brand, category, gender, page, size, sort]);    
     
 
     return (

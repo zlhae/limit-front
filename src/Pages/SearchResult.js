@@ -1,5 +1,3 @@
-// 수정할 것 : 사이드바
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -37,11 +35,11 @@ const SearchResult = () => {
                     readOnly 
                 />
             </SearchBox>
-            <ProductContainer className='product_container'>
-                <SideFilterWrapper className='side_filter'>
+            <ProductContainer>
+                <SideFilterWrapper>
                     <SideFilter allCategories={allCategories} />
                 </SideFilterWrapper>
-                <ProductWrapper className='product'>
+                <ProductWrapper>
                     <ProductNumber>
                         <h3>상품 {searchResults.length}개</h3> 
                     </ProductNumber>
