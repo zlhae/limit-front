@@ -5,58 +5,81 @@ import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
 
-const fetchProductData = async (brandId, category = [], gender = '', page = 0, size = 1000, sort = 'ASC') => {
-    let categoryParam = '';
-    if (category.length > 0) {
-        categoryParam = category.map(cat => `category=${cat}`).join('&');
-    }
-
-    const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${gender}&page=${page}&size=${size}&sort=${sort}`;
-
+// 모든 찜한 상품을 서버에서 가져오는 함수
+const fetchAllBookmarks = async () => {
     try {
-        const response = await axios.get(url);
-        console.log('API Response:', response.data);
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.get('https://api.lim-it.one/api/v1/products/wishes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         return response.data;
     } catch (error) {
-        console.error('상품 데이터를 가져오는 중 오류 발생:', error);
-        return { content: [] };  
+        console.error('찜 목록을 가져오는 중 오류 발생:', error);
+        return [];
     }
 };
 
-const getSavedBookmarks = () => {
-    const saved = localStorage.getItem('bookmarkedItems');
-    return saved ? JSON.parse(saved) : [];
+const updateBookmarkStatus = async (productId, shouldBookmark) => {
+    try {
+        const token = localStorage.getItem('accessToken');
+        // 항상 PUT 요청을 사용하고, 요청 본문에 찜 상태를 전달
+        const data = { wish: shouldBookmark };
+
+        const response = await axios({
+            method: 'PUT', // PUT 요청 사용
+            url: `https://api.lim-it.one/api/v1/products/${productId}/wishes`,
+            headers: { 'Authorization': `Bearer ${token}` },
+            data: data
+        });
+        console.log('서버 응답:', response.data);
+        return response.status === 200;
+    } catch (error) {
+        if (error.response) {
+            // 서버가 응답을 반환한 경우
+            console.error('서버 오류:', error.response.data);
+            console.error('응답 상태 코드:', error.response.status);
+        } else {
+            // 서버가 응답하지 않은 경우
+            console.error('요청 오류:', error.message);
+        }
+        return false;
+    }
 };
 
-const saveBookmarks = (bookmarks) => {
-    localStorage.setItem('bookmarkedItems', JSON.stringify(bookmarks));
-};
 
-const Product = ({ product }) => {
+// 상품 컴포넌트
+const Product = ({ product, bookmarkedProducts, updateBookmarks }) => {
     const navigate = useNavigate();
-    const [isBookmarked, setIsBookmarked] = useState(false);  
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
 
+    // 찜한 목록에 있는지 확인하여 상태 설정
     useEffect(() => {
-        const bookmarkedItems = getSavedBookmarks();
-        if (bookmarkedItems.includes(product.id)) {
-            setIsBookmarked(true);
-        }
-    }, [product.id]);
+        const isProductBookmarked = bookmarkedProducts.some(bookmarked => bookmarked.productId === product.id);
+        setIsBookmarked(isProductBookmarked);
+    }, [product.id, bookmarkedProducts]);
 
-    const handleBookmarkClick = (e) => {
+    // 찜 버튼 클릭 시 UI와 서버 동기화
+    const handleBookmarkClick = async (e) => {
         e.stopPropagation();
-        const bookmarkedItems = getSavedBookmarks();
-        let updatedBookmarks;
+        if (isUpdating) return; // 이미 업데이트 중이면 무시
 
-        if (isBookmarked) {
-            updatedBookmarks = bookmarkedItems.filter(id => id !== product.id);
+        setIsUpdating(true); // 업데이트 중으로 설정
+        const shouldBookmark = !isBookmarked;
+
+        console.log('현재 찜 상태:', isBookmarked);
+        console.log('변경할 찜 상태:', shouldBookmark);
+
+        const success = await updateBookmarkStatus(product.id, shouldBookmark);
+        if (success) {
+            console.log('찜 상태 업데이트 성공');
+            setIsBookmarked(shouldBookmark); // UI 상태 업데이트
+            updateBookmarks(); // 찜 목록 업데이트
         } else {
-            updatedBookmarks = [...bookmarkedItems, product.id];
+            console.error('찜 상태 업데이트 실패');
         }
-
-        saveBookmarks(updatedBookmarks);
-        setIsBookmarked(!isBookmarked); 
+        setIsUpdating(false); // 업데이트 완료
     };
 
     const handleProductClick = () => {
@@ -101,17 +124,47 @@ const Product = ({ product }) => {
     );
 };
 
+// 상품 목록 컴포넌트
 const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 829, sort = 'ASC' }) => {
     const [products, setProducts] = useState([]);
+    const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
 
+    // 모든 찜한 상품을 불러옵니다
     useEffect(() => {
+        loadBookmarks();
+    }, []);
+
+    const loadBookmarks = async () => {
+        const bookmarks = await fetchAllBookmarks();
+        setBookmarkedProducts(bookmarks);
+    };
+
+    // 상품 데이터를 불러옵니다
+    useEffect(() => {
+        const fetchProductData = async (brandId, category = [], gender = '', page = 0, size = 1000, sort = 'ASC') => {
+            let categoryParam = '';
+            if (category.length > 0) {
+                categoryParam = category.map(cat => `category=${cat}`).join('&');
+            }
+
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${gender}&page=${page}&size=${size}&sort=${sort}`;
+
+            try {
+                const response = await axios.get(url);
+                console.log('API Response:', response.data);
+                return response.data;
+            } catch (error) {
+                console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+                return { content: [] };
+            }
+        };
+
         const getProductData = async () => {
             const data = await fetchProductData(brand, category, gender, page, size, sort);
             setProducts(data.content);
         };
         getProductData();
-    }, [brand, category, gender, page, size, sort]);    
-    
+    }, [brand, category, gender, page, size, sort]);
 
     return (
         <ProductListContainer>
@@ -121,6 +174,8 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
                         <Product 
                             key={product.id} 
                             product={product}
+                            bookmarkedProducts={bookmarkedProducts} // 찜한 상품 목록 전달
+                            updateBookmarks={loadBookmarks} // 찜 목록 업데이트 함수 전달
                         />
                     ))
                 ) : (
@@ -130,6 +185,7 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
         </ProductListContainer>
     );
 };
+
 
 const ProductContainer = styled.div`
     width: 100%; 
