@@ -3,34 +3,66 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
-import { getSavedBookmarks, saveBookmarks } from '../Utils/Bookmarks';
-import ArrowLeftIcon from '../Images/arrow-left.svg';
-import ArrowRightIcon from '../Images/arrow-right.svg'; 
 import LoadingImage from '../Images/Loading.svg';
+import ArrowLeftIcon from '../Images/arrow-left.svg';
+import ArrowRightIcon from '../Images/arrow-right.svg';
 
-const RecentProduct = ({ product, index }) => {
-    const [isBookmarked, setIsBookmarked] = useState(false);
-    const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
+
+const fetchAllBookmarks = async () => {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.get('https://api.lim-it.one/api/v1/products/wishes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('찜 목록을 가져오는 중 오류 발생:', error);
+        return [];
+    }
+};
+
+const updateBookmarkStatus = async (productId, shouldBookmark) => {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const data = { wish: shouldBookmark };
+        const response = await axios({
+            method: 'PUT',
+            url: `https://api.lim-it.one/api/v1/products/${productId}/wishes`,
+            headers: { 'Authorization': `Bearer ${token}` },
+            data: data
+        });
+        return response.status === 200;
+    } catch (error) {
+        console.error('찜 상태 업데이트 중 오류 발생:', error);
+        return false;
+    }
+};
+
+const RecentProduct = ({ product, bookmarkedProducts, updateBookmarks, index }) => {
     const navigate = useNavigate();
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
 
     useEffect(() => {
-        const savedBookmarks = getSavedBookmarks();
-        setIsBookmarked(savedBookmarks.includes(product.id));
-    }, [product.id]);
+        const isProductBookmarked = Array.isArray(bookmarkedProducts) && 
+            bookmarkedProducts.some(bookmarked => bookmarked.productId === product.id);
+        setIsBookmarked(isProductBookmarked);
+    }, [product.id, bookmarkedProducts]);
 
-    const handleBookmarkClick = (e) => {
+    const handleBookmarkClick = async (e) => {
         e.stopPropagation();
-        const savedBookmarks = getSavedBookmarks();
-        let updatedBookmarks = [...savedBookmarks];
+        if (isUpdating) return;
 
-        if (isBookmarked) {
-            updatedBookmarks = updatedBookmarks.filter(id => id !== product.id); 
-        } else {
-            updatedBookmarks.push(product.id); 
+        setIsUpdating(true);
+        const shouldBookmark = !isBookmarked;
+
+        const success = await updateBookmarkStatus(product.id, shouldBookmark);
+        if (success) {
+            setIsBookmarked(shouldBookmark);
+            updateBookmarks();
         }
-
-        setIsBookmarked(!isBookmarked);
-        saveBookmarks(updatedBookmarks); 
+        setIsUpdating(false);
     };
 
     const handleProductClick = () => {
@@ -41,19 +73,18 @@ const RecentProduct = ({ product, index }) => {
         setImageSrc(LoadingImage);
     };
 
+    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.currentPrice) + "원";
+
     return (
         <ProductContainer onClick={handleProductClick}>
             <ThumbBox>
                 <BookmarkWrapper>
-                    <BookmarkIcon
-                        filled={isBookmarked}
-                        onClick={handleBookmarkClick} 
-                    />
+                    <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
                 <img 
                     src={imageSrc} 
-                    alt={`Product Thumbnail ${index}`} 
-                    onError={handleImageError} 
+                    alt='Product Thumbnail' 
+                    onError={handleImageError}
                 />
             </ThumbBox>
             <InfoBox>
@@ -73,7 +104,7 @@ const RecentProduct = ({ product, index }) => {
                     <TagText>직거래</TagText>
                 </Tag>
                 <Price>
-                    <h3>{product.currentPrice.toLocaleString()}원</h3>
+                    <h3>{formattedPrice}</h3>
                 </Price>
             </InfoBox>
         </ProductContainer>
@@ -83,16 +114,24 @@ const RecentProduct = ({ product, index }) => {
 const RecentProductListWrap = () => {
     const productListRef = useRef(null);
     const [products, setProducts] = useState([]);
+    const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+
+    useEffect(() => {
+        loadBookmarks();
+        fetchRecentProducts();
+    }, []);
+
+    const loadBookmarks = async () => {
+        const bookmarks = await fetchAllBookmarks();
+        setBookmarkedProducts(bookmarks);
+    };
 
     const fetchRecentProducts = async () => {
         try {
             const response = await axios.get('https://api.lim-it.one/api/v1/products', {
-                params: {
-                    sort: 'releaseDate,desc',
-                    size: 30,
-                },
+                params: { sort: 'releaseDate,desc', size: 30 }
             });
             setProducts(response.data.content);
         } catch (error) {
@@ -109,22 +148,6 @@ const RecentProductListWrap = () => {
         }
     };
 
-    useEffect(() => {
-        fetchRecentProducts(); 
-    }, []);
-
-    useEffect(() => {
-        const { current } = productListRef;
-        if (current) {
-            current.addEventListener('scroll', checkScrollButtons);
-        }
-        return () => {
-            if (current) {
-                current.removeEventListener('scroll', checkScrollButtons);
-            }
-        };
-    }, []);
-
     const scrollProducts = (direction) => {
         if (productListRef.current) {
             const scrollAmount = direction === 'left' ? -300 : 300;
@@ -139,7 +162,13 @@ const RecentProductListWrap = () => {
             <ProductListContainer ref={productListRef}>
                 <ProductGroup>
                     {products.map((product, index) => (
-                        <RecentProduct key={product.id} product={product} index={index} />
+                        <RecentProduct 
+                            key={product.id} 
+                            product={product} 
+                            index={index} 
+                            bookmarkedProducts={bookmarkedProducts} 
+                            updateBookmarks={loadBookmarks} // updateBookmarks 함수 전달
+                        />
                     ))}
                 </ProductGroup>
             </ProductListContainer>
@@ -147,6 +176,8 @@ const RecentProductListWrap = () => {
         </ProductListWrap>
     );
 };
+
+
 
 const ProductContainer = styled.div`
     width: 225px;  

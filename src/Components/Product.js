@@ -125,7 +125,7 @@ const Product = ({ product, bookmarkedProducts, updateBookmarks }) => {
 };
 
 // 상품 목록 컴포넌트
-const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 829, sort = 'ASC' }) => {
+const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 900, sort = 'ASC' }) => {
     const [products, setProducts] = useState([]);
     const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
 

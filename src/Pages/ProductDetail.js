@@ -64,7 +64,33 @@ const ProductDetail = () => {
     const [selectedTimeRange, setSelectedTimeRange] = useState('ALL');
     const [globalMinPrice, setGlobalMinPrice] = useState(null);
     const [globalMaxPrice, setGlobalMaxPrice] = useState(null);
+    const [sortOrder, setSortOrder] = useState('latest');
     const navigate = useNavigate();
+    const [brandData, setBrandData] = useState(null);
+    const [error, setError] = useState(null);
+
+    const fetchBrandData = async (brandId) => {
+        try {
+            const response = await axios.get(`https://api.lim-it.one/api/v1/brands`);
+            const brand = response.data.find((b) => b.id === brandId);
+            if (brand) {
+                setBrandData(brand); 
+            } else {
+                setError('해당 브랜드를 찾을 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('브랜드 데이터를 가져오는 중 오류 발생:', error);
+            setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (product && product.brandId) {
+            fetchBrandData(product.brandId);
+        }
+    }, [product]);
 
     const calculatePriceRange = (prices) => {
         const allPrices = prices.map(price => price.price);
@@ -105,6 +131,7 @@ const ProductDetail = () => {
             const data = await fetchProductPriceHistory(productId, selectedTimeRange === 'ALL' ? '' : selectedTimeRange);
             if (data.prices.length > 0) {
                 setChartData(prepareChartData(data.prices));
+                setFullTradeHistory(data.prices); // 전체 시세 저장
                 if (selectedTimeRange === 'ALL') {
                     calculatePriceRange(data.prices);
                 }
@@ -118,6 +145,7 @@ const ProductDetail = () => {
                         tension: 0.1
                     }]
                 });
+                setFullTradeHistory([]);
             }
             setLoading(false);
         };
@@ -126,6 +154,20 @@ const ProductDetail = () => {
 
     const handleTimeRangeChange = (range) => {
         setSelectedTimeRange(range);
+    };
+
+    const handleShowModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleSortChange = () => {
+        const newOrder = sortOrder === 'latest' ? 'oldest' : 'latest';
+        setSortOrder(newOrder);
+        setFullTradeHistory([...fullTradeHistory].reverse());
     };
 
     const chartOptions = {
@@ -196,47 +238,54 @@ const ProductDetail = () => {
 
     return (
         <Container>
-            <div className='sub_header'>
-                <SubHeader />
-            </div>
+            <SubHeader />
             <ProductContainer>
                 <ProductDetails>
                     <ProductImageContainer>
-                        <ProductImage src={`https://${product.imageUrl}`} alt="Product Thumbnail" />
+                        <ProductImage 
+                            src={`https://${product.imageUrl}`} 
+                            alt="Product Thumbnail" 
+                            onError={(e) => e.target.src = LoadingImage} 
+                        />
                     </ProductImageContainer>
-                    <AdditionalImagesMobile>
-                        {(product.additionalImages || []).map((image, index) => (
-                            <AdditionalImage key={index} src={`https://${image}`} alt={`Additional ${index}`} />
-                        ))}
-                    </AdditionalImagesMobile>
                     <Divider></Divider>
                     <ProductInfo>
                         <h3>즉시 구매가</h3>
                         <Price>{product.currentPrice.toLocaleString()}원</Price>
                         <ProductName>{product.names.eng}</ProductName>
                         <ProductDescription>{product.names.kor}</ProductDescription>
+                        <SizeContainer>
                         <SizeSelector onChange={handleSizeChange}>
                             <option hidden>모든 사이즈</option>
                             {(product.sizeInfo || []).map((size, index) => (
                                 <option key={index}>{`${size.size} | 최고 희망 구매가: ${size.buyPrice.toLocaleString()} | 최저 희망 판매가: ${size.sellPrice.toLocaleString()}`}</option>
                             ))}
                         </SizeSelector>
+                        </SizeContainer>
                         <OtherInfo>
                             <InfoItem>
-                                <div><strong>모델 번호:</strong></div>
-                                <div>{product.modelNumber}</div>
+                                <FirstInfo><strong>모델 번호:</strong></FirstInfo>
+                                <SecondInfo>{product.modelNumber}</SecondInfo>
                             </InfoItem>
                             <InfoItem>
-                                <div><strong>출시일:</strong></div>
-                                <div>{product.releaseDate}</div>
+                                <FirstInfo><strong>출시일:</strong></FirstInfo>
+                                <SecondInfo>{product.releaseDate}</SecondInfo>
                             </InfoItem>
                             <InfoItem>
-                                <div><strong>발매가:</strong></div>
-                                <div>{product.releasePrice?.toLocaleString()}원</div>
+                                <FirstInfo><strong>발매가:</strong></FirstInfo>
+                                <SecondInfo>{product.releasePrice?.toLocaleString()}원</SecondInfo>
                             </InfoItem>                         
                         </OtherInfo>
                         <BrandInfo onClick={handleBrandClick}>
-                            <BrandLogo src={`https://${product.logoUrl}`} alt="Brand Logo" />
+                            {brandData && brandData.logoUrl ? (
+                                <BrandLogo 
+                                    src={`https://${brandData.logoUrl}`} 
+                                    alt="Brand Logo" 
+                                    onError={(e) => e.target.src = LoadingImage} 
+                                />
+                            ) : (
+                                <div>브랜드 로고를 불러올 수 없습니다.</div>
+                            )}
                             <BrandName>{product.brandNames.eng}</BrandName>
                         </BrandInfo>
                         <DividerMobile></DividerMobile>
@@ -259,16 +308,86 @@ const ProductDetail = () => {
                                 <TimeButton onClick={() => handleTimeRangeChange('ALL')}>전체</TimeButton>
                             </ButtonGroup>
                             <Line data={chartData} options={chartOptions} />
+                            <ViewAllButton onClick={handleShowModal}>시세 전체 보기</ViewAllButton>
                         </DetailSection>
                     </ProductInfo>
                 </ProductDetails>
             </ProductContainer>
+
+            {showModal && (
+                <Modal>
+                    <ModalContent>
+                        <CloseButton onClick={handleCloseModal}>닫기</CloseButton>
+                        <h3>시세 전체 보기</h3>
+                        <SortButton onClick={handleSortChange}>
+                            {sortOrder === 'latest' ? '오래된 순' : '최신 순'}
+                        </SortButton>
+                        <TradeHistoryList>
+                            {fullTradeHistory.map((trade, index) => (
+                                <TradeItem key={index}>
+                                    <div>{new Date(trade.tradeTime).toLocaleDateString()}</div>
+                                    <div>{trade.price.toLocaleString()}원</div>
+                                </TradeItem>
+                            ))}
+                        </TradeHistoryList>
+                    </ModalContent>
+                </Modal>
+            )}
         </Container>
     );
 };
 
+const ViewAllButton = styled.button`
+    margin-top: 20px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
 
+    &:hover {
+        background-color: #ccc;
+    }
+    
+`;
 
+const SortButton = styled.button`
+    margin-top: 10px;
+    padding: 5px 10px;
+`;
+
+const TradeHistoryList = styled.div`
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 10px;
+`;
+
+const DividerMobile = styled.div`
+    display: none;
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+    margin: 20px 0;
+
+    @media (max-width: 600px) {
+        display: block;
+    }
+`;
+
+const DividerMobile2 = styled.div`
+    display: none;
+    height: 1px;
+    width: 90%;
+    background-color: #ddd;
+    margin: 0 auto;
+    margin-top: 20px;
+
+    @media (max-width: 600px) {
+        display: block;
+    }
+`;
+
+// 시작
 const Container = styled.div`
 `;
 
@@ -305,6 +424,23 @@ const ProductImageContainer = styled.div`
     }
 `;
 
+const ProductImage = styled.img`
+    width: 100%;
+    border-radius: 10px;
+
+    @media (max-width: 480px) {
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 0;
+    }
+
+    @media (max-width: 600px) {
+        width: 100%;
+        margin-top: -14.4%;
+        border-radius: 0;
+    }
+`;
+
 const Divider = styled.div`
     height: 100%;
     position: absolute;
@@ -316,42 +452,6 @@ const Divider = styled.div`
 
     @media (max-width: 600px) {
         display: none;
-    }
-`;
-
-const DividerMobile = styled.div`
-    display: none;
-    height: 1px;
-    width: 100%;
-    background-color: #ddd;
-    margin: 20px 0;
-
-    @media (max-width: 600px) {
-        display: block;
-    }
-`;
-
-const DividerMobile2 = styled.div`
-    display: none;
-    height: 1px;
-    width: 90%;
-    background-color: #ddd;
-    margin: 0 auto;
-    margin-top: 20px;
-
-    @media (max-width: 600px) {
-        display: block;
-    }
-`;
-
-const ProductImage = styled.img`
-    width: 100%;
-    border-radius: 10px;
-
-    @media (max-width: 650px) {
-        width: 100%;
-        margin-top: -14.4%;
-        border-radius: 0;
     }
 `;
 
@@ -381,13 +481,13 @@ const AdditionalImagesMobile = styled.div`
 const ProductInfo = styled.div`
     width: 46%;
     margin-left: 3%;
-    margin-top: 1.5%;
+    margin-top: 15px;
     box-sizing: border-box;
 
     h3 {
         font-size: 17px;
         font-weight: lighter;
-        margin-top: -20px;
+        margin-top: -18.5px;
 
         @media (max-width: 650px) {
             font-size: 15px;
@@ -399,23 +499,6 @@ const ProductInfo = styled.div`
         margin-left: 5%;
         margin-right: 5%;
         margin-top: 40px;
-    }
-`;
-
-const SameproductWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    h3 {
-        font-size: 18px;
-    }
-
-    @media (max-width: 650px) {
-       margin-left: 5%;
-       h3 {
-        font-size: 15px;
-       } 
     }
 `;
 
@@ -444,17 +527,20 @@ const ProductDescription = styled.p`
     }
 `;
 
+const SizeContainer = styled.div`
+    width: 100%;
+`;
+
 const SizeSelector = styled.select`
-    margin: 20px 0;
-    padding: 10px;
+    margin-bottom: 10px;
     border-radius: 5px;
     border: none;
-    width: 100%;
+    
     height: 60px;
     font-weight: bold;
 
     @media (max-width: 600px) {
-        height: 55px;
+       
         border: 1px solid #e0e0e0;
     }
 `;
@@ -462,19 +548,27 @@ const SizeSelector = styled.select`
 const OtherInfo = styled.div`
     display: flex;
     justify-content: space-between;
-    margin: 20px 0;
+    margin-bottom: 10px;
+    width: 100%;
+
+    @media (max-width: 840px){
+        flex-direction: column; 
+        margin-top: 0;   
+        margin-bottom: 0;
+    }
 `;
 
 const InfoItem = styled.div`
     margin: 10px 0;
-    padding: 10px;
+    height: 60px;
+    padding-right: 20px;
     font-size: 14px;
     color: #333;
     background-color: white;
     border-radius: 5px;
     width: 27%;
     text-align: center;
-    margin-top: -20px;
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -489,12 +583,64 @@ const InfoItem = styled.div`
         }
     }
 
+        @media (max-width: 840px) {
+        flex-direction: column;
+        height: 60px; /* 높이를 고정 */
+        width: calc(100% - 40px); /* 100%에서 20px을 뺀 값 */
+        margin-top: 5px;
+        padding-right: 40px;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+
     @media (max-width: 600px) {
-        margin-top: -30px;
         border: 1px solid #e0e0e0;
-        height: 30px;
+        height: 60px; // 높이를 고정
+        width: calc(100% - 40px); /* 100%에서 20px을 뺀 값 */
+        margin-top: 1px;
+        padding-right: 40px;
+        align-items: flex-start;
+        text-align: left;
     }
 `;
+
+const FirstInfo = styled.div`
+    white-space: nowrap; // 텍스트 줄바꿈 방지
+    overflow: hidden;    // 넘치는 텍스트 숨기기
+    text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
+    width: 100%;  // 전체 박스 내에서 너비를 제한
+    
+
+    @media (max-width: 840px) {
+        strong {
+            font-weight: lighter;
+            color: #6B6B6B;
+            font-size: 13px;
+            margin-left: 20px;
+
+            @media (max-width: 600px) {
+                margin-top: -5px;
+                font-size: 15px;
+            }
+        }
+    }
+`;
+
+const SecondInfo = styled.div`
+    white-space: nowrap; // 텍스트 줄바꿈 방지
+    overflow: hidden;    // 넘치는 텍스트 숨기기
+    text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
+    width: 100%;  // 전체 박스 내에서 너비를 제한
+    margin-left: 20px;
+
+    @media (max-width: 840px) {
+        margin-top: 3px;
+        font-size: 13px;
+        margin-left: 20px;
+    }
+`;
+
 
 const BrandInfo = styled.div`
     display: flex;
@@ -502,17 +648,20 @@ const BrandInfo = styled.div`
     background-color: white;
     border-radius: 5px;
     text-align: center;
-    margin-top: -10px;
+    margin-top: 10px;
     width: 100%;
     height: 60px;
     font-weight: bold;
     cursor: pointer;
+    
+
+    @media (max-width: 840px) {
+        margin-top: 5px;
+    }
 
     @media (max-width: 600px) {
-        height: 55px;
-        margin-top: -20px;
+        margin-top: 1px;
         border: 1px solid #e0e0e0;
-        width: 99.5%;
     }
 `;
 
@@ -531,7 +680,7 @@ const ButtonContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
+    
     @media (max-width: 650px) {
         display: none;
     }
@@ -543,7 +692,7 @@ const ActionButton1 = styled.button`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    
     height: 60px;
     font-size: 16px;
     color: #fff;
@@ -551,7 +700,13 @@ const ActionButton1 = styled.button`
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 5%;
+    margin-right: 20px;
+
+    @media (max-width: 840px) {
+        height: 60px;
+        margin-top: -5px;
+        margin-right: 15px;
+    }
 `;
 
 const ActionButton2 = styled.button`
@@ -560,7 +715,7 @@ const ActionButton2 = styled.button`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    
     height: 60px;
     font-size: 16px;
     color: #fff;
@@ -568,6 +723,11 @@ const ActionButton2 = styled.button`
     border: none;
     border-radius: 5px;
     cursor: pointer;
+
+    @media (max-width: 840px) {
+        height: 60px;
+        margin-top: -5px;
+    }
 `;
 
 const ButtonText = styled.span`
@@ -623,7 +783,7 @@ const AdditionalImage = styled.img`
 `;
 
 const DetailSection = styled.div`
-    margin: 20px 0;
+    margin: 50px 0;
     h3 {
         font-size: 18px;
         color: #000;

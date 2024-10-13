@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter'; 
 import ProductListWrap from '../Components/Product';
 
 const OuterCate = () => {
+    const location = useLocation();
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
+    const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
+    const searchResults = location.state?.results || [];
     const [selectedGenders, setSelectedGenders] = useState([]);
 
     const categoryNameMap = {
@@ -23,8 +27,9 @@ const OuterCate = () => {
 
     const fetchProducts = async (categories, genders) => {
         try {
+            setIsLoading(true); // 로딩 시작
             const filteredCategories = categories.length > 0 ? categories : outerCategories;
-            const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용'];  // 기본 성별 필터
+            const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용']; 
 
             const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
             const genderParam = filteredGenders.map(gen => `gender=${gen}`).join('&');
@@ -36,11 +41,13 @@ const OuterCate = () => {
             setTotalProducts(response.data.content.length);
         } catch (error) {
             console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        } finally {
+            setIsLoading(false); // 로딩 종료
         }
     };
 
     useEffect(() => {
-        fetchProducts([], []);  // 처음 로드 시 기본 카테고리와 성별로 로드
+        fetchProducts([], []);  
     }, []);
 
     const handleCategoryChange = (categoryId, isChecked) => {
@@ -77,7 +84,7 @@ const OuterCate = () => {
                 </SideFilterWrapper>
                 <ProductWrapper>
                     <ProductNumber>
-                        <h3>상품 {totalProducts}개</h3>
+                        <h3>상품 {products.length}개</h3> 
                     </ProductNumber>
                     <ProductListWrap category={selectedCategories.length > 0 ? selectedCategories : outerCategories} products={products} />  
                 </ProductWrapper>

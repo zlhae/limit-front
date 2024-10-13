@@ -1,12 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { getSavedBookmarks, saveBookmarks, isProductBookmarked } from '../Utils/Bookmarks'; 
+import axios from 'axios';
 import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
 
 const Product = ({ searchResults }) => {
     const navigate = useNavigate(); 
+    const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
+
+    // 모든 찜한 상품을 불러옵니다
+    useEffect(() => {
+        loadBookmarks();
+    }, []);
+
+    const loadBookmarks = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.get('https://api.lim-it.one/api/v1/products/wishes', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setBookmarkedProducts(response.data);
+        } catch (error) {
+            console.error('찜 목록을 가져오는 중 오류 발생:', error);
+        }
+    };
+
+    const updateBookmarks = async (productId, shouldBookmark) => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const data = { wish: shouldBookmark };
+            const response = await axios({
+                method: 'PUT',
+                url: `https://api.lim-it.one/api/v1/products/${productId}/wishes`,
+                headers: { 'Authorization': `Bearer ${token}` },
+                data: data
+            });
+            if (response.status === 200) {
+                loadBookmarks(); // 찜 목록을 다시 불러와 업데이트
+            }
+        } catch (error) {
+            console.error('찜 상태를 업데이트하는 중 오류 발생:', error);
+        }
+    };
 
     const handleProductClick = (id) => {
         navigate(`/productdetail/${id}`);
@@ -17,7 +53,13 @@ const Product = ({ searchResults }) => {
             <ProductGroup>
                 {searchResults.length > 0 ? (
                     searchResults.map((product) => (
-                        <SingleProduct key={product.id} product={product} handleProductClick={handleProductClick} />
+                        <SingleProduct 
+                            key={product.id} 
+                            product={product} 
+                            handleProductClick={handleProductClick} 
+                            bookmarkedProducts={bookmarkedProducts} 
+                            updateBookmarks={updateBookmarks}
+                        />
                     ))
                 ) : (
                     <NoResults>검색 결과가 없습니다.</NoResults>
@@ -27,46 +69,45 @@ const Product = ({ searchResults }) => {
     );
 };
 
-const SingleProduct = ({ product, handleProductClick }) => {
+const SingleProduct = ({ product, handleProductClick, bookmarkedProducts, updateBookmarks }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
 
+    // 찜한 목록에 있는지 확인하여 상태 설정
     useEffect(() => {
-        setIsBookmarked(isProductBookmarked(product.id)); 
-    }, [product.id]);
-
-    const handleBookmarkClick = (e) => {
-        e.stopPropagation(); 
-        const savedBookmarks = getSavedBookmarks();
-        let updatedBookmarks = [...savedBookmarks];
-
-        if (isBookmarked) {
-            updatedBookmarks = updatedBookmarks.filter(id => id !== product.id); 
-        } else {
-            updatedBookmarks.push(product.id);
+        if (bookmarkedProducts && Array.isArray(bookmarkedProducts)) {
+            const isProductBookmarked = bookmarkedProducts.some(bookmarked => bookmarked.productId === product.id);
+            setIsBookmarked(isProductBookmarked);
         }
+    }, [product.id, bookmarkedProducts]);
 
-        saveBookmarks(updatedBookmarks);
-        setIsBookmarked(!isBookmarked);
+    const handleBookmarkClick = async (e) => {
+        e.stopPropagation();
+        if (isUpdating) return;
+
+        setIsUpdating(true);
+        const shouldBookmark = !isBookmarked;
+        await updateBookmarks(product.id, shouldBookmark);
+        setIsUpdating(false);
     };
 
     const handleImageError = () => {
         setImageSrc(LoadingImage);
     };
 
+    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.currentPrice) + "원";
+
     return (
         <ProductContainer onClick={() => handleProductClick(product.id)}>
             <ThumbBox>
                 <BookmarkWrapper>
-                    <BookmarkIcon
-                        filled={isBookmarked}
-                        onClick={handleBookmarkClick}
-                    />
+                    <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
-                <img
-                    src={imageSrc}
-                    alt="Product Thumbnail"
-                    onError={handleImageError}
+                <img 
+                    src={imageSrc} 
+                    alt='Product Thumbnail' 
+                    onError={handleImageError} 
                 />
             </ThumbBox>
             <InfoBox>
@@ -86,12 +127,13 @@ const SingleProduct = ({ product, handleProductClick }) => {
                     <TagText>직거래</TagText>
                 </Tag>
                 <Price>
-                    <h3>{new Intl.NumberFormat('ko-KR').format(product.currentPrice)}원</h3>
+                    <h3>{formattedPrice}</h3>
                 </Price>
             </InfoBox>
         </ProductContainer>
     );
 };
+
 
 const NoResults = styled.p`
     font-size: 15px;
