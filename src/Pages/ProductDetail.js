@@ -333,6 +333,18 @@ const ProductDetail = () => {
                     </ModalContent>
                 </Modal>
             )}
+
+            {/* Fixed Purchase and Sale Buttons for Mobile View */}
+            <FixedButtonContainer>
+                <ActionButton1 onClick={onClickPurchase}>
+                    구매
+                    {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
+                </ActionButton1>
+                <ActionButton2 onClick={onClickSale}>
+                    판매
+                    {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
+                </ActionButton2>
+            </FixedButtonContainer>
         </Container>
     );
 };
@@ -395,8 +407,24 @@ const ProductContainer = styled.div`
     width: 80%;
     margin: 0 auto;
 
-    @media (max-width: 600px) {
+    @media (max-width: 400px) {
         width: 100%;
+        margin-top: -20px;
+    }
+
+    @media (min-width: 401px) and (max-width: 450px) {
+        width: 100%;
+        margin-top: -10px;
+    }
+
+    @media (min-width: 451px) and (max-width: 500px) {
+        width: 100%;
+        margin-top: -5px;
+    }
+
+    @media (min-width: 501px) and (max-width: 600px) {
+        width: 100%;
+        margin-top: 10px; 
     }
 `;
 
@@ -437,7 +465,7 @@ const ProductImage = styled.img`
     @media (max-width: 600px) {
         width: 100%;
         margin-top: -14.4%;
-        border-radius: 0;
+        border-radius: 0;        
     }
 `;
 
@@ -455,29 +483,6 @@ const Divider = styled.div`
     }
 `;
 
-const AdditionalImagesMobile = styled.div`
-    display: none;
-
-    @media (max-width: 600px) {
-        display: flex;
-        flex-wrap: nowrap;
-        margin: 10px 0;   
-        margin-left: 3%;
-        overflow-x: auto;
-        -ms-overflow-style: none;  
-        scrollbar-width: none;
-    }
-
-    & > * {
-        flex: 0 0 auto;
-        margin-right: 10px;
-    }
-
-    &::-webkit-scrollbar {
-        display: none; 
-    }
-`;
-
 const ProductInfo = styled.div`
     width: 46%;
     margin-left: 3%;
@@ -489,12 +494,12 @@ const ProductInfo = styled.div`
         font-weight: lighter;
         margin-top: -18.5px;
 
-        @media (max-width: 650px) {
+        @media (max-width: 840px) {
             font-size: 15px;
         }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 600px) {
         width: 90%;
         margin-left: 5%;
         margin-right: 5%;
@@ -506,7 +511,7 @@ const Price = styled.h2`
     font-size: 24px;
     margin-top: -15px;
 
-    @media (max-width: 850px) {
+    @media (max-width: 840px) {
         font-size: 21px;
     }
 `;
@@ -522,26 +527,33 @@ const ProductDescription = styled.p`
     color: #6b6b6b;
     margin-top: -10px;
 
-    @media (max-width: 650px) {
+    @media (max-width: 600px) {
         font-size: 14px;
     }
 `;
 
 const SizeContainer = styled.div`
     width: 100%;
+    padding: 0; 
+    margin: 0;
+
+    @media (max-width: 600px) {
+        margin-bottom: 10px;
+    }
 `;
 
 const SizeSelector = styled.select`
+    width: 100%;
     margin-bottom: 10px;
     border-radius: 5px;
     border: none;
-    
     height: 60px;
     font-weight: bold;
 
     @media (max-width: 600px) {
-       
+        width: calc(100% + 2px);
         border: 1px solid #e0e0e0;
+        margin: 0;
     }
 `;
 
@@ -550,29 +562,35 @@ const OtherInfo = styled.div`
     justify-content: space-between;
     margin-bottom: 10px;
     width: 100%;
+    gap: 10px;
 
+    
+    
     @media (max-width: 840px){
         flex-direction: column; 
         margin-top: 0;   
         margin-bottom: 0;
+        width: calc(100% - 10px);
     }
 `;
 
 const InfoItem = styled.div`
-    margin: 10px 0;
+    flex: 1; /* 모든 박스의 너비가 동일하도록 설정 */
     height: 60px;
-    padding-right: 20px;
+    min-height: 60px; /* 최소 높이를 고정하여 줄어들지 않도록 설정 */
+    overflow: hidden; /* 높이를 초과하는 콘텐츠를 숨기기 */
+    padding: 0 10px; /* 패딩 조정 */
     font-size: 14px;
     color: #333;
     background-color: white;
     border-radius: 5px;
-    width: 27%;
     text-align: center;
-    
+    width: 27%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0; /* 요소가 줄어들지 않도록 설정 */
 
     strong {
         font-weight: lighter;
@@ -583,33 +601,44 @@ const InfoItem = styled.div`
         }
     }
 
-        @media (max-width: 840px) {
+    @media (max-width: 960px) {
+        width: calc(27% - 40px);
+    }
+
+    @media (max-width: 840px) {
         flex-direction: column;
         height: 60px; /* 높이를 고정 */
-        width: calc(100% - 40px); /* 100%에서 20px을 뺀 값 */
-        margin-top: 5px;
+        min-height: 60px; /* 최소 높이도 고정 */
+        overflow: hidden; /* 높이를 초과하는 내용을 숨기기 */
+        width: calc(100% - 40px); /* 100%에서 40px을 뺀 값 */
+        margin-top: 0;
         padding-right: 40px;
         align-items: flex-start;
         text-align: left;
+        flex-shrink: 0; /* 줄어들지 않도록 설정 */
     }
-
 
     @media (max-width: 600px) {
         border: 1px solid #e0e0e0;
-        height: 60px; // 높이를 고정
-        width: calc(100% - 40px); /* 100%에서 20px을 뺀 값 */
+        height: 60px; /* 높이를 고정 */
+        min-height: 60px; /* 최소 높이도 고정 */
+        overflow: hidden; /* 높이를 초과하는 내용을 숨기기 */
+        width: calc(100% - 40px); /* 100%에서 40px을 뺀 값 */
         margin-top: 1px;
         padding-right: 40px;
         align-items: flex-start;
         text-align: left;
+        flex-shrink: 0; /* 줄어들지 않도록 설정 */
     }
 `;
+
 
 const FirstInfo = styled.div`
     white-space: nowrap; // 텍스트 줄바꿈 방지
     overflow: hidden;    // 넘치는 텍스트 숨기기
     text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
     width: 100%;  // 전체 박스 내에서 너비를 제한
+   
     
 
     @media (max-width: 840px) {
@@ -617,7 +646,7 @@ const FirstInfo = styled.div`
             font-weight: lighter;
             color: #6B6B6B;
             font-size: 13px;
-            margin-left: 20px;
+            margin-left: 10px;
 
             @media (max-width: 600px) {
                 margin-top: -5px;
@@ -632,12 +661,12 @@ const SecondInfo = styled.div`
     overflow: hidden;    // 넘치는 텍스트 숨기기
     text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
     width: 100%;  // 전체 박스 내에서 너비를 제한
-    margin-left: 20px;
+    
 
     @media (max-width: 840px) {
         margin-top: 3px;
         font-size: 13px;
-        margin-left: 20px;
+        margin-left: 10px;
     }
 `;
 
@@ -656,11 +685,11 @@ const BrandInfo = styled.div`
     
 
     @media (max-width: 840px) {
-        margin-top: 5px;
+        margin-top: 10px;
     }
 
     @media (max-width: 600px) {
-        margin-top: 1px;
+        margin-top: 10px;
         border: 1px solid #e0e0e0;
     }
 `;
@@ -707,6 +736,12 @@ const ActionButton1 = styled.button`
         margin-top: -5px;
         margin-right: 15px;
     }
+
+    @media (max-width: 600px) {
+        height: 50px;
+        margin-top: 0;
+        margin-right: 20px;
+    }
 `;
 
 const ActionButton2 = styled.button`
@@ -727,6 +762,12 @@ const ActionButton2 = styled.button`
     @media (max-width: 840px) {
         height: 60px;
         margin-top: -5px;
+    }
+
+    @media (max-width: 600px) {
+        height: 50px;
+        margin-top: 0;
+        
     }
 `;
 
@@ -754,6 +795,7 @@ const FixedButtonContainer = styled.div`
         background-color: white;
         padding: 10px 20px;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        
     }
 `;
 
