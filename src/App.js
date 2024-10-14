@@ -27,6 +27,7 @@ import Brand from "./Pages/Brand";
 import Chatting from "./Pages/Chatting";
 import SearchaResult from "./Pages/SearchResult";
 import MoreProduct from "./Pages/MoreProduct";
+import ChatRoom from "./Pages/ChatRoom";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
         <Route path = "/chatting" element = {<Chatting/>}/>
         <Route path = "/searchresult" element = {<SearchaResult/>}/>
         <Route path = "/moreproduct" element = {<MoreProduct/>}/>
+        <Route path="/chat" element={<ChatRoom/>}/>
       </Routes>
       <Footer></Footer>  
     </div>

@@ -1,17 +1,95 @@
 import styled from "styled-components";
 import PlusIcon from "../Images/plus_icon.svg";
 import ArrowUPIcon from "../Images/arrow-up.svg";
+import React, { useState, useEffect } from "react";
+import {over} from 'stompjs';
+import SockJS from 'sockjs-client';
 
-import TestProfileImg2 from "../Images/test_profile_img2.png"
+var stompClient=null;
+const ChattingWindow=({selectedChattingRoomData})=>{
+    const [privateChats, setPrivateChats]=useState(new Map());
+    const [publicChats, setPublicChats]=useState([]);
+    const [tab, setTab]=useState("CHATROOM");
+    const [userData, setUserData]=useState({
+        username: '',
+        connected: false,
+    });
+    const [customHeaders, setCustomeHeaders]=useState({
+        Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`
+    })
+    const [messageInput, setMessageInput] = useState("");
 
-const ChattingWindow=()=>{
+    useEffect(()=>{
+        console.log(userData);
+    }, [userData]);
+
+    const connect=()=>{
+        let Sock=new SockJS('https://api.lim-it.one/ws/stomp');
+        stompClient=over(Sock);
+        stompClient.connect(customHeaders, onConnected, onError);
+    }
+
+    const onConnected=()=>{
+        setUserData({...userData, "connected": true});
+
+        stompClient.subscribe('/topic/chat.1', onMessageReceived);
+        stompClient.subscribe('/queue/error', onMessageReceived);
+
+        var chatRequest={
+            content: "HELLO I'm "+userData.username
+        }
+        stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
+    }
+
+    const onMessageReceived=(payload)=>{
+        var payloadData=JSON.parse(payload.body);
+        console.log(payloadData);
+    }
+
+    const onError=(err)=>{
+        console.log(err);
+    }
+
+    const handleMessage =(event)=>{
+        var messageContent = messageInput;
+        messageContent = "asdf!!!test1"; // 이건 html text input 받으면 되는데 몰라서 못 받겠어요
+        if (messageContent && stompClient) { // 메세지 입력했고, stomp 연결된 경우
+            var chatRequest = {
+                content: messageInput + userData.username + ": sent message!",
+            };
+
+            // 메세지 전송, /pub/chat/talk/{chatRoomId}
+            stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
+        }
+    }
+
+    const sendValue=()=>{
+        if (stompClient) {
+            var chatRequest = {
+                content: messageInput + userData.username,
+            };
+
+            stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
+            setUserData({...userData,"message": ""});
+        }
+    }
+
+    const handleUsername=(event)=>{
+        const {value}=event.target;
+        setUserData({...userData,"username": value});
+    }
+
+    const registerUser=()=>{
+        connect();
+    }
+
     return(
         <ChattingWindowContainer>
             <UserInformation>
                 <ImgWrapper>
-                    <ProfileImageInWindow src={TestProfileImg2}></ProfileImageInWindow>
+                    <ProfileImageInWindow src={selectedChattingRoomData.profile_img}></ProfileImageInWindow>
                 </ImgWrapper>
-                <UserName>하치와레</UserName>
+                <UserName>{selectedChattingRoomData.user_name}</UserName>
             </UserInformation>
             <SpeechBubbleContainer>
                 <MeSpeechBubbleContainer>
@@ -19,19 +97,19 @@ const ChattingWindow=()=>{
                 </MeSpeechBubbleContainer>
                 <YouSpeechBubbleContainer>                    
                     <YouProfileWrapper>
-                        <YouProfile src={TestProfileImg2}></YouProfile>
+                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
                     </YouProfileWrapper>    
                     <YouSpeechBubble>네 가능하십니다.</YouSpeechBubble>
                 </YouSpeechBubbleContainer>
                 <YouSpeechBubbleContainer>                    
                     <YouProfileWrapper>
-                        <YouProfile src={TestProfileImg2}></YouProfile>
+                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
                     </YouProfileWrapper>    
                     <YouSpeechBubble>배송 방식은 어떤 거 원하실까요? 편의점 택배는 3000원 우체국 택배는 4000원입니다.</YouSpeechBubble>
                 </YouSpeechBubbleContainer>
                 <YouSpeechBubbleContainer>                    
                     <YouProfileWrapper>
-                        <YouProfile src={TestProfileImg2}></YouProfile>
+                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
                     </YouProfileWrapper>    
                     <YouSpeechBubble>원하시는 배송 방법의 금액을 포함하여 총 000000원 농협 000 0000 000000으로 입금해주시고 배송지 정보 남겨주세요.</YouSpeechBubble>
                 </YouSpeechBubbleContainer>
@@ -43,7 +121,7 @@ const ChattingWindow=()=>{
                 </MeSpeechBubbleContainer>
                 <YouSpeechBubbleContainer>                    
                     <YouProfileWrapper>
-                        <YouProfile src={TestProfileImg2}></YouProfile>
+                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
                     </YouProfileWrapper>    
                     <YouSpeechBubble>넵! 발송 후 연락드리겠습니다 좋은 하루 되세요</YouSpeechBubble>
                 </YouSpeechBubbleContainer>
@@ -109,7 +187,7 @@ const SpeechBubbleContainer=styled.div`
 
 const MeSpeechBubbleContainer=styled.div`
     width: 100%;
-    text-align: end;
+    text-align: right;
 `
 
 const MeSpeechBubble=styled.div`
@@ -119,6 +197,7 @@ const MeSpeechBubble=styled.div`
     border-radius: 15px 0px 15px 15px;
     margin-top: 10px;
     display: inline-block;
+    text-align: left;
 `
 
 const YouSpeechBubbleContainer=styled.div`

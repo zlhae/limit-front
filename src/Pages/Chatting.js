@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useState } from "react";
 import SubHeader from "../Components/SubHeader";
 import ChattingList from "../Components/ChattingList";
 import ChattingWindow from "../Components/ChattingWindow";
@@ -13,6 +14,8 @@ import TestProfileImg7 from "../Images/test_profile_img7.png"
 import TestProfileImg8 from "../Images/test_profile_img8.png"
 
 const Chatting=()=>{
+    const [selectedChattingRoom, setSelectedChattingRoom]=useState(0);
+
     const chattingListData=[
         {
             id: 0,
@@ -68,8 +71,15 @@ const Chatting=()=>{
         <div>
             <SubHeader></SubHeader>
             <ChattingComponent>
-                <ChattingList chattingListData={chattingListData}></ChattingList>
-                <ChattingWindow></ChattingWindow>
+                <ChattingList
+                    chattingListData={chattingListData}
+                    selectedChattingRoom={selectedChattingRoom}
+                    setSelectedChattingRoom={setSelectedChattingRoom}
+                ></ChattingList>
+                
+                <ChattingWindow
+                    selectedChattingRoomData={chattingListData[selectedChattingRoom]}
+                ></ChattingWindow>
             </ChattingComponent>
         </div>
     )
