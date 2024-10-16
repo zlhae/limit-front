@@ -1,26 +1,45 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+import { login, logout } from '../store'; 
+import axios from 'axios'; 
 import Logo from '../Images/limit-logo.svg';
 import ChattingIcon from '../Images/chatting-icon.svg';
 import SearchIcon from '../Images/search-icon.svg'
 
-const Header = () => {
+const Header = () => { // 헤더
 
-    const [userLogin, setUserLogin] = useState(false); // 사용자 로그인 상태
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(state => state.auth.isLoggedIn); // 로그인 상태 
 
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-            setUserLogin(true);
+        const accessToken = Cookies.get("accessToken");
+        if (accessToken) {
+            dispatch(login({ isLoggedIn: true, id: "", password: "" }));
         }
-    }, [userLogin]);
+    }, [isLoggedIn]);
 
-    const Logout = () => { // 로그아웃 메서드
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setUserLogin(false);
-        window.location.href = "/"
+    const Logout = async () => { // 로그아웃 메서드
+        const refreshToken = Cookies.get("refreshToken"); 
+    
+        try {
+            const response = await axios.post('https://api.lim-it.one/api/v1/accounts/logout', {
+                RefreshToken: refreshToken
+            });
+    
+            if (response.status === 200) {
+                Cookies.remove("accessToken");
+                Cookies.remove("refreshToken");
+                dispatch(logout());
+                window.location.href = "/";
+            } else {
+                console.error("로그아웃 실패", response.status);
+            }
+        } catch (error) {
+            console.error("로그아웃 중 오류 발생", error);
+        }
     };
 
     return(
@@ -30,7 +49,7 @@ const Header = () => {
                     <HeaderTopItem><HeaderTopItemLink to = {"/cs-center"}>고객센터</HeaderTopItemLink></HeaderTopItem>
                     <HeaderTopItem><HeaderTopItemLink to = {"/my-page"}>마이페이지</HeaderTopItemLink></HeaderTopItem>
                     <HeaderTopItem>
-                        {userLogin ? (<HeaderLoggedIn onClick = {Logout}>로그아웃</HeaderLoggedIn>) : (
+                        {isLoggedIn ? (<HeaderLoggedIn onClick = {Logout}>로그아웃</HeaderLoggedIn>) : (
                             <HeaderTopItemLink to = "/login">로그인</HeaderTopItemLink>)}
                     </HeaderTopItem>
                 </HeaderTopList>

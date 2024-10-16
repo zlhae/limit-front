@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedMenu, toggleMobileMenu, closeMobileMenu } from '../store';
 import MenuIcon from "../Images/menu-button.svg";
 import Default_MyPage from "../Components/Default_MyPage.js";
 import Unopened_Purchase from "../Components/Unopened_Purchase.js";
@@ -24,14 +23,11 @@ const menuTitles = {
     default: "마이페이지",
 };
 
-export default function MyPage() {
+export default function MyPage() { // 마이페이지 메뉴
 
-    const [selectedMenu, setSelectedMenu] = useState("default"); // 현재 선택된 메뉴 상태
-    const [mobileMenu, setMobileMenu] = useState(false); // 모바일 뷰 네비바 표시 여부 상태
-
-    const MenuToggle = () => { // 모바일 뷰 상태 토글 메서드
-        setMobileMenu(!mobileMenu); 
-    };
+    const dispatch = useDispatch();
+    const selectedMenu = useSelector((state) => state.MypageMenu.selectedMenu); // 선택된 메뉴바 상태
+    const mobileMenu = useSelector((state) => state.MypageMenu.mobileMenu); // 모바일 뷰 상태
 
     const renderComponent = () => { // 우측 컨테이너 컴포넌트 렌더링 메서드
         switch(selectedMenu) {
@@ -50,38 +46,38 @@ export default function MyPage() {
             case "inquiry":
                 return <InquiryPage />;
             default:
-                return <Default_MyPage setSelectedMenu = {setSelectedMenu}/>;
+                return <Default_MyPage setSelectedMenu = {dispatch(setSelectedMenu)}/>;
         }
     }
 
     return (
         <>
         <SubHeader/>
-        <MyPageContainer onClick = {() => setMobileMenu(false)}>
+        <MyPageContainer onClick = {() => dispatch(closeMobileMenu())}>
             <LeftNavBar mobileMenu = {mobileMenu}>
                 <NaviList style = {{fontSize: "17.5px", fontWeight: "bold", marginBottom: "30px"}} 
-                          onClick = {() => setSelectedMenu("default")}>마이페이지</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("default"))}>마이페이지</NaviList>
 
                 <NaviList selected = {selectedMenu === "unopened_purchase"}
-                          onClick = {() => setSelectedMenu("unopened_purchase")}>미개봉 구매 내역</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("unopened_purchase"))}>미개봉 구매 내역</NaviList>
 
                 <NaviList selected = {selectedMenu === "unopened_sale"}
-                          onClick = {() => setSelectedMenu("unopened_sale")}>미개봉 판매 내역</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("unopened_sale"))}>미개봉 판매 내역</NaviList>
 
                 <NaviList selected = {selectedMenu === "used_purchase"}
-                          onClick = {() => setSelectedMenu("used_purchase")}>중고 구매 내역</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("used_purchase"))}>중고 구매 내역</NaviList>
 
                 <NaviList selected = {selectedMenu === "used_sale"}
-                          onClick = {() => setSelectedMenu("used_sale")}>중고 판매 내역</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("used_sale"))}>중고 판매 내역</NaviList>
 
                 <NaviList selected = {selectedMenu === "interest_product"}
-                          onClick = {() => setSelectedMenu("interest_product")}>관심 상품 목록</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("interest_product"))}>관심 상품 목록</NaviList>
 
                 <NaviList selected = {selectedMenu === "inquiry"}
-                          onClick = {() => setSelectedMenu("inquiry")}>문의 내역</NaviList>
+                          onClick = {() => dispatch(setSelectedMenu("inquiry"))}>문의 내역</NaviList>
             </LeftNavBar>    
             <RightContainer>
-                <MenuBox onClick = {(e) => {e.stopPropagation(); MenuToggle();}}>
+                <MenuBox onClick = {(e) => {e.stopPropagation(); dispatch(toggleMobileMenu());}}>
                     <MenuButton src = {MenuIcon}/>
                     <MenuTitle>{menuTitles[selectedMenu]}</MenuTitle>
                 </MenuBox>

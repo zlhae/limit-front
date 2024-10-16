@@ -1,21 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+import { setSelectedMenu } from '../store';
+import Cookies from 'js-cookie';
 import Default_Profile from "../Images/Default_Profile.svg";
 
-export default function Default_MyPage({setSelectedMenu}) {
+export default function Default_MyPage() { // 기본 마이페이지
+
+    const dispatch = useDispatch();
+    const [nickname, setNickname] = useState(''); // 사용자 닉네임
+    const [email, setEmail] = useState(''); // 사용자 이메일
+    const [profileUrl, setProfileUrl] = useState(Default_Profile); // 사용자 프로필 URL
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const accessToken = Cookies.get("accessToken"); 
+
+                const response = await axios.get('https://api.lim-it.one/api/v1/members/my-profile/basic', {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}` 
+                    }
+                });
+
+                const { nickname, email, profileUrl } = response.data;
+
+                setNickname(nickname);
+                setEmail(email);
+                setProfileUrl(profileUrl ? profileUrl : Default_Profile);
+            } catch (error) {
+                console.error("조회중 에러발생 : ", error);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     return (
         <Container>
-            <ProfileContainer>
-                <ProfileImage/>
+            <ProfileContainer> 
+                <ProfileImage profileUrl = {profileUrl}/>
                 <UserInfoContainer>
-                    <UserInfo type = {"nickname"}>리밋</UserInfo>
-                    <UserInfo type = {"email"}>limit@gmail.com</UserInfo>
+                    <UserInfo type = {"nickname"}>{nickname}</UserInfo>
+                    <UserInfo type = {"email"}>{email}</UserInfo> 
                 </UserInfoContainer>
-                <ProfileModiBtn onClick = {() => setSelectedMenu("modify_profile")}>프로필 관리</ProfileModiBtn>
+                <ProfileModiBtn onClick = {() => dispatch(setSelectedMenu("modify_profile"))}>프로필 관리</ProfileModiBtn>
             </ProfileContainer>
             <Title>미개봉 구매 내역</Title>
             <ContentsBox type = {"Purchase"}>
@@ -94,7 +124,7 @@ const ProfileImage = styled.div` // 사용자 프로필 이미지
     height: 120px;
     margin-top: 15px;
     margin-left: 30px;
-    background-image: url(${Default_Profile});
+    background-image: url(${props => props.profileUrl});
     background-size: cover;
     border-radius: 50%;
 

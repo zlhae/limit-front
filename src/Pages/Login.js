@@ -1,13 +1,16 @@
 import styled from 'styled-components';
-import {useState} from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, setTokens } from '../store'; 
+import Cookies from 'js-cookie'; 
 
-const Login = () => {
+const Login = () => { // 로그인 페이지
 
-    const [id, setId] = useState(""); // 사용자 이메일ID
-    const [password, setPassword] = useState(""); // 사용자 패스워드
+    const dispatch = useDispatch();
+    const id = useSelector((state) => state.auth.id); // 이메일 아이디
+    const password = useSelector((state) => state.auth.password); // 패스워드
 
     const userLogin = async () => { // 사용자 로그인 메서드
         try {
@@ -15,21 +18,22 @@ const Login = () => {
                 email: id,
                 password: password,
             });
-            localStorage.setItem("accessToken", response.data.accessToken);
-            localStorage.setItem("refreshToken", response.data.refreshToken);
 
-            await Swal.fire({
-                icon: "success",
-                title: "로그인 성공!"
-            });
-            window.location.href = "/"
+            dispatch(login({ id: id, password: password })); 
+            dispatch(setTokens({ 
+                accessToken: response.data.accessToken,
+                refreshToken: response.data.refreshToken,
+            }));
+
+            Cookies.set("accessToken", response.data.accessToken, { expires: 14 }); 
+            Cookies.set("refreshToken", response.data.refreshToken, { expires: 14 }); 
+
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 100); 
 
         } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "로그인 실패",
-                text: "이메일 또는 비밀번호를 확인해주세요.",
-            });
+
         }
     };
 
@@ -46,13 +50,13 @@ const Login = () => {
                 <EmailLoginInput
                     type = "text"
                     placeholder = "이메일"
-                    onChange = {(e) => {setId(e.target.value)}}
+                    onChange = {(e) => { dispatch(login({ id: e.target.value, password })); }}
                     onKeyDown = {EnterKey}
                 ></EmailLoginInput>
                 <EmailLoginInput
                     type = "password"
                     placeholder = "비밀번호"
-                    onChange = {(e) => {setPassword(e.target.value)}}
+                    onChange = {(e) => { dispatch(login({ id, password: e.target.value })); }}
                     onKeyDown = {EnterKey}
                 ></EmailLoginInput>
                 <EmailLoginButton onClick = {userLogin}>이메일로 로그인하기</EmailLoginButton>
