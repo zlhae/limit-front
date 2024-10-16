@@ -21,7 +21,7 @@ const Brand = () => {
     const [error, setError] = useState(null);
     const [products, setProducts] = useState([]);
 
-    const fetchBrandData = async () => {
+    const fetchBrandData = async () => {    
         try {
             const response = await axios.get(`https://api.lim-it.one/api/v1/brands`);
             const brand = response.data.find((b) => b.id === parseInt(brandId));
