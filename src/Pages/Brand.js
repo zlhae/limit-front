@@ -19,7 +19,7 @@ const Brand = () => {
     const [brandData, setBrandData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState([]);   
 
     const fetchBrandData = async () => {    
         try {
