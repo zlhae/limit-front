@@ -16,7 +16,7 @@ const ChattingWindow=()=>{
             <SpeechBubbleContainer>
                 <MeSpeechBubbleContainer>
                     <MeSpeechBubble>안녕하세요! 거래하고 싶어 연락 드립니다!</MeSpeechBubble>
-                </MeSpeechBubbleContainer>
+                </MeSpeechBubbleContainer>   
                 <YouSpeechBubbleContainer>                    
                     <YouProfileWrapper>
                         <YouProfile src={TestProfileImg2}></YouProfile>
