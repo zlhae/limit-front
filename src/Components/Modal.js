@@ -1,3 +1,5 @@
+// 수정할 것 : 카테고리 버튼, 성별 버튼 위치
+
 import React from 'react';
 import styled from 'styled-components';
 
@@ -7,7 +9,7 @@ const Modal = ({ isOpen, onClose, children, onReset, selectedFilters }) => {
     return (
         <ModalOverlay onClick={onClose}>
             <ModalContent onClick={(e) => e.stopPropagation()}>
-                <ModalBody>
+                <ModalBody>   
                     {children}
                 </ModalBody>
                 <ModalFooter>
@@ -69,7 +71,7 @@ const ModalFooter = styled.div`
 `;
 
 const SelectedFilters = styled.div`
-    font-size: 14px;
+    font-size: 13px;
     color: #000000;
     margin-bottom: 10px;
     text-align: center;

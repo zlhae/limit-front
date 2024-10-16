@@ -1,33 +1,106 @@
-import React from 'react';
-import SubHeader from '../Components/SubHeader';
-import SideFilter from '../Components/SideFilter'; // SideFilter를 불러옴
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import SubHeader from '../Components/SubHeader';
+import SideFilter from '../Components/SideFilter'; 
 import ProductListWrap from '../Components/Product';
 
 const GoodsCate = () => {
-    const goodsCategories = ['비니', '버킷햇', '볼캡', '기타 모자', '머플러', '스카프', '넥타이', '장갑', '양말', '기타 패션잡화'];
-    const allCategories = { 패션잡화: goodsCategories };
+    const [products, setProducts] = useState([]);
+    const [totalProducts, setTotalProducts] = useState(0);
+    const [selectedCategories, setSelectedCategories] = useState([]); 
+    const [selectedGenders, setSelectedGenders] = useState([]);  // 성별 필터 상태 추가
+
+    const categoryNameMap = {
+        33: '비니',
+        34: '베레모',
+        35: '볼캡',
+        36: '스냅백',
+        37: '기타 모자',
+        38: '장갑',
+    };
+
+    const goodsCategories = [33, 34, 35, 36, 37, 38];
+    const categoryNames = goodsCategories.map((id) => categoryNameMap[id]);
+
+    // 상품을 가져오는 함수
+    const fetchProducts = async (categories, genders) => {
+        try {
+            // 필터 적용: 선택된 카테고리 또는 기본 모든 카테고리
+            const filteredCategories = categories.length > 0 ? categories : goodsCategories;
+            const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용'];
+
+            // URL에 필터링된 카테고리와 성별, 페이지 크기(size)를 107로 설정
+            const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
+            const genderParam = filteredGenders.map(gen => `gender=${gen}`).join('&');
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}&size=107`;
+
+            // API 요청
+            const response = await axios.get(url);
+
+            // 상품 데이터 설정
+            setProducts(response.data.content);
+            setTotalProducts(response.data.content.length);
+        } catch (error) {
+            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        }
+    };
+
+    // 페이지 로드 시 상품을 가져오는 useEffect
+    useEffect(() => {
+        fetchProducts([], []); 
+    }, []);
+
+    // 카테고리 필터 변경 처리
+    const handleCategoryChange = (categoryId, isChecked) => {
+        if (isChecked) {
+            setSelectedCategories((prev) => [...prev, categoryId]); // 카테고리 추가
+        } else {
+            setSelectedCategories((prev) => prev.filter((id) => id !== categoryId)); // 카테고리 제거
+        }
+    };
+
+    // 성별 필터 변경 처리
+    const handleGenderChange = (gender, isChecked) => {
+        const updatedGenders = isChecked
+            ? [...selectedGenders, gender]  // 성별 추가
+            : selectedGenders.filter((g) => g !== gender);  // 성별 제거
+
+        setSelectedGenders(updatedGenders);  // 성별 필터 업데이트
+    };
+
+    // 필터 상태가 변경되면 상품을 다시 가져오는 useEffect
+    useEffect(() => {
+        fetchProducts(selectedCategories, selectedGenders);
+    }, [selectedCategories, selectedGenders]);
 
     return (
-        <MainProduct className='main_product'>
-            <div className='sub_header'>
-                <SubHeader />
-            </div>
-            <ProductContainer className='product_container'>
-                <SideFilterWrapper className='side_filter'>
-                    <SideFilter selectedCategory="goods" categories={goodsCategories} allCategories={allCategories} />
+        <MainProduct>
+            <SubHeader />
+            <ProductContainer>
+                <SideFilterWrapper>
+                    <SideFilter 
+                        categories={categoryNames}
+                        allCategories={goodsCategories}
+                        onCategoryChange={handleCategoryChange} 
+                        onGenderChange={handleGenderChange}  // 성별 필터 전달
+                    />
                 </SideFilterWrapper>
-                <ProductWrapper className='product'>
+                <ProductWrapper>
                     <ProductNumber>
-                        <h3>상품 8,765개</h3>
+                        <h3>상품 {totalProducts}개</h3>
                     </ProductNumber>
-                    <ProductListWrap />
+                    <ProductListWrap 
+                        category={selectedCategories.length > 0 ? selectedCategories : goodsCategories} 
+                        products={products} 
+                    />  
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
-}
+};
 
+// 스타일 정의
 const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`

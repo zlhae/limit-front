@@ -1,54 +1,110 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styled from 'styled-components';
 import BookmarkIcon from './BookmarkIcon';
+import LoadingImage from '../Images/Loading.svg';
 import ArrowLeftIcon from '../Images/arrow-left.svg';
-import ArrowRightIcon from '../Images/arrow-right.svg'; 
-import a10 from '../Images/a10.webp';
-import a6 from '../Images/a6.webp';
-import a2 from '../Images/a2.webp';
-import test20 from '../Images/20.webp';
-import test21 from '../Images/21.webp';
-import test22 from '../Images/22.webp';
-import test23 from '../Images/23.webp';
-import test24 from '../Images/24.webp';
-import test25 from '../Images/25.webp';
-import test26 from '../Images/26.webp';
+import ArrowRightIcon from '../Images/arrow-right.svg';
 
-const images = [a10, a6, a2, test20, test21, test22, test23, test24, test25, test26];
 
-const RecentProduct = ({ image, index }) => {
+const fetchAllBookmarks = async () => {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const response = await axios.get('https://api.lim-it.one/api/v1/products/wishes', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('찜 목록을 가져오는 중 오류 발생:', error);
+        return [];
+    }
+};
+
+const updateBookmarkStatus = async (productId, shouldBookmark) => {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const data = { wish: shouldBookmark };
+        const response = await axios({
+            method: 'PUT',
+            url: `https://api.lim-it.one/api/v1/products/${productId}/wishes`,
+            headers: { 'Authorization': `Bearer ${token}` },
+            data: data
+        });
+        return response.status === 200;
+    } catch (error) {
+        console.error('찜 상태 업데이트 중 오류 발생:', error);
+        return false;
+    }
+};
+
+const RecentProduct = ({ product, bookmarkedProducts, updateBookmarks, index }) => {
+    const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
 
-    const handleBookmarkClick = () => {
-        setIsBookmarked(!isBookmarked);
+    useEffect(() => {
+        const isProductBookmarked = Array.isArray(bookmarkedProducts) && 
+            bookmarkedProducts.some(bookmarked => bookmarked.productId === product.id);
+        setIsBookmarked(isProductBookmarked);
+    }, [product.id, bookmarkedProducts]);
+
+    const handleBookmarkClick = async (e) => {
+        e.stopPropagation();
+        if (isUpdating) return;
+
+        setIsUpdating(true);
+        const shouldBookmark = !isBookmarked;
+
+        const success = await updateBookmarkStatus(product.id, shouldBookmark);
+        if (success) {
+            setIsBookmarked(shouldBookmark);
+            updateBookmarks();
+        }
+        setIsUpdating(false);
     };
 
+    const handleProductClick = () => {
+        navigate(`/productdetail/${product.id}`);
+    };
+
+    const handleImageError = () => {
+        setImageSrc(LoadingImage);
+    };
+
+    const formattedPrice = new Intl.NumberFormat('ko-KR').format(product.currentPrice) + "원";
+
     return (
-        <ProductContainer>
+        <ProductContainer onClick={handleProductClick}>
             <ThumbBox>
                 <BookmarkWrapper>
                     <BookmarkIcon filled={isBookmarked} onClick={handleBookmarkClick} />
                 </BookmarkWrapper>
-                <img src={image} alt={`Product Thumbnail ${index}`} />
+                <img 
+                    src={imageSrc} 
+                    alt='Product Thumbnail' 
+                    onError={handleImageError}
+                />
             </ThumbBox>
             <InfoBox>
                 <BrandBookmark>
                     <Brand>
-                        <h1>Asics</h1>
+                        <h1>{product.brandNames.eng}</h1>
                     </Brand>
                 </BrandBookmark>
                 <Name>
-                    <h2>Asics Unlimited Gel-Kayano 14 Carrier Grey Black</h2>
+                    <h2>{product.names.eng}</h2>
                 </Name>
                 <KoreaName>
-                    <h3>아식스 언리미티드 젤 카야노 14 캐리어 그레이 블랙</h3>
+                    <h3>{product.names.kor}</h3>
                 </KoreaName>
                 <Tag>
                     <TagText>택배</TagText>
                     <TagText>직거래</TagText>
                 </Tag>
                 <Price>
-                    <h3>310,000원</h3>
+                    <h3>{formattedPrice}</h3>
                 </Price>
             </InfoBox>
         </ProductContainer>
@@ -57,8 +113,31 @@ const RecentProduct = ({ image, index }) => {
 
 const RecentProductListWrap = () => {
     const productListRef = useRef(null);
+    const [products, setProducts] = useState([]);
+    const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+
+    useEffect(() => {
+        loadBookmarks();
+        fetchRecentProducts();
+    }, []);
+
+    const loadBookmarks = async () => {
+        const bookmarks = await fetchAllBookmarks();
+        setBookmarkedProducts(bookmarks);
+    };
+
+    const fetchRecentProducts = async () => {
+        try {
+            const response = await axios.get('https://api.lim-it.one/api/v1/products', {
+                params: { sort: 'releaseDate,desc', size: 30 }
+            });
+            setProducts(response.data.content);
+        } catch (error) {
+            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        }
+    };
 
     const checkScrollButtons = () => {
         const { current } = productListRef;
@@ -69,23 +148,11 @@ const RecentProductListWrap = () => {
         }
     };
 
-    useEffect(() => {
-        const { current } = productListRef;
-        if (current) {
-            current.addEventListener('scroll', checkScrollButtons);
-        }
-        return () => {
-            if (current) {
-                current.removeEventListener('scroll', checkScrollButtons);
-            }
-        };
-    }, []);
-
     const scrollProducts = (direction) => {
         if (productListRef.current) {
             const scrollAmount = direction === 'left' ? -300 : 300;
             productListRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            setTimeout(checkScrollButtons, 200); 
+            setTimeout(checkScrollButtons, 200);
         }
     };
 
@@ -94,8 +161,14 @@ const RecentProductListWrap = () => {
             {canScrollLeft && <ArrowButton direction="left" onClick={() => scrollProducts('left')} />}
             <ProductListContainer ref={productListRef}>
                 <ProductGroup>
-                    {images.map((image, index) => (
-                        <RecentProduct key={index} image={image} index={index} />
+                    {products.map((product, index) => (
+                        <RecentProduct 
+                            key={product.id} 
+                            product={product} 
+                            index={index} 
+                            bookmarkedProducts={bookmarkedProducts} 
+                            updateBookmarks={loadBookmarks} // updateBookmarks 함수 전달
+                        />
                     ))}
                 </ProductGroup>
             </ProductListContainer>
@@ -104,85 +177,34 @@ const RecentProductListWrap = () => {
     );
 };
 
-const ProductListWrap = styled.div`
-    width: 80%;
-    margin: 0 auto;
-    position: relative;
 
-    @media (max-width: 600px) {
-        width: 90%;
-    }
-`;
-
-const ProductListContainer = styled.div`
-    display: flex;
-    overflow-x: scroll;
-    
-    &::-webkit-scrollbar {
-        display: none;
-    }
-`;
-
-const ArrowButton = styled.button`
-    position: absolute;
-    top: 33.3%;
-    transform: translateY(-50%);
-    z-index: 10;
-    background: url(${(props) => (props.direction === 'left' ? ArrowLeftIcon : ArrowRightIcon)}) no-repeat center center;
-    background-size: contain;
-    width: 50px;
-    height: 50px;
-    border: none;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.3s;
-
-    &:hover {
-        opacity: 1;
-    }
-
-    ${(props) => (props.direction === 'left' ? 'left: -20px;' : 'right: -20px;')}
-
-    @media (max-width: 600px) {
-        width: 40px;
-        height: 40px;
-
-        ${(props) => (props.direction === 'left' ? 'left: -15px;' : 'right: -15px;')}
-    }
-`;
-
-const ProductGroup = styled.div`
-    display: flex;
-    gap: 20px;
-
-    @media (max-width: 600px) {
-        gap: 15px;
-    }
-`;
 
 const ProductContainer = styled.div`
-    min-width: 250px;
-    width: 100%;
+    width: 225px;  
+    max-width: 225px;
+    cursor: pointer;
+
 
     @media (max-width: 600px) {
-        min-width: 200px;
+        width: 150px;
+        max-width: 150x;
     }
 `;
 
-const ThumbBox = styled.div` 
+const ThumbBox = styled.div`
     position: relative;
-        
+
     img {
         width: 100%;
         height: auto;
         border-radius: 10px;
-        background-color: rgba(114, 184, 223, 0.15); /* 배경색과 투명도 설정 */
+        background-color: rgba(114, 184, 223, 0.15);
     }
 `;
 
-const BookmarkWrapper = styled.span` 
+const BookmarkWrapper = styled.span`
     position: absolute;
-    bottom: 7px; 
+    bottom: 7px;
     right: 10px;
 `;
 
@@ -195,15 +217,15 @@ const BrandBookmark = styled.div`
     padding: 0;
 `;
 
-const Brand = styled.div` 
+const Brand = styled.div`
 
     h1 {
         font-size: 15px;
         font-weight: bold;
-        margin-top: -10px;
+        margin-top: -3px;
 
         @media (max-width: 600px) {
-            font-size: 14px; 
+            font-size: 14px;
         }
     }
 `;
@@ -215,13 +237,12 @@ const Name = styled.div`
         font-weight: 500;
         margin-top: -10px;
         overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        text-overflow: ellipsis;
-
+        white-space: nowrap; 
+        text-overflow: ellipsis; 
+        display: block; 
+        
         @media (max-width: 600px) {
-            font-size: 12px; 
+            font-size: 12px;
         }
     }
 `;
@@ -235,10 +256,10 @@ const KoreaName = styled.div`
         color: #6D6D6D;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap; 
+        white-space: nowrap;
 
         @media (max-width: 600px) {
-            font-size: 11px; 
+            font-size: 11px;
         }
     }
 `;
@@ -259,13 +280,66 @@ const Price = styled.div`
 
     h3 {
         font-size: 15px;
-        margin-top: 8px;
+        margin-top: 10px;
 
         @media (max-width: 600px) {
-            font-size: 14px; 
+            font-size: 14px;
         }
     }
 `;
 
-export default RecentProductListWrap;
+const ProductListWrap = styled.div`
+    width: 80%;
+    margin: 0 auto;
+    position: relative;
 
+    @media (max-width: 600px) {
+        width: 90%;
+    }
+`;
+
+const ArrowButton = styled.button`
+    position: absolute;
+    top: 33.3%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: url(${(props) => (props.direction === 'left' ? ArrowLeftIcon : ArrowRightIcon)}) no-repeat center center;
+    background-size: contain;
+    width: 50px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    ${(props) => (props.direction === 'left' ? 'left: -25px;' : 'right: -25px;')}
+
+    &:hover {
+        opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+        width: 40px;
+        height: 40px;
+        ${(props) => (props.direction === 'left' ? 'left: -20px;' : 'right: -20px;')}
+    }
+`;
+
+const ProductListContainer = styled.div`
+    display: flex;
+    overflow-x: scroll;
+    
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`;
+
+const ProductGroup = styled.div`
+    display: flex;
+    gap: 15px;
+    
+    @media (max-width: 600px) {
+        gap: 10px;
+    }
+`;
+
+export default RecentProductListWrap;
