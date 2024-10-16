@@ -15,7 +15,7 @@ const Brand = () => {
         패션잡화: ['비니', '버킷햇', '볼캡', '기타 모자', '머플러', '스카프', '넥타이', '장갑', '양말', '기타 패션잡화']
     };
 
-    const { brandId } = useParams(); 
+    const { brandId } = useParams();   
     const [brandData, setBrandData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
