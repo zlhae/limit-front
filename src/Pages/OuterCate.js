@@ -30,13 +30,15 @@ const OuterCate = () => {
             setIsLoading(true); // 로딩 시작
             const filteredCategories = categories.length > 0 ? categories : outerCategories;
             const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용']; 
-
+    
             const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
             const genderParam = filteredGenders.map(gen => `gender=${gen}`).join('&');
-            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}`;
-
+            
+            // 페이지 크기(size)를 100으로 설정
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}&size=92`;
+    
             const response = await axios.get(url);
-
+    
             setProducts(response.data.content);
             setTotalProducts(response.data.content.length);
         } catch (error) {
@@ -45,6 +47,7 @@ const OuterCate = () => {
             setIsLoading(false); // 로딩 종료
         }
     };
+    
 
     useEffect(() => {
         fetchProducts([], []);  

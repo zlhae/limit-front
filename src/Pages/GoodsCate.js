@@ -9,6 +9,7 @@ const GoodsCate = () => {
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
+    const [selectedGenders, setSelectedGenders] = useState([]);  // 성별 필터 상태 추가
 
     const categoryNameMap = {
         33: '비니',
@@ -22,15 +23,22 @@ const GoodsCate = () => {
     const goodsCategories = [33, 34, 35, 36, 37, 38];
     const categoryNames = goodsCategories.map((id) => categoryNameMap[id]);
 
-    const fetchProducts = async (categories) => {
+    // 상품을 가져오는 함수
+    const fetchProducts = async (categories, genders) => {
         try {
+            // 필터 적용: 선택된 카테고리 또는 기본 모든 카테고리
             const filteredCategories = categories.length > 0 ? categories : goodsCategories;
+            const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용'];
 
+            // URL에 필터링된 카테고리와 성별, 페이지 크기(size)를 107로 설정
             const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
-            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}`;
+            const genderParam = filteredGenders.map(gen => `gender=${gen}`).join('&');
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}&size=107`;
 
+            // API 요청
             const response = await axios.get(url);
 
+            // 상품 데이터 설정
             setProducts(response.data.content);
             setTotalProducts(response.data.content.length);
         } catch (error) {
@@ -38,21 +46,33 @@ const GoodsCate = () => {
         }
     };
 
+    // 페이지 로드 시 상품을 가져오는 useEffect
     useEffect(() => {
-        fetchProducts([]); 
+        fetchProducts([], []); 
     }, []);
 
+    // 카테고리 필터 변경 처리
     const handleCategoryChange = (categoryId, isChecked) => {
         if (isChecked) {
-            setSelectedCategories((prev) => [...prev, categoryId]); 
+            setSelectedCategories((prev) => [...prev, categoryId]); // 카테고리 추가
         } else {
-            setSelectedCategories((prev) => prev.filter((id) => id !== categoryId)); 
+            setSelectedCategories((prev) => prev.filter((id) => id !== categoryId)); // 카테고리 제거
         }
     };
 
+    // 성별 필터 변경 처리
+    const handleGenderChange = (gender, isChecked) => {
+        const updatedGenders = isChecked
+            ? [...selectedGenders, gender]  // 성별 추가
+            : selectedGenders.filter((g) => g !== gender);  // 성별 제거
+
+        setSelectedGenders(updatedGenders);  // 성별 필터 업데이트
+    };
+
+    // 필터 상태가 변경되면 상품을 다시 가져오는 useEffect
     useEffect(() => {
-        fetchProducts(selectedCategories);
-    }, [selectedCategories]);
+        fetchProducts(selectedCategories, selectedGenders);
+    }, [selectedCategories, selectedGenders]);
 
     return (
         <MainProduct>
@@ -63,21 +83,25 @@ const GoodsCate = () => {
                         categories={categoryNames}
                         allCategories={goodsCategories}
                         onCategoryChange={handleCategoryChange} 
+                        onGenderChange={handleGenderChange}  // 성별 필터 전달
                     />
                 </SideFilterWrapper>
                 <ProductWrapper>
                     <ProductNumber>
                         <h3>상품 {totalProducts}개</h3>
                     </ProductNumber>
-                    <ProductListWrap category={selectedCategories.length > 0 ? selectedCategories : goodsCategories} products={products} />  
+                    <ProductListWrap 
+                        category={selectedCategories.length > 0 ? selectedCategories : goodsCategories} 
+                        products={products} 
+                    />  
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 };
 
-const MainProduct = styled.div`
-`;
+// 스타일 정의
+const MainProduct = styled.div``;
 
 const ProductContainer = styled.div`
     margin-top: -20px;

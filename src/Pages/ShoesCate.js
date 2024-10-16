@@ -27,10 +27,10 @@ const ShoesCate = () => {
             const filteredCategories = categories.length > 0 ? categories : shoesCategories;
             const filteredGenders = genders.length > 0 ? genders : ['남성', '여성', '공용'];
 
-            // URL에 필터링된 카테고리 및 성별을 쿼리로 추가
+            // URL에 필터링된 카테고리 및 성별을 쿼리로 추가하고 페이지 크기(size)를 125로 설정
             const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
             const genderParam = filteredGenders.map(gen => `gender=${encodeURIComponent(gen)}`).join('&');
-            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}`;
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&${genderParam}&size=125`; // 페이지 크기 125로 설정
 
             // API 요청
             const response = await axios.get(url);
@@ -140,4 +140,3 @@ const ProductNumber = styled.h3`
 `;
 
 export default ShoesCate;
-

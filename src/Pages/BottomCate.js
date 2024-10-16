@@ -9,6 +9,8 @@ const BottomCate = () => {
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
+    const [selectedGenders, setSelectedGenders] = useState([]); // 성별 필터 상태 추가
+    const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
 
     const categoryNameMap = {
         21: '바지',
@@ -20,12 +22,13 @@ const BottomCate = () => {
     const bottomCategories = [21, 22, 23, 24];
     const categoryNames = bottomCategories.map((id) => categoryNameMap[id]);
 
+    // 상품을 가져오는 함수 (카테고리와 페이지 크기 size=122 추가)
     const fetchProducts = async (categories) => {
         try {
             const filteredCategories = categories.length > 0 ? categories : bottomCategories;
 
             const categoryParam = filteredCategories.map(cat => `categoryId=${cat}`).join('&');
-            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}`;
+            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&size=122`;  // 페이지 크기 122로 설정
 
             const response = await axios.get(url);
 
@@ -48,9 +51,19 @@ const BottomCate = () => {
         }
     };
 
+    // 성별 선택 시 처리 함수
+    const handleGenderChange = (gender, isChecked) => {
+        if (isChecked) {
+            setSelectedGenders((prev) => [...prev, gender]); 
+        } else {
+            setSelectedGenders((prev) => prev.filter((g) => g !== gender)); 
+        }
+    };
+
+    // 선택된 카테고리 또는 성별이 변경될 때마다 상품을 다시 불러옴
     useEffect(() => {
-        fetchProducts(selectedCategories);
-    }, [selectedCategories]);
+        fetchProducts(selectedCategories, selectedGenders);
+    }, [selectedCategories, selectedGenders]);
 
     return (
         <MainProduct>
@@ -61,6 +74,7 @@ const BottomCate = () => {
                         categories={categoryNames}
                         allCategories={bottomCategories}
                         onCategoryChange={handleCategoryChange} 
+                        onGenderChange={handleGenderChange} 
                     />
                 </SideFilterWrapper>
                 <ProductWrapper>
