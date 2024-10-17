@@ -5,7 +5,7 @@ import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter'; 
 import ProductListWrap from '../Components/Product';
    
-const ShoesCate = () => {
+const ShoesCate = () => {  
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
