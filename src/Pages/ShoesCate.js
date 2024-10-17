@@ -4,14 +4,14 @@ import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter'; 
 import ProductListWrap from '../Components/Product';
-
+   
 const ShoesCate = () => {
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
     const [selectedGenders, setSelectedGenders] = useState([]);  
 
-    const categoryNameMap = {
+    const categoryNameMap = {  
         7: '스니커즈',  
         8: '부츠',              
         9: '샌들/슬리퍼',           
