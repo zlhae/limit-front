@@ -126,7 +126,7 @@ const ProductWrapper = styled.div`
     }
 `;
 
-const ProductNumber = styled.h3`
+const ProductNumber = styled.h3`   
     margin-top: 30px;
     font-size: 12px;
     color: #656565;
