@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
-import TestImage from '../Images/test01.png';
-import { useNavigate } from 'react-router-dom';
-import { Line } from 'react-chartjs-2';
-import SameProductListWrap from '../Components/SameProduct';
+import LoadingImage from '../Images/Loading.svg';
 
 import {
     Chart as ChartJS,
@@ -27,65 +27,148 @@ ChartJS.register(
     Legend
 );
 
+const fetchProductDetail = async (id) => {
+    const url = `https://api.lim-it.one/api/v1/products/${id}`;
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error('상품 상세 데이터를 가져오는 중 오류 발생:', error);
+        return null;
+    }
+};
+
+const fetchProductPriceHistory = async (productId, period = '') => {
+    const url = period
+        ? `https://api.lim-it.one/api/v1/trades/transactions/prices?productId=${productId}&period=${period}`
+        : `https://api.lim-it.one/api/v1/trades/transactions/prices?productId=${productId}`;
+    
+    try {
+        const response = await axios.get(url);
+        return response.data;
+    } catch (error) {
+        console.error('상품 시세 데이터를 가져오는 중 오류 발생:', error);
+        return { prices: [] };
+    }
+};
+
 const ProductDetail = () => {
-    const product = {
-        price: 293000,
-        nameEng: 'Jordan1 x Travis Scott x Fragment Retro Low OG SP Military Blue',
-        nameKor: '조던 1 x 트래비스 스캇 x 프라그먼트 레트로 로우 OG SP 밀리터리 블루',
-        modelNumber: 'DM7866-140',
-        releaseDate: '2021/08/13',
-        originalPrice: 240000,
-        brandLogoUrl: 'https://via.placeholder.com/50',
-        brandNameEng: 'Jordan',
-        additionalImages: ['https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100', 'https://via.placeholder.com/100'],
-        usedProducts: [
-            { imageUrl: 'https://via.placeholder.com/100', price: 310000, description: 'Supreme backpack black - 2455' },
-            { imageUrl: 'https://via.placeholder.com/100', price: 310000, description: 'Supreme backpack black - 2455' },
-        ],
-        sizeInfo: [
-            ['KR', 220, 225, 230, 235, 240, 245, 250, 255, 260, 265, 270, 275],
-            ['US (M)', 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5],
-            ['US (W)', 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5],
-            ['UK', 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5],
-            ['JP', 22.5, 23, 23.5, 24, 24.5, 25, 25.5, 26, 26.5, 27, 27.5, 28],
-            ['EU', 35.5, 36, 36.5, 37.5, 38, 38.5, 39, 40, 40.5, 41, 42, 42.5]
-        ]
+    const { productId } = useParams();
+    const [product, setProduct] = useState(null);
+    const [tradeHistory, setTradeHistory] = useState([]);
+    const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+    const [selectedPrice, setSelectedPrice] = useState({ buyPrice: null, sellPrice: null });
+    const [showModal, setShowModal] = useState(false);
+    const [fullTradeHistory, setFullTradeHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedTimeRange, setSelectedTimeRange] = useState('ALL');
+    const [globalMinPrice, setGlobalMinPrice] = useState(null);
+    const [globalMaxPrice, setGlobalMaxPrice] = useState(null);
+    const [sortOrder, setSortOrder] = useState('latest');
+    const navigate = useNavigate();
+    const [brandData, setBrandData] = useState(null);
+    const [error, setError] = useState(null);
+
+    const fetchBrandData = async (brandId) => {
+        try {
+            const response = await axios.get(`https://api.lim-it.one/api/v1/brands`);
+            const brand = response.data.find((b) => b.id === brandId);
+            if (brand) {
+                setBrandData(brand); 
+            } else {
+                setError('해당 브랜드를 찾을 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('브랜드 데이터를 가져오는 중 오류 발생:', error);
+            setError('데이터를 불러오는 중 오류가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const tradeHistory = [
-        { size: 300, price: 104000, date: '24/06/17' },
-        { size: 255, price: 236000, date: '24/06/17' },
-        { size: 265, price: 238000, date: '24/06/17' },
-        { size: 290, price: 175000, date: '24/06/17' },
-        { size: 280, price: 199000, date: '24/06/17' },
-        { size: 260, price: 230000, date: '24/06/17' },
-        { size: 260, price: 207000, date: '24/06/17' },
-        { size: 260, price: 204000, date: '24/06/17' },
-        { size: 275, price: 194000, date: '24/06/17' },
-        { size: 295, price: 180000, date: '24/06/17' },
-        { size: 280, price: 199000, date: '24/06/17' },
-        { size: 275, price: 193000, date: '24/06/17' },
-        { size: 280, price: 198000, date: '24/06/17' },
-        { size: 275, price: 229000, date: '24/06/17' },
-        { size: 300, price: 194000, date: '24/04/17' },
-        { size: 255, price: 236000, date: '24/02/17' },
-        { size: 265, price: 238000, date: '24/01/17' },
-        { size: 290, price: 175000, date: '24/01/16' },
-        { size: 280, price: 199000, date: '24/01/10' },
-        { size: 260, price: 230000, date: '23/12/17' },
-        { size: 260, price: 207000, date: '23/02/17' },
-    ];
+    useEffect(() => {
+        if (product && product.brandId) {
+            fetchBrandData(product.brandId);
+        }
+    }, [product]);
 
-    const [chartData, setChartData] = useState({
-        labels: tradeHistory.map(item => item.date),
-        datasets: [{
-            label: 'Price',
-            data: tradeHistory.map(item => item.price),
-            fill: false,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            tension: 0.1
-        }]
-    });
+    const calculatePriceRange = (prices) => {
+        const allPrices = prices.map(price => price.price);
+        const minPrice = Math.min(...allPrices);
+        const maxPrice = Math.max(...allPrices);
+        setGlobalMinPrice(minPrice);
+        setGlobalMaxPrice(maxPrice);
+    };
+
+    const prepareChartData = (prices) => {
+        return {
+            labels: prices.map((price) => price.tradeTime).reverse(),
+            datasets: [{
+                label: 'Price',
+                data: prices.map((price) => price.price).reverse(),
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        };
+    };
+
+    useEffect(() => {
+        const getProductDetail = async () => {
+            const data = await fetchProductDetail(productId);
+            if (data) {
+                setProduct(data);
+                setTradeHistory(data.tradeHistory || []);
+            }
+            setLoading(false);
+        };
+        getProductDetail();
+    }, [productId]);
+
+    useEffect(() => {
+        const getProductPriceHistory = async () => {
+            setLoading(true);
+            const data = await fetchProductPriceHistory(productId, selectedTimeRange === 'ALL' ? '' : selectedTimeRange);
+            if (data.prices.length > 0) {
+                setChartData(prepareChartData(data.prices));
+                setFullTradeHistory(data.prices); // 전체 시세 저장
+                if (selectedTimeRange === 'ALL') {
+                    calculatePriceRange(data.prices);
+                }
+            } else {
+                setChartData({
+                    labels: [],
+                    datasets: [{
+                        label: 'Price',
+                        data: [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        tension: 0.1
+                    }]
+                });
+                setFullTradeHistory([]);
+            }
+            setLoading(false);
+        };
+        getProductPriceHistory();
+    }, [productId, selectedTimeRange]);
+
+    const handleTimeRangeChange = (range) => {
+        setSelectedTimeRange(range);
+    };
+
+    const handleShowModal = () => {
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+
+    const handleSortChange = () => {
+        const newOrder = sortOrder === 'latest' ? 'oldest' : 'latest';
+        setSortOrder(newOrder);
+        setFullTradeHistory([...fullTradeHistory].reverse());
+    };
 
     const chartOptions = {
         responsive: true,
@@ -103,26 +186,25 @@ const ProductDetail = () => {
         },
         scales: {
             x: {
-                display: false
+                display: false,
             },
             y: {
                 display: true,
+                min: globalMinPrice,
+                max: globalMaxPrice,
                 grid: {
-                    
-                    drawBorder: false, // Y축 선 숨기기
-                    drawOnChartArea: false, // Y축 격자선 숨기기
-                    drawTicks: false // Y축의 눈금 표시 숨기기
+                    drawBorder: false,
+                    drawOnChartArea: false,
+                    drawTicks: false
                 },
                 ticks: {
-                    display: true // Y축 값 표시
-                    
+                    display: true
                 }
             }
         },
         elements: {
             line: {
                 borderWidth: 2,
-                
             },
             point: {
                 radius: 0
@@ -130,21 +212,13 @@ const ProductDetail = () => {
         }
     };
 
-    const navigate = useNavigate();
-    const [selectedPrice, setSelectedPrice] = useState({ buyPrice: null, sellPrice: null });
-    const [showModal, setShowModal] = useState(false);
-
     const onClickPurchase = () => {
         navigate('/purchase');
-    }
+    };
 
     const onClickSale = () => {
         navigate('/sale');
-    }
-
-    const onClickMore = () => {
-        navigate('/moreproduct')
-    }
+    };
 
     const handleSizeChange = (event) => {
         const [_, buyPrice, sellPrice] = event.target.value.split('|').map(text => text.replace(/[^0-9]/g, ''));
@@ -152,189 +226,205 @@ const ProductDetail = () => {
             buyPrice: buyPrice ? parseInt(buyPrice) : null,
             sellPrice: sellPrice ? parseInt(sellPrice) : null
         });
-    }
+    };
 
-    const handleTimeRangeChange = (range) => {
-        // range에 따라 chartData 업데이트
-        // 여기서는 예제로 동일한 데이터를 사용
-        setChartData({
-            labels: tradeHistory.map(item => item.date),
-            datasets: [{
-                label: 'Price',
-                data: tradeHistory.map(item => item.price),
-                fill: false,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.1
-            }]
-        });
+    const handleBrandClick = () => {
+        navigate(`/brand/${product.brandId}`);
+    };
+
+    if (!product) {
+        return <div>Loading...</div>;
     }
 
     return (
         <Container>
-            <div className='sub_header'>
-                <SubHeader />
-            </div>
+            <SubHeader />
             <ProductContainer>
                 <ProductDetails>
                     <ProductImageContainer>
-                        <ProductImage src={TestImage} alt="Product Thumbnail" />
+                        <ProductImage 
+                            src={`https://${product.imageUrl}`} 
+                            alt="Product Thumbnail" 
+                            onError={(e) => e.target.src = LoadingImage} 
+                        />
                     </ProductImageContainer>
-                    <AdditionalImagesMobile>
-                        {product.additionalImages.map((image, index) => (
-                            <AdditionalImage key={index} src={image} alt={`Additional ${index}`} />
-                        ))}
-                    </AdditionalImagesMobile>
                     <Divider></Divider>
                     <ProductInfo>
                         <h3>즉시 구매가</h3>
-                        <Price>{product.price.toLocaleString()}원</Price>
-                        <ProductName>{product.nameEng}</ProductName>
-                        <ProductDescription>{product.nameKor}</ProductDescription>
+                        <Price>{product.currentPrice.toLocaleString()}원</Price>
+                        <ProductName>{product.names.eng}</ProductName>
+                        <ProductDescription>{product.names.kor}</ProductDescription>
+                        <SizeContainer>
                         <SizeSelector onChange={handleSizeChange}>
                             <option hidden>모든 사이즈</option>
-                            <option>220 | 최고 희망 구매가: 293,000 | 최저 희망 판매가: 251,000</option>
-                            <option>225 | 최고 희망 구매가: 357,000 | 최저 희망 판매가: 234,000</option>
-                            <option>230 | 최고 희망 구매가: 345,000 | 최저 희망 판매가: 429,000</option>
-                            <option>235 | 최고 희망 구매가: 323,000 | 최저 희망 판매가: 321,000</option>
-                            <option>240 | 최고 희망 구매가: 487,000 | 최저 희망 판매가: 551,000</option>
-                            <option>245 | 최고 희망 구매가: 310,000 | 최저 희망 판매가: 229,000</option>
-                            <option>250 | 최고 희망 구매가: 399,000 | 최저 희망 판매가: 234,000</option>
-                            <option>255 | 최고 희망 구매가: 345,000 | 최저 희망 판매가: 213,000</option>
+                            {(product.sizeInfo || []).map((size, index) => (
+                                <option key={index}>{`${size.size} | 최고 희망 구매가: ${size.buyPrice.toLocaleString()} | 최저 희망 판매가: ${size.sellPrice.toLocaleString()}`}</option>
+                            ))}
                         </SizeSelector>
+                        </SizeContainer>
                         <OtherInfo>
                             <InfoItem>
-                                <div><strong>모델 번호:</strong></div>
-                                <div>{product.modelNumber}</div>
+                                <FirstInfo><strong>모델 번호:</strong></FirstInfo>
+                                <SecondInfo>{product.modelNumber}</SecondInfo>
                             </InfoItem>
                             <InfoItem>
-                                <div><strong>출시일:</strong></div>
-                                <div>{product.releaseDate}</div>
+                                <FirstInfo><strong>출시일:</strong></FirstInfo>
+                                <SecondInfo>{product.releaseDate}</SecondInfo>
                             </InfoItem>
                             <InfoItem>
-                                <div><strong>발매가:</strong></div>
-                                <div>{product.originalPrice.toLocaleString()}원</div>
-                            </InfoItem>
+                                <FirstInfo><strong>발매가:</strong></FirstInfo>
+                                <SecondInfo>{product.releasePrice?.toLocaleString()}원</SecondInfo>
+                            </InfoItem>                         
                         </OtherInfo>
-                        <BrandInfo>
-                            <BrandLogo src={product.brandLogoUrl} alt="Brand Logo" />
-                            <BrandName>{product.brandNameEng}</BrandName>
+                        <BrandInfo onClick={handleBrandClick}>
+                            {brandData && brandData.logoUrl ? (
+                                <BrandLogo 
+                                    src={`https://${brandData.logoUrl}`} 
+                                    alt="Brand Logo" 
+                                    onError={(e) => e.target.src = LoadingImage} 
+                                />
+                            ) : (
+                                <div>브랜드 로고를 불러올 수 없습니다.</div>
+                            )}
+                            <BrandName>{product.brandNames.eng}</BrandName>
                         </BrandInfo>
-                        <DividerMobile></DividerMobile> {/* 추가된 코드 */}
+                        <DividerMobile></DividerMobile>
                         <ButtonContainer>
                             <ActionButton1 onClick={onClickPurchase}>
-                                살래요
+                                구매
                                 {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
                             </ActionButton1>
                             <ActionButton2 onClick={onClickSale}>
-                                팔래요
+                                판매
                                 {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
-                            </ActionButton2>               
+                            </ActionButton2>
                         </ButtonContainer>
-                        
                         <DetailSection>
                             <h3>시세</h3>
                             <ButtonGroup>
-                                <TimeButton onClick={() => handleTimeRangeChange('1M')}>1개월</TimeButton>
-                                <TimeButton onClick={() => handleTimeRangeChange('3M')}>3개월</TimeButton>
-                                <TimeButton onClick={() => handleTimeRangeChange('6M')}>6개월</TimeButton>
-                                <TimeButton onClick={() => handleTimeRangeChange('1Y')}>1년</TimeButton>
+                                <TimeButton onClick={() => handleTimeRangeChange('P1W')}>1주</TimeButton>
+                                <TimeButton onClick={() => handleTimeRangeChange('P1M')}>1개월</TimeButton>
+                                <TimeButton onClick={() => handleTimeRangeChange('P1Y')}>1년</TimeButton>
                                 <TimeButton onClick={() => handleTimeRangeChange('ALL')}>전체</TimeButton>
                             </ButtonGroup>
                             <Line data={chartData} options={chartOptions} />
+                            <ViewAllButton onClick={handleShowModal}>시세 전체 보기</ViewAllButton>
                         </DetailSection>
-                        <TradeHistory>
-                            <h3>체결 내역</h3>
-                            {tradeHistory.slice(0, 5).map((trade, index) => (
-                                <TradeItem key={index}>
-                                    <div>{trade.size}</div>
-                                    <div>{trade.price.toLocaleString()}원</div>
-                                    <div>{trade.date}</div>
-                                    {trade.fastDelivery && <div>빠른배송</div>}
-                                </TradeItem>
-                            ))}
-                            <ShowMoreButton onClick={() => setShowModal(true)}>
-                                체결 내역 더보기
-                            </ShowMoreButton>
-                        </TradeHistory>
                     </ProductInfo>
                 </ProductDetails>
-                <AdditionalImages>
-                    {product.additionalImages.map((image, index) => (
-                        <AdditionalImage key={index} src={image} alt={`Additional ${index}`} />
-                    ))}
-                </AdditionalImages>
-                <DividerMobile1></DividerMobile1>
-                <SizeInfo>
-                    <h3>사이즈 정보</h3>
-                    <SizeTableWrapper>
-                        <SizeTable>
-                            <thead>
-                                <tr>
-                                    {product.sizeInfo[0].map((size, index) => (
-                                        <th key={index}>{size}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {product.sizeInfo.slice(1).map((row, rowIndex) => (
-                                    <tr key={rowIndex}>
-                                        {row.map((size, sizeIndex) => (
-                                            <td key={sizeIndex}>{size}</td>
-                                        ))}
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </SizeTable>
-                    </SizeTableWrapper>
-                </SizeInfo>
-                <DividerMobile2></DividerMobile2>
-                <SameproductWrapper>
-                <h3>중고 상품 둘러보기</h3>
-                </SameproductWrapper>
-                <SameProductListWrap></SameProductListWrap>
             </ProductContainer>
-            <FixedButtonContainer>
-                <ActionButton1 onClick={onClickPurchase}>
-                    살래요
-                    {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
-                </ActionButton1>
-                <ActionButton2 onClick={onClickSale}>
-                    팔래요
-                    {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
-                </ActionButton2>
-            </FixedButtonContainer>
+
             {showModal && (
                 <Modal>
                     <ModalContent>
-                        <CloseButton onClick={() => setShowModal(false)}>X</CloseButton>
-                        <h3>전체 체결 내역</h3>
-                        <ScrollableContent>
-                            {tradeHistory.map((trade, index) => (
+                        <CloseButton onClick={handleCloseModal}>닫기</CloseButton>
+                        <h3>시세 전체 보기</h3>
+                        <SortButton onClick={handleSortChange}>
+                            {sortOrder === 'latest' ? '오래된 순' : '최신 순'}
+                        </SortButton>
+                        <TradeHistoryList>
+                            {fullTradeHistory.map((trade, index) => (
                                 <TradeItem key={index}>
-                                    <div>{trade.size}</div>
+                                    <div>{new Date(trade.tradeTime).toLocaleDateString()}</div>
                                     <div>{trade.price.toLocaleString()}원</div>
-                                    <div>{trade.date}</div>
-                                    {trade.fastDelivery && <div>빠른배송</div>}
                                 </TradeItem>
                             ))}
-                        </ScrollableContent>
+                        </TradeHistoryList>
                     </ModalContent>
                 </Modal>
             )}
+
+            {/* Fixed Purchase and Sale Buttons for Mobile View */}
+            <FixedButtonContainer>
+                <ActionButton1 onClick={onClickPurchase}>
+                    구매
+                    {selectedPrice.buyPrice && <ButtonPrice>{selectedPrice.buyPrice.toLocaleString()}원</ButtonPrice>}
+                </ActionButton1>
+                <ActionButton2 onClick={onClickSale}>
+                    판매
+                    {selectedPrice.sellPrice && <ButtonPrice>{selectedPrice.sellPrice.toLocaleString()}원</ButtonPrice>}
+                </ActionButton2>
+            </FixedButtonContainer>
         </Container>
     );
 };
 
-const Container = styled.div`
+const ViewAllButton = styled.button`
+    margin-top: 20px;
+    width: 100%;
+    height: 40px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
 
+    &:hover {
+        background-color: #ccc;
+    }
+    
+`;
+
+const SortButton = styled.button`
+    margin-top: 10px;
+    padding: 5px 10px;
+`;
+
+const TradeHistoryList = styled.div`
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 10px;
+`;
+
+const DividerMobile = styled.div`
+    display: none;
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+    margin: 20px 0;
+
+    @media (max-width: 600px) {
+        display: block;
+    }
+`;
+
+const DividerMobile2 = styled.div`
+    display: none;
+    height: 1px;
+    width: 90%;
+    background-color: #ddd;
+    margin: 0 auto;
+    margin-top: 20px;
+
+    @media (max-width: 600px) {
+        display: block;
+    }
+`;
+
+// 시작
+const Container = styled.div`
 `;
 
 const ProductContainer = styled.div`
     width: 80%;
     margin: 0 auto;
 
-    @media (max-width: 600px) {
+    @media (max-width: 400px) {
         width: 100%;
+        margin-top: -20px;
+    }
+
+    @media (min-width: 401px) and (max-width: 450px) {
+        width: 100%;
+        margin-top: -10px;
+    }
+
+    @media (min-width: 451px) and (max-width: 500px) {
+        width: 100%;
+        margin-top: -5px;
+    }
+
+    @media (min-width: 501px) and (max-width: 600px) {
+        width: 100%;
+        margin-top: 10px; 
     }
 `;
 
@@ -354,13 +444,28 @@ const ProductImageContainer = styled.div`
     width: 51%;
     position: sticky;
     top: 15px;
-    
-   
     box-sizing: border-box;
 
     @media (max-width: 600px) {
         width: 100%;
         position: static;
+    }
+`;
+
+const ProductImage = styled.img`
+    width: 100%;
+    border-radius: 10px;
+
+    @media (max-width: 480px) {
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 0;
+    }
+
+    @media (max-width: 600px) {
+        width: 100%;
+        margin-top: -14.4%;
+        border-radius: 0;        
     }
 `;
 
@@ -378,82 +483,23 @@ const Divider = styled.div`
     }
 `;
 
-const DividerMobile = styled.div`  // 추가된 코드
-    display: none;
-    height: 1px;
-    width: 100%;
-    background-color: #ddd;
-    margin: 20px 0;
-
-    @media (max-width: 600px) {
-        display: block;
-    }
-`;
-
-const DividerMobile2 = styled.div`  // 추가된 코드
-    display: none;
-    height: 1px;
-    width: 90%;
-    background-color: #ddd;
-    margin: 0 auto;
-    margin-top: 20px;
-
-    @media (max-width: 600px) {
-        display: block;
-    }
-`;
-
-const ProductImage = styled.img`
-    width: 100%;
-    border-radius: 10px;
-
-    @media (max-width: 650px) {
-        width: 100%;
-        margin-top: -14.4%;
-        border-radius: 0;
-    }
-`;
-
-const AdditionalImagesMobile = styled.div`
-    display: none;
-
-    @media (max-width: 600px) {
-        display: flex;
-        flex-wrap: nowrap;
-        margin: 10px 0;   
-        margin-left: 3%;
-        overflow-x: auto;
-        -ms-overflow-style: none;  
-        scrollbar-width: none;
-    }
-
-    & > * {
-        flex: 0 0 auto;
-        margin-right: 10px;
-    }
-
-    &::-webkit-scrollbar {
-        display: none; 
-    }
-`;
-
 const ProductInfo = styled.div`
     width: 46%;
     margin-left: 3%;
-    margin-top: 1.5%;
+    margin-top: 15px;
     box-sizing: border-box;
 
     h3 {
-        font-size: 15px;
+        font-size: 17px;
         font-weight: lighter;
-        margin-top: -20px;
+        margin-top: -18.5px;
 
-        @media (max-width: 650px) {
-            font-size: 13px;
+        @media (max-width: 840px) {
+            font-size: 15px;
         }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 600px) {
         width: 90%;
         margin-left: 5%;
         margin-right: 5%;
@@ -461,47 +507,11 @@ const ProductInfo = styled.div`
     }
 `;
 
-const SameproductWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    h3 {
-        font-size: 18px;
-    }
-
-    @media (max-width: 650px) {
-       margin-left: 5%;
-       h3 {
-        font-size: 15px;
-       } 
-        
-    }
-    
-`;
-
-const MoreLink = styled.a`
-    font-size: 13px;
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    margin-top: 20px;
-    
-
-    &:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 650px) {
-        margin-right: 5%;
-    }
-`;
-
 const Price = styled.h2`
     font-size: 24px;
     margin-top: -15px;
 
-    @media (max-width: 850px) {
+    @media (max-width: 840px) {
         font-size: 21px;
     }
 `;
@@ -517,47 +527,70 @@ const ProductDescription = styled.p`
     color: #6b6b6b;
     margin-top: -10px;
 
-    @media (max-width: 650px) {
+    @media (max-width: 600px) {
         font-size: 14px;
     }
 `;
 
+const SizeContainer = styled.div`
+    width: 100%;
+    padding: 0; 
+    margin: 0;
+
+    @media (max-width: 600px) {
+        margin-bottom: 10px;
+    }
+`;
+
 const SizeSelector = styled.select`
-    margin: 20px 0;
-    padding: 10px;
+    width: 100%;
+    margin-bottom: 10px;
     border-radius: 5px;
     border: none;
-    width: 100%;
     height: 60px;
     font-weight: bold;
 
     @media (max-width: 600px) {
-        height: 55px;
+        width: calc(100% + 2px);
         border: 1px solid #e0e0e0;
+        margin: 0;
     }
 `;
 
 const OtherInfo = styled.div`
     display: flex;
     justify-content: space-between;
-    margin: 20px 0;
+    margin-bottom: 10px;
+    width: 100%;
+    gap: 10px;
+
+    
+    
+    @media (max-width: 840px){
+        flex-direction: column; 
+        margin-top: 0;   
+        margin-bottom: 0;
+        width: calc(100% - 10px);
+    }
 `;
 
 const InfoItem = styled.div`
-    margin: 10px 0;
-    padding: 10px;
+    flex: 1; /* 모든 박스의 너비가 동일하도록 설정 */
+    height: 60px;
+    min-height: 60px; /* 최소 높이를 고정하여 줄어들지 않도록 설정 */
+    overflow: hidden; /* 높이를 초과하는 콘텐츠를 숨기기 */
+    padding: 0 10px; /* 패딩 조정 */
     font-size: 14px;
     color: #333;
     background-color: white;
     border-radius: 5px;
-    width: 27%;
     text-align: center;
-    margin-top: -20px;
-
+    width: 27%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0; /* 요소가 줄어들지 않도록 설정 */
 
     strong {
         font-weight: lighter;
@@ -568,12 +601,75 @@ const InfoItem = styled.div`
         }
     }
 
+    @media (max-width: 960px) {
+        width: calc(27% - 40px);
+    }
+
+    @media (max-width: 840px) {
+        flex-direction: column;
+        height: 60px; /* 높이를 고정 */
+        min-height: 60px; /* 최소 높이도 고정 */
+        overflow: hidden; /* 높이를 초과하는 내용을 숨기기 */
+        width: calc(100% - 40px); /* 100%에서 40px을 뺀 값 */
+        margin-top: 0;
+        padding-right: 40px;
+        align-items: flex-start;
+        text-align: left;
+        flex-shrink: 0; /* 줄어들지 않도록 설정 */
+    }
+
     @media (max-width: 600px) {
-        margin-top: -30px;
         border: 1px solid #e0e0e0;
-        height: 30px;
+        height: 60px; /* 높이를 고정 */
+        min-height: 60px; /* 최소 높이도 고정 */
+        overflow: hidden; /* 높이를 초과하는 내용을 숨기기 */
+        width: calc(100% - 40px); /* 100%에서 40px을 뺀 값 */
+        margin-top: 1px;
+        padding-right: 40px;
+        align-items: flex-start;
+        text-align: left;
+        flex-shrink: 0; /* 줄어들지 않도록 설정 */
     }
 `;
+
+
+const FirstInfo = styled.div`
+    white-space: nowrap; // 텍스트 줄바꿈 방지
+    overflow: hidden;    // 넘치는 텍스트 숨기기
+    text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
+    width: 100%;  // 전체 박스 내에서 너비를 제한
+   
+    
+
+    @media (max-width: 840px) {
+        strong {
+            font-weight: lighter;
+            color: #6B6B6B;
+            font-size: 13px;
+            margin-left: 10px;
+
+            @media (max-width: 600px) {
+                margin-top: -5px;
+                font-size: 15px;
+            }
+        }
+    }
+`;
+
+const SecondInfo = styled.div`
+    white-space: nowrap; // 텍스트 줄바꿈 방지
+    overflow: hidden;    // 넘치는 텍스트 숨기기
+    text-overflow: ellipsis; // 넘치는 부분은 '...'으로 처리
+    width: 100%;  // 전체 박스 내에서 너비를 제한
+    
+
+    @media (max-width: 840px) {
+        margin-top: 3px;
+        font-size: 13px;
+        margin-left: 10px;
+    }
+`;
+
 
 const BrandInfo = styled.div`
     display: flex;
@@ -581,16 +677,20 @@ const BrandInfo = styled.div`
     background-color: white;
     border-radius: 5px;
     text-align: center;
-    margin-top: -10px;
+    margin-top: 10px;
     width: 100%;
     height: 60px;
     font-weight: bold;
+    cursor: pointer;
+    
+
+    @media (max-width: 840px) {
+        margin-top: 10px;
+    }
 
     @media (max-width: 600px) {
-        height: 55px;
-        margin-top: -20px;
+        margin-top: 10px;
         border: 1px solid #e0e0e0;
-        width: 99.5%;
     }
 `;
 
@@ -609,7 +709,7 @@ const ButtonContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
+    
     @media (max-width: 650px) {
         display: none;
     }
@@ -621,7 +721,7 @@ const ActionButton1 = styled.button`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    
     height: 60px;
     font-size: 16px;
     color: #fff;
@@ -629,7 +729,19 @@ const ActionButton1 = styled.button`
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 5%;
+    margin-right: 20px;
+
+    @media (max-width: 840px) {
+        height: 60px;
+        margin-top: -5px;
+        margin-right: 15px;
+    }
+
+    @media (max-width: 600px) {
+        height: 50px;
+        margin-top: 0;
+        margin-right: 20px;
+    }
 `;
 
 const ActionButton2 = styled.button`
@@ -638,7 +750,7 @@ const ActionButton2 = styled.button`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    
     height: 60px;
     font-size: 16px;
     color: #fff;
@@ -646,6 +758,17 @@ const ActionButton2 = styled.button`
     border: none;
     border-radius: 5px;
     cursor: pointer;
+
+    @media (max-width: 840px) {
+        height: 60px;
+        margin-top: -5px;
+    }
+
+    @media (max-width: 600px) {
+        height: 50px;
+        margin-top: 0;
+        
+    }
 `;
 
 const ButtonText = styled.span`
@@ -672,6 +795,7 @@ const FixedButtonContainer = styled.div`
         background-color: white;
         padding: 10px 20px;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        
     }
 `;
 
@@ -679,7 +803,6 @@ const AdditionalImages = styled.div`
     display: flex;
     flex-wrap: wrap;
     margin: 30px 0;
-    
 
     @media (max-width: 600px) {
         display: none;
@@ -698,12 +821,11 @@ const AdditionalImage = styled.img`
         width: 14%;
         margin-right: 10px;
         border-radius: 0;
-    
     }
 `;
 
 const DetailSection = styled.div`
-    margin: 20px 0;
+    margin: 50px 0;
     h3 {
         font-size: 18px;
         color: #000;
@@ -711,7 +833,6 @@ const DetailSection = styled.div`
 
     @media (max-width: 600px) {
         width: 100%;
-        
         margin-top: 40px;
 
         h3 {
@@ -772,7 +893,7 @@ const ShowMoreButton = styled.button`
     }
 `;
 
-const DividerMobile1 = styled.div` 
+const DividerMobile1 = styled.div`
     display: none;
     height: 1px;
     width: 90%;

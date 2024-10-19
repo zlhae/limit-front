@@ -1,26 +1,55 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import ProductInformation from '../Components/ProductInformation';
 import ImmediatePrice from '../Components/ImmediatePrice';
 import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
-import MockDataImage from '../Images/test01.png';
 
 const Purchase=()=>{
+    const productId=1;
+    const productOptionId=1;
+    const [productInformationData, setProductInformationData]=useState({});
+    const [productImmediatePriceData, setProductImmediatePriceData]=useState({});
     const [position,setPosition]=useState(1);
 
-    const productInformationData={
-        image: MockDataImage,
-        number: 'DM7866-140',
-        name_en: 'Jordan1 x Travis Scott x Fragment Retro Low OG SP Military Blue',
-        name_ko: '조던 1 x 트래비스 스캇 x 프라그먼트 레트로 로우 OG SP 밀리터리 블루',
-        size: 220
+    const productInformationDataFetch=()=>{
+        axios
+        .get(`https://api.lim-it.one/api/v1/products/${productId}`)
+        .then((response)=>{
+            const productInformation={
+                imageUrl: response.data.imageUrl.startsWith('http') ? response.data.imageUrl : `https://${response.data.imageUrl}`,
+                modelNumber: response.data.modelNumber,
+                name_eng: response.data.names.eng,
+                name_kor: response.data.names.kor,
+                size: 230
+            };
+            setProductInformationData(productInformation);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
     }
 
-    const immediatePriceData={
-        purchase: 293000,
-        sale: 251000
+    const productImmediatePriceDataFetch=()=>{
+        axios
+        .get(`https://api.lim-it.one/api/v1/trades/orders?productId=${productId}`)
+        .then((response)=>{
+            const productImmediatePrice={
+                purchase: response.data.bestPriceToBuy,
+                sale: response.data.bestPriceToSell
+            }
+            setProductImmediatePriceData(productImmediatePrice);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
     }
+
+    useEffect(()=>{
+        productInformationDataFetch();
+        productImmediatePriceDataFetch();
+    },[]);
 
     const showSubmitBox=()=>{
         switch(position){
@@ -28,13 +57,18 @@ const Purchase=()=>{
                 return(
                     <DoBid
                         type="purchase"
+                        productId={productId}
+                        productOptionId={productOptionId}
+                        immediatePriceData={productImmediatePriceData.purchase?productImmediatePriceData.purchase:"null"}
                     ></DoBid>
                 );
             case 2:
                 return(
                     <DoImmediate
                         type="purchase"
-                        immediatePriceData={immediatePriceData}
+                        productId={productId}
+                        productOptionId={productOptionId}
+                        immediatePriceData={productImmediatePriceData.purchase?productImmediatePriceData.purchase:"null"}
                     ></DoImmediate>
                 );
             default:
@@ -45,15 +79,11 @@ const Purchase=()=>{
     return(
         <PurchaseContainer>
             <ProductInformation
-                image={productInformationData.image}
-                number={productInformationData.number}
-                name_en={productInformationData.name_en}
-                name_ko={productInformationData.name_ko}
-                size={productInformationData.size}
+                productInformationData={productInformationData}
             ></ProductInformation>
             <ImmediatePrice
-                purchase={immediatePriceData.purchase}
-                sale={immediatePriceData.sale}   
+                purchase={productImmediatePriceData.purchase?productImmediatePriceData.purchase: "null"}
+                sale={productImmediatePriceData.sale?productImmediatePriceData.sale: "null"}   
             ></ImmediatePrice>
             <PurchaseToggleContainer>
                 <PurchaseToggleElement
@@ -66,7 +96,7 @@ const Purchase=()=>{
                     check={position===2?"checked":""}
                     onClick={(e)=>setPosition(2)}
                 >
-                    <PurchaseToggleText>즉시 구매</PurchaseToggleText>
+                <PurchaseToggleText>즉시 구매</PurchaseToggleText>
                 </PurchaseToggleElement>
             </PurchaseToggleContainer>
             {showSubmitBox()}

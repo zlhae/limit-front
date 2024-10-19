@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, setTokens } from '../store'; 
 import Cookies from 'js-cookie'; 
@@ -18,6 +17,11 @@ const Login = () => { // 로그인 페이지
                 email: id,
                 password: password,
             });
+            
+            localStorage.setItem("userId", response.data.userId); // 회원 ID 저장
+            localStorage.setItem("userPW", password); 
+
+            window.location.href = "/"
 
             dispatch(login({ id: id, password: password })); 
             dispatch(setTokens({ 

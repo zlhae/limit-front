@@ -1,46 +1,102 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import styled from 'styled-components';
-import Swal from 'sweetalert2';
+import styled, { css } from 'styled-components';
+import Cookies from 'js-cookie';
 
 export default function InquiryPage() {
+    const [expandedIndex, setExpandedIndex] = useState(null); // 답변 보기&닫기 버튼의 현재 상태
+    const [inquiries, setInquiries] = useState([]); // 문의내역
+    const [detailedInquiries, setDetailedInquiries] = useState({}); // 상세 문의 내역
 
-    const [expanded, setExpanded] = useState(false); // 답변 보기&닫기 버튼의 현재 상태
+    useEffect(() => {
+        const fetchInquiries = async () => {
+            try {
+                const accessToken = Cookies.get('accessToken');
 
-    const toggleExpanded = () => { // 답변 보기&닫기 버튼 상태 반전 메서드
-        setExpanded(!expanded); 
+                const response = await axios.get('https://api.lim-it.one/api/v1/auth/inquiries', {
+                    params: {
+                        page: 0,
+                        size: 20,
+                        sort: 'ASC'
+                    },
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                setInquiries(response.data.content);
+            } catch (error) {
+                console.error("문의 내역 조회 중 에러 발생 :", error);
+            }
+        };
+
+        fetchInquiries();
+    }, []);
+
+    const toggleExpanded = async (index, inquiryId) => { // 답변상태 토글 메서드
+        if (expandedIndex === index) {
+            setExpandedIndex(null); 
+            return;
+        }
+
+        try {
+            const accessToken = Cookies.get('accessToken');
+            const response = await axios.get(`https://api.lim-it.one/api/v1/auth/inquiries/${inquiryId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+
+            setDetailedInquiries(prevState => ({
+                ...prevState,
+                [inquiryId]: response.data 
+            }));
+            setExpandedIndex(index); 
+        } catch (error) {
+            console.error("문의 답변 조회 중 에러 발생 :", error);
+        }
+    };
+
+    const formatDate = (dateTime) => { // 작성일시 형태변환 메서드
+        const date = new Date(dateTime);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const formattedDate = date.toLocaleDateString('ko-KR', options); 
+
+        return formattedDate.replace(/\s/g, '').replace(/\.$/, '');
     };
 
     return (
         <Container>
             <Title>문의 내역</Title>
             <InnerContainer>
-                <InquiryBox BoxState = {expanded}>
-                    <InquiryDate>{"2025-01-01"}</InquiryDate>
-                    <InfoBox>
-                        <TitleAndButtonBox>
-                            <InquiryTitle>ㅇㅇㅇ 서비스에 대해 문의 드립니다.</InquiryTitle>
-                            <DetailButton onClick = {toggleExpanded}>
-                                {expanded ? "닫기" : "보기"}
-                            </DetailButton>
-                        </TitleAndButtonBox>
-                        {expanded && 
-                            <HiddenBox>
-                                <QuestionBox>
-                                    안녕하세요. ㅇㅇㅇ 서비스에 대한 의문점이 생겨 문의드립니다.<br/>
-                                    어떻게 사용하는 기능인지 설명 부탁드려도 될까요?
-                                </QuestionBox>
-                                <AnswerBox>
-                                    안녕하세요 고객님.<br/>
-                                    고객님이 질문해주신 문의에 대한 답변은 아래와 같습니다.<br/>
-                                    ㅇㅇㅇ 기능은 ㅇㅇㅇ 화면에서 ㅇㅇㅇ에 대한 ㅇㅇ 기능입니다.<br/>
-                                    참고 부탁드립니다. 감사합니다.
-                                </AnswerBox>
-                            </HiddenBox>
-                        }
-                    </InfoBox>
-                </InquiryBox>     
+                {inquiries.map((inquiry, index) => (
+                    <InquiryBox key = {inquiry.id} isOpen = {expandedIndex === index}>
+                        <InquiryDate>{formatDate(inquiry.createAt)}</InquiryDate>
+                        <InfoBox>
+                            <TitleAndButtonBox>
+                                <InquiryTitle>
+                                    {inquiry.title ? inquiry.title : `${inquiry.brand} ${inquiry.productName} 상품 등록 문의내역`}
+                                </InquiryTitle>
+                                <DetailButton onClick = {() => toggleExpanded(index, inquiry.id)}>
+                                    {expandedIndex === index ? "닫기" : "보기"}
+                                </DetailButton>
+                            </TitleAndButtonBox>
+                            {expandedIndex === index && (
+                                <HiddenBox>
+                                    {detailedInquiries[inquiry.id] && (
+                                        <>
+                                            {detailedInquiries[inquiry.id].contents ? (
+                                                <QuestionBox>{detailedInquiries[inquiry.id].contents}</QuestionBox>
+                                            ) : null}
+                                            <AnswerBox hasContent = {detailedInquiries[inquiry.id]?.contents !== null}>
+                                                {detailedInquiries[inquiry.id]?.answerContents || "아직 답변이 없습니다."}
+                                            </AnswerBox>
+                                        </>
+                                    )}
+                                </HiddenBox>
+                            )}
+                        </InfoBox>
+                    </InquiryBox>
+                ))}
             </InnerContainer>
         </Container>
     );
@@ -75,7 +131,7 @@ const InnerContainer = styled.div` // 내부 컨테이너
 const InquiryBox = styled.div` // 문의 내역 컨테이너 컴포넌트
     display: flex;
     width: 95%;
-    height: ${({BoxState}) => (BoxState ? "auto" : "50px")};
+    height: ${({ isOpen }) => (isOpen ? "auto" : "50px")};
     border-radius: 10px;
     background-color: #D9D9D9;
     margin-left: 2.5%;
@@ -89,6 +145,19 @@ const InquiryDate = styled.div` // 문의 내역 작성(생성) 날짜
     line-height: 50px;
     margin-left: 15px;
     margin-right: 5px;
+
+    @media (max-width: 800px) {
+        font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+        font-size: 11px;
+        margin-left: 5px;
+    }
+
+    @media (max-width: 550px) {
+        font-size: 9px;
+    }
 `;
 
 const InfoBox = styled.div` // 문의 내역 상세 정보 컨테이너
@@ -108,19 +177,17 @@ const InquiryTitle = styled.div` // 문의 내역 제목 컴포넌트
     overflow: hidden;
     text-overflow: ellipsis;
 
-    @media (min-width: 650px) and (max-width: 800px) {
-        width: 300px;
+    @media (max-width: 800px) {
+        width: 80%;
         font-size: 14px;
     }
 
-    @media (min-width: 500px) and (max-width: 649px) {
-        width: 200px;
-        font-size: 13px;
+    @media (max-width: 600px) {
+        font-size: 12px;
     }
 
-    @media (max-width: 499px) {
-        width: 125px;
-        font-size: 12px;
+    @media (max-width: 550px) {
+        font-size: 11px;
     }
 `;
 
@@ -137,6 +204,31 @@ const DetailButton = styled.div` // 답변 보기&닫기 버튼
 
     &:hover {
         background-color: #F5F5F7; 
+    }
+
+    @media (max-width: 800px) {
+        width: 40px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+        margin: 10px 7.5px 0 auto;
+    }
+
+    @media (max-width: 600px) {
+        width: 35px;
+        height: 25px;
+        line-height: 25px;
+        font-size: 11px;
+        margin: 13px 7.5px 0 auto;
+        border-radius: 5px;
+    }
+
+    @media (max-width: 500px) {
+        width: 30px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 10px;
+        margin: 16px 7.5px 0 auto;
     }
 `;
 
@@ -160,7 +252,13 @@ const AnswerBox = styled.div` // 관리자 답변내용 박스
     padding: 15px;
     white-space: pre-wrap;
 
-    @media (max-width: 800px) {
-        width: 85%;
+    ${({ hasContent }) => hasContent ? css`
+        margin-top: 10px; 
+    ` : css`
+        margin-top: 0; 
+    `}
+
+    @media (max-width: 600px) {
+        width: 90%;
     }
 `;

@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import MenuIcon from "../Images/menu-button.svg";
+import Cookies from 'js-cookie';
 
 const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
     const [brand, setBrand]=useState("");
@@ -10,7 +11,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
     const [modelNumber, setModelNumber]=useState("");
 
     const submitProductRegistrationInquiry=()=>{
-        if(!localStorage.getItem('accessToken')){
+        if(!Cookies.get("accessToken")){
             Swal.fire({
                 icon: "info",
                 title: "로그인 후 이용 가능합니다.",
@@ -36,7 +37,7 @@ const ProductRegistrationInquiry=({handleShowMobileSideBar})=>{
                 modelNumber: modelNumber
             },{
                 headers:{
-                    Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
+                    Authorization: `Bearer ${Cookies.get("accessToken") || ''}`,
                 }
             })
             .then(()=>{

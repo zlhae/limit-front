@@ -5,11 +5,11 @@ const ImmediatePrice=({purchase, sale})=>{
         <ImmediatePriceContainer>
             <PurchaseSaleContaienr type={"purchase"}>
                 <PriceTitle>즉시 구매가</PriceTitle>
-                <PriceContext>{purchase.toLocaleString('ko-KR')}원</PriceContext>
+                <PriceContext>{purchase.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</PriceContext>
             </PurchaseSaleContaienr>
             <PurchaseSaleContaienr type={"sale"}>
                 <PriceTitle>즉시 판매가</PriceTitle>
-                <PriceContext>{sale.toLocaleString('ko-KR')}원</PriceContext>
+                <PriceContext>{sale.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}원</PriceContext>
             </PurchaseSaleContaienr>
         </ImmediatePriceContainer>
     );  

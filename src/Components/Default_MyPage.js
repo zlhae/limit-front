@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setSelectedMenu } from '../store';
 import Cookies from 'js-cookie';
 import Default_Profile from "../Images/Default_Profile.svg";
+import BrandProduct from "./BrandProduct";
 
 export default function Default_MyPage() { // 기본 마이페이지
 
@@ -93,6 +94,9 @@ export default function Default_MyPage() { // 기본 마이페이지
                 </UsedContents>
             </UsedProductBox>
             <Title>관심 상품 목록</Title>
+            <DipsContainer>
+                
+            </DipsContainer>
         </Container>
     );
 }
@@ -256,4 +260,10 @@ const UsedContents = styled.div` // 중고 상품 컨텐츠 컴포넌트
         height: 120px;
         font-size: 12.5px;
     }
+`;
+
+const DipsContainer = styled.div` // 사용자 찜상품 컨테이너
+    display: flex;
+    width: 100%;
+    height: 200px;
 `;

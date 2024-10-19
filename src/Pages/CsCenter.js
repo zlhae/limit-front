@@ -3,7 +3,6 @@ import { useState } from 'react';
 import SubHeader from '../Components/SubHeader';
 import Notification from '../Components/Notification';
 import Event from '../Components/Event';
-import ServiceInformation from '../Components/ServiceInformation';
 import ProductRegistrationInquiry from '../Components/ProductRegistrationInquiry';
 import OtherInquiry from '../Components/OtherInquiry';
 
@@ -24,9 +23,8 @@ const CsCenter=()=>{
         switch(menu){
             case 0: return(<Notification handleShowMobileSideBar={handleShowMobileSideBar}></Notification>);
             case 1: return(<Event handleShowMobileSideBar={handleShowMobileSideBar}></Event>)
-            case 2: return(<ServiceInformation handleShowMobileSideBar={handleShowMobileSideBar}></ServiceInformation>)
-            case 3: return(<ProductRegistrationInquiry handleShowMobileSideBar={handleShowMobileSideBar}></ProductRegistrationInquiry>)
-            case 4: return(<OtherInquiry handleShowMobileSideBar={handleShowMobileSideBar}></OtherInquiry>)
+            case 2: return(<ProductRegistrationInquiry handleShowMobileSideBar={handleShowMobileSideBar}></ProductRegistrationInquiry>)
+            case 3: return(<OtherInquiry handleShowMobileSideBar={handleShowMobileSideBar}></OtherInquiry>)
             default: return(<Notification handleShowMobileSideBar={handleShowMobileSideBar}></Notification>);
         }
     }
@@ -46,19 +44,15 @@ const CsCenter=()=>{
                             onClick={(e)=>{handleMenu(1)}}
                             selected={menu===1}
                         >이벤트</NavigationElement>
-                        <NavigationElement
-                            onClick={(e)=>{handleMenu(2)}}
-                            selected={menu===2}
-                        >서비스 안내</NavigationElement>
                     </CategoryContainer>
                     <CategoryContainer>
                         <NavigationElement
-                            onClick={(e)=>{handleMenu(3)}}
-                            selected={menu===3}
+                            onClick={(e)=>{handleMenu(2)}}
+                            selected={menu===2}
                         >상품 등록 문의</NavigationElement>
                         <NavigationElement
-                            onClick={(e)=>{handleMenu(4)}}
-                            selected={menu===4}
+                            onClick={(e)=>{handleMenu(3)}}
+                            selected={menu===3}
                         >기타 문의</NavigationElement>
                     </CategoryContainer>
                 </NavigationContainer>

@@ -2,9 +2,7 @@ import styled from "styled-components"
 import { useState } from "react"
 import ChattingRoom from "./ChattingRoom"
 
-const ChattingList=({chattingListData})=>{
-    const [selectedChattingRoom, setSelectedChattingRoom]=useState(null);
-
+const ChattingList=({chattingListData, selectedChattingRoom, setSelectedChattingRoom})=>{
     const handleSelectedChattingRoom=(id)=>{
         setSelectedChattingRoom(id);
     }

@@ -92,6 +92,11 @@ const MyPageContainer = styled.div` // 마이페이지 최상위 부모 컨테�
     display: flex;
     width: 80%;
     margin: 0px 10%;
+
+    @media (max-width: 600px) {
+        width: 90%;
+        margin: 0px 5%;
+    }
 `;
 
 const LeftNavBar = styled.div` // 마이페이지 좌측 목록 네비바 컨테이너

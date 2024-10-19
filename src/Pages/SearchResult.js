@@ -1,10 +1,16 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter';
-import styled from 'styled-components';
-import ProductListWrap from '../Components/Product';
+import Product from '../Components/ResultProduct';
 
 const SearchResult = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const searchResults = location.state?.results || [];
+    const searchQuery = location.state?.query || '';
+
     const allCategories = {
         아우터: ['자켓', '아노락', '코트', '패딩', '기타 아우터'],
         상의: ['반팔 티셔츠', '긴팔 티셔츠', '가디건', '셔츠', '후드', '후드 집업', '스웨트셔츠', '슬리브리스', '원피스', '니트', '기타 상의'],
@@ -14,38 +20,43 @@ const SearchResult = () => {
         패션잡화: ['비니', '버킷햇', '볼캡', '기타 모자', '머플러', '스카프', '넥타이', '장갑', '양말', '기타 패션잡화']
     };
 
+    const handleSearchBoxClick = () => {
+        navigate('/search'); 
+    };
+
     return (
-        <MainProduct className='main_product'>
-            <div className='sub_header'>
-                <SubHeader />
-            </div>
-            <SearchBox>
+        <MainProduct>
+            <SubHeader />
+            <SearchBox onClick={handleSearchBoxClick}>
                 <input
                     type='text'
-                    placeholder='브랜드명, 상품명, 모델 번호 등'  
+                    placeholder='브랜드명, 상품명, 모델 번호 등'
+                    value={searchQuery} 
+                    readOnly 
                 />
             </SearchBox>
-            <ProductContainer className='product_container'>
-                <SideFilterWrapper className='side_filter'>
+            <ProductContainer>
+                <SideFilterWrapper>
                     <SideFilter allCategories={allCategories} />
                 </SideFilterWrapper>
-                <ProductWrapper className='product'>
+                <ProductWrapper>
                     <ProductNumber>
-                        <h3>상품 154,329개</h3>
+                        <h3>상품 {searchResults.length}개</h3> 
                     </ProductNumber>
-                    <ProductListWrap />
+                    <Product searchResults={searchResults} />
                 </ProductWrapper>
             </ProductContainer>
         </MainProduct>
     );
 }
 
-const MainProduct = styled.div``;
+const MainProduct = styled.div`
+`;
 
 const ProductContainer = styled.div`
     display: flex;
     width: 100%;
-    margin-top: 20px; /* 검색 박스와 사이드 필터 사이의 여백 추가 */
+    margin-top: 20px;
 
     @media (max-width: 600px) {
         flex-direction: column;
@@ -65,24 +76,24 @@ const SideFilterWrapper = styled.div`
 `;
 
 const SearchBox = styled.div`
-width: 50%;
-margin: 0 auto;
-margin-top: -30px; /* 검색 박스를 전체 화면에서 위로 올리기 */
+    width: 50%;
+    margin: 0 auto;
+    margin-top: -30px; 
 
-input {
-    border-width: 0 0 3px;
-    border-color: black;
-    width: 100%;
-    font-size: 17px;
-    background-color: transparent;
-    outline: none;
-    padding-bottom: 1%;
-}
+    input {
+        border-width: 0 0 3px;
+        border-color: black;
+        width: 100%;
+        font-size: 17px;
+        background-color: transparent;
+        outline: none;
+        padding-bottom: 1%;
+    }
 
-@media (max-width: 600px) {
-    width: 90%;
-    margin-top: 0;
-}
+    @media (max-width: 600px) {
+        width: 90%;
+        margin-top: 0;
+    }
 `;
 
 const ProductWrapper = styled.div`
