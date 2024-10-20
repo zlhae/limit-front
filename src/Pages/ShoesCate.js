@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter'; 
-import ProductListWrap from '../Components/Product';
+import ProductListWrap from '../Components/Product';      
    
 const ShoesCate = () => {  
     const [products, setProducts] = useState([]);
