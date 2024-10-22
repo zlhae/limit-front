@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ProductInformation from "../Components/ProductInformation"
 import ImmediatePrice from '../Components/ImmediatePrice';
@@ -7,8 +8,10 @@ import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
 
 const Sale=()=>{
-    const productId=1;
-    const productOptionId=1;
+    const location=useLocation();
+    const queryParams=new URLSearchParams(location.search);
+    const productId=queryParams.get("id");
+    const productSize=queryParams.get("size");
     const [productInformationData, setProductInformationData]=useState({});
     const [productImmediatePriceData, setProductImmediatePriceData]=useState({});
     const [position,setPosition]=useState(1);
@@ -58,8 +61,8 @@ const Sale=()=>{
                     <DoBid
                         type="sale"
                         productId={productId}
-                        productOptionId={productOptionId}
-                        immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"null"}
+                        productOptionId={productSize}
+                        immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"0"}
                     ></DoBid>
                 );
             case 2:
@@ -67,8 +70,8 @@ const Sale=()=>{
                     <DoImmediate
                         type="sale"
                         productId={productId}
-                        productOptionId={productOptionId}
-                        immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"null"}
+                        productOptionId={productSize}
+                        immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"0"}
                     ></DoImmediate>
                 );
             default:
@@ -82,8 +85,8 @@ const Sale=()=>{
                 productInformationData={productInformationData}
             ></ProductInformation>
             <ImmediatePrice
-                purchase={productImmediatePriceData.purchase?productImmediatePriceData.purchase: "null"}
-                sale={productImmediatePriceData.sale?productImmediatePriceData.sale: "null"}   
+                purchase={productImmediatePriceData.purchase}
+                sale={productImmediatePriceData.sale}
             ></ImmediatePrice>
             <SaleToggleContainer>
                 <SaleToggleElement

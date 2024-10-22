@@ -16,7 +16,7 @@ const DoImmediate=({type, productId, productOptionId, immediatePriceData})=>{
         <div>
             <ImmediateElement>
                 <ImmediateTitle>즉시 {type==="purchase"?"구매":"판매"}가</ImmediateTitle>
-                <ImmediateContext>{immediatePriceData}원</ImmediateContext>
+                <ImmediateContext>{immediatePriceData?immediatePriceData:"- "}원</ImmediateContext>
             </ImmediateElement>
             <ImmediateSubmit type={type} onClick={onClickDummy}>즉시 {type==="purchase"?"구매":"판매"}하기</ImmediateSubmit>
         </div>

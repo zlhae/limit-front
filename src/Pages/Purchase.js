@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ProductInformation from '../Components/ProductInformation';
 import ImmediatePrice from '../Components/ImmediatePrice';
@@ -7,8 +8,10 @@ import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
 
 const Purchase=()=>{
-    const productId=1;
-    const productOptionId=1;
+    const location=useLocation();
+    const queryParams=new URLSearchParams(location.search);
+    const productId=queryParams.get("id");
+    const productSize=queryParams.get("size");
     const [productInformationData, setProductInformationData]=useState({});
     const [productImmediatePriceData, setProductImmediatePriceData]=useState({});
     const [position,setPosition]=useState(1);
@@ -22,7 +25,7 @@ const Purchase=()=>{
                 modelNumber: response.data.modelNumber,
                 name_eng: response.data.names.eng,
                 name_kor: response.data.names.kor,
-                size: 230
+                size: productSize
             };
             setProductInformationData(productInformation);
         })
@@ -58,8 +61,8 @@ const Purchase=()=>{
                     <DoBid
                         type="purchase"
                         productId={productId}
-                        productOptionId={productOptionId}
-                        immediatePriceData={productImmediatePriceData.purchase?productImmediatePriceData.purchase:"null"}
+                        productOptionId={productSize}
+                        immediatePriceData={productImmediatePriceData.purchase}
                     ></DoBid>
                 );
             case 2:
@@ -67,8 +70,8 @@ const Purchase=()=>{
                     <DoImmediate
                         type="purchase"
                         productId={productId}
-                        productOptionId={productOptionId}
-                        immediatePriceData={productImmediatePriceData.purchase?productImmediatePriceData.purchase:"null"}
+                        productOptionId={productSize}
+                        immediatePriceData={productImmediatePriceData.purchase}
                     ></DoImmediate>
                 );
             default:
@@ -82,8 +85,8 @@ const Purchase=()=>{
                 productInformationData={productInformationData}
             ></ProductInformation>
             <ImmediatePrice
-                purchase={productImmediatePriceData.purchase?productImmediatePriceData.purchase: "null"}
-                sale={productImmediatePriceData.sale?productImmediatePriceData.sale: "null"}   
+                purchase={productImmediatePriceData.purchase}
+                sale={productImmediatePriceData.sale}   
             ></ImmediatePrice>
             <PurchaseToggleContainer>
                 <PurchaseToggleElement

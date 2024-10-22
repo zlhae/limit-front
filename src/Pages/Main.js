@@ -61,21 +61,21 @@ const Main = () => {
                 <MainTitle>
                     <h1> Recently Traded Products </h1>
                     <h3> 요즘 많이 거래된 상품 </h3>
-                    </MainTitle>
+                </MainTitle>
                 <MainProductListWrap></MainProductListWrap>
             </Section>
             <Section>
                 <MainTitle>
                     <h1> Popular Brands </h1>
                     <h3> 인기 브랜드 </h3>
-                    </MainTitle>
+                </MainTitle>
                 <PopularBrand></PopularBrand>
             </Section>
             <Section>
                 <MainTitle>
                     <h1> Recently Listed Products </h1>
                     <h3> 최근 등록된 상품 </h3>
-                    </MainTitle>
+                </MainTitle>
                 <RecentProductListWrap></RecentProductListWrap>
             </Section>
         </Container>
