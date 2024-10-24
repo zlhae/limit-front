@@ -223,7 +223,7 @@ export default function ModifyProfile() {
                         });
 
                         if (confirmRegister) {
-                            await newLocationModal(query); // query를 인자로 넘겨줌
+                            await newLocationModal(query); 
                         }
                     }
                 } catch (error) {

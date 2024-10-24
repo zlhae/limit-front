@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedMenu, toggleMobileMenu, closeMobileMenu } from '../store';
@@ -26,8 +27,17 @@ const menuTitles = {
 export default function MyPage() { // 마이페이지 메뉴
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const selectedMenu = useSelector((state) => state.MypageMenu.selectedMenu); // 선택된 메뉴바 상태
     const mobileMenu = useSelector((state) => state.MypageMenu.mobileMenu); // 모바일 뷰 상태
+
+    useEffect(() => {
+        const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken='));
+        if (!accessToken) {
+            alert("로그인 이용 후 이용가능합니다.");
+            navigate("/"); 
+        }
+    }, [navigate]);
 
     const renderComponent = () => { // 우측 컨테이너 컴포넌트 렌더링 메서드
         switch(selectedMenu) {
