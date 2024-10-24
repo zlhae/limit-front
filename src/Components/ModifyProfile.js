@@ -11,7 +11,7 @@ import Cookies from 'js-cookie';
 
 export default function ModifyProfile() {
 
-    const RS = React_Swal(Swal);
+    const RS = React_Swal(Swal); 
     const navigate = useNavigate();
 
     const [profileImage, setProfileImage] = useState(""); // 사용자 프로필 사진
