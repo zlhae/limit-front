@@ -107,7 +107,7 @@ const ProductDetail = () => {
         setGlobalMinPrice(minPrice);
         setGlobalMaxPrice(maxPrice);
     };
-
+ 
     const prepareChartData = (prices) => {
         return {
             labels: prices.map((price) => price.tradeTime).reverse(),
