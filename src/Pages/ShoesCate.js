@@ -3,15 +3,15 @@ import axios from 'axios';
 import styled from 'styled-components';
 import SubHeader from '../Components/SubHeader';
 import SideFilter from '../Components/SideFilter'; 
-import ProductListWrap from '../Components/Product';
-
-const ShoesCate = () => {
+import ProductListWrap from '../Components/Product';      
+   
+const ShoesCate = () => {  
     const [products, setProducts] = useState([]);
     const [totalProducts, setTotalProducts] = useState(0);
     const [selectedCategories, setSelectedCategories] = useState([]); 
     const [selectedGenders, setSelectedGenders] = useState([]);  
 
-    const categoryNameMap = {
+    const categoryNameMap = {  
         7: '스니커즈',  
         8: '부츠',              
         9: '샌들/슬리퍼',           
@@ -123,10 +123,10 @@ const ProductWrapper = styled.div`
     @media (max-width: 600px) {
         margin: 0 auto;
         width: 100%; 
-    }
+    }   
 `;
 
-const ProductNumber = styled.h3`
+const ProductNumber = styled.h3`   
     margin-top: 30px;
     font-size: 12px;
     color: #656565;
