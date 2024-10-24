@@ -69,6 +69,14 @@ const ProductDetail = () => {
     const [brandData, setBrandData] = useState(null);
     const [error, setError] = useState(null);
 
+    const sizeInfo = [
+        210,215,220,225,
+        230,235,240,245,
+        250,255,260,265,
+        270,275,280,285
+    ]
+    const [selectedSize,setSelecteSize]=useState();
+
     const fetchBrandData = async (brandId) => {
         try {
             const response = await axios.get(`https://api.lim-it.one/api/v1/brands`);
@@ -99,7 +107,7 @@ const ProductDetail = () => {
         setGlobalMinPrice(minPrice);
         setGlobalMaxPrice(maxPrice);
     };
-
+ 
     const prepareChartData = (prices) => {
         return {
             labels: prices.map((price) => price.tradeTime).reverse(),
@@ -213,20 +221,32 @@ const ProductDetail = () => {
     };
 
     const onClickPurchase = () => {
-        navigate('/purchase');
+        if(selectedSize){
+            navigate(`/purchase?id=${productId}&size=${selectedSize}`);
+        } else{
+            alert('사이즈를 선택해주세요.');
+        }
     };
 
     const onClickSale = () => {
-        navigate('/sale');
+        if(selectedSize){
+            navigate(`/sale?id=${productId}&size=${selectedSize}`);
+        } else{
+            alert('사이즈를 선택해주세요.');
+        }
     };
 
-    const handleSizeChange = (event) => {
+    const handleSizeChange=(event)=>{
+        setSelecteSize(event.target.value);
+    }
+
+    /*const handleSizeChange = (event) => {
         const [_, buyPrice, sellPrice] = event.target.value.split('|').map(text => text.replace(/[^0-9]/g, ''));
         setSelectedPrice({
             buyPrice: buyPrice ? parseInt(buyPrice) : null,
             sellPrice: sellPrice ? parseInt(sellPrice) : null
         });
-    };
+    };*/
 
     const handleBrandClick = () => {
         navigate(`/brand/${product.brandId}`);
@@ -257,9 +277,12 @@ const ProductDetail = () => {
                         <SizeContainer>
                         <SizeSelector onChange={handleSizeChange}>
                             <option hidden>모든 사이즈</option>
-                            {(product.sizeInfo || []).map((size, index) => (
-                                <option key={index}>{`${size.size} | 최고 희망 구매가: ${size.buyPrice.toLocaleString()} | 최저 희망 판매가: ${size.sellPrice.toLocaleString()}`}</option>
+                            {sizeInfo.map((size,idx)=>(
+                                <option key={idx}>{size}</option>
                             ))}
+                            {/*{(product.sizeInfo || []).map((size, index) => (
+                                <option key={index}>{`${size.size} | 최고 희망 구매가: ${size.buyPrice.toLocaleString()} | 최저 희망 판매가: ${size.sellPrice.toLocaleString()}`}</option>
+                            ))}*/}
                         </SizeSelector>
                         </SizeContainer>
                         <OtherInfo>

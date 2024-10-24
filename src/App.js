@@ -32,7 +32,6 @@ import Brand from "./Pages/Brand";
 function App() {
   return (
     <div className = "App"> 
-      
         <Header />
         <Routes>
           <Route path = "/" element = {<Main/>} />
