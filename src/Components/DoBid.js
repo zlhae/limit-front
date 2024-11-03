@@ -15,13 +15,21 @@ const DoBid=({type, productId, productOptionId, immediatePriceData})=>{
 
     useEffect(()=>{
         setBidPrice(showBidPrice.split(',').reduce((curr,acc)=>curr+acc,""));
-        if(type==='purchase' && bidPrice>immediatePriceData){
+        if(type==='purchase' && immediatePriceData && bidPrice>immediatePriceData){
             setCanBidPrice(false);
         }
         else{
             setCanBidPrice(true);
         }
     },[showBidPrice])
+
+    useEffect(() => {
+        const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken='));
+        if (!accessToken) {
+            alert("로그인 이용 후 이용가능합니다.");
+            navigate("/"); 
+        }
+    }, [navigate]);
 
     const inputPriceFormat=(str)=>{
         const comma=(str)=>{
@@ -55,7 +63,7 @@ const DoBid=({type, productId, productOptionId, immediatePriceData})=>{
                     type: type==="purchase"?"구매":"판매"
                 },{
                     headers:{
-                        Authorization: `Bearer ${Cookies.get("accessToken") || ''}`,
+                        Authorization: `Bearer ${Cookies.get('accessToken')}`
                     }
                 })
                 .then(()=>{
