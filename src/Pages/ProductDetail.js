@@ -68,14 +68,8 @@ const ProductDetail = () => {
     const navigate = useNavigate();
     const [brandData, setBrandData] = useState(null);
     const [error, setError] = useState(null);
-
-    const sizeInfo = [
-        210,215,220,225,
-        230,235,240,245,
-        250,255,260,265,
-        270,275,280,285
-    ]
-    const [selectedSize,setSelecteSize]=useState();
+    const [sizeInfo, setSizeInfo]=useState([]);
+    const [selectedSize,setSelectedSize]=useState({});
 
     const fetchBrandData = async (brandId) => {
         try {
@@ -127,6 +121,13 @@ const ProductDetail = () => {
             if (data) {
                 setProduct(data);
                 setTradeHistory(data.tradeHistory || []);
+                let sizeList=data.productOptions;
+                sizeList.sort(function (a,b) {
+                    if(a.hasOwnProperty('optionId')){
+                        return a.optionId - b.optionId;
+                    }
+                });
+                setSizeInfo(sizeList);
             }
             setLoading(false);
         };
@@ -222,7 +223,11 @@ const ProductDetail = () => {
 
     const onClickPurchase = () => {
         if(selectedSize){
-            navigate(`/purchase?id=${productId}&size=${selectedSize}`);
+            navigate(`/purchase?id=${productId}&size=${selectedSize.id}`,{
+                state: {
+                    size: selectedSize.name
+                }
+            });
         } else{
             alert('사이즈를 선택해주세요.');
         }
@@ -230,14 +235,20 @@ const ProductDetail = () => {
 
     const onClickSale = () => {
         if(selectedSize){
-            navigate(`/sale?id=${productId}&size=${selectedSize}`);
+            navigate(`/sale?id=${productId}&size=${selectedSize.id}`,{
+                state: {
+                    size: selectedSize.name
+                }
+            });
         } else{
             alert('사이즈를 선택해주세요.');
         }
     };
 
     const handleSizeChange=(event)=>{
-        setSelecteSize(event.target.value);
+        let optionId=event.target.value;
+        let optionName=document.querySelector("select[name=size] option:checked").text;
+        setSelectedSize({id: optionId, name: optionName});
     }
 
     /*const handleSizeChange = (event) => {
@@ -275,10 +286,10 @@ const ProductDetail = () => {
                         <ProductName>{product.names.eng}</ProductName>
                         <ProductDescription>{product.names.kor}</ProductDescription>
                         <SizeContainer>
-                        <SizeSelector onChange={handleSizeChange}>
+                        <SizeSelector name="size" onChange={handleSizeChange}>
                             <option hidden>모든 사이즈</option>
-                            {sizeInfo.map((size,idx)=>(
-                                <option key={idx}>{size}</option>
+                            {sizeInfo.map((obj)=>(
+                                <option key={obj.optionId} value={obj.optionId}>{obj.name}</option>
                             ))}
                             {/*{(product.sizeInfo || []).map((size, index) => (
                                 <option key={index}>{`${size.size} | 최고 희망 구매가: ${size.buyPrice.toLocaleString()} | 최저 희망 판매가: ${size.sellPrice.toLocaleString()}`}</option>

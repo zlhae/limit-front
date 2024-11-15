@@ -44,7 +44,6 @@ const DoBid=({type, productId, productOptionId, immediatePriceData})=>{
     }
 
     const onClickBid=()=>{ 
-        console.log(bidPrice);
         if(canBidPrice===true && canMeet!==null){
             if(showBidPrice===""){
                 Swal.fire({

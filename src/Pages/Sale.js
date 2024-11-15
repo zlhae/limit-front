@@ -11,7 +11,8 @@ const Sale=()=>{
     const location=useLocation();
     const queryParams=new URLSearchParams(location.search);
     const productId=queryParams.get("id");
-    const productSize=queryParams.get("size");
+    const productSizeId=queryParams.get("size");
+    const productSizeName=location.state.size;
     const [productInformationData, setProductInformationData]=useState({});
     const [productImmediatePriceData, setProductImmediatePriceData]=useState({});
     const [position,setPosition]=useState(1);
@@ -25,7 +26,7 @@ const Sale=()=>{
                 modelNumber: response.data.modelNumber,
                 name_eng: response.data.names.eng,
                 name_kor: response.data.names.kor,
-                size: 230
+                size: productSizeName
             };
             setProductInformationData(productInformation);
         })
@@ -38,10 +39,15 @@ const Sale=()=>{
         axios
         .get(`https://api.lim-it.one/api/v1/trades/orders?productId=${productId}`)
         .then((response)=>{
-            const productImmediatePrice={
-                purchase: response.data.bestPriceToBuy,
-                sale: response.data.bestPriceToSell
-            }
+            let productImmediatePrice={};
+            response.data.options.map((item)=>{
+                if(item.optionId==productSizeId){
+                    productImmediatePrice={
+                        purchase: item.bestPriceToBuy,
+                        sale: item.bestPriceToSell
+                    }
+                }
+            })
             setProductImmediatePriceData(productImmediatePrice);
         })
         .catch((error)=>{
@@ -61,7 +67,7 @@ const Sale=()=>{
                     <DoBid
                         type="sale"
                         productId={productId}
-                        productOptionId={productSize}
+                        productOptionId={productSizeId}
                         immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"0"}
                     ></DoBid>
                 );
@@ -70,7 +76,7 @@ const Sale=()=>{
                     <DoImmediate
                         type="sale"
                         productId={productId}
-                        productOptionId={productSize}
+                        productOptionId={productSizeId}
                         immediatePriceData={productImmediatePriceData.sale?productImmediatePriceData.sale:"0"}
                     ></DoImmediate>
                 );
