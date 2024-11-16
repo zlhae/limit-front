@@ -7,8 +7,6 @@ import MenuIcon from "../Images/menu-button.svg";
 import Default_MyPage from "../Components/Default_MyPage.js";
 import Unopened_Purchase from "../Components/Unopened_Purchase.js";
 import Unopened_Sale from "../Components/Unopened_Sale.js";
-import Used_Purchase from "../Components/Used_Purchase.js";
-import Used_Sale from "../Components/Used_Sale.js";
 import ModifyProfile from '../Components/ModifyProfile.js';
 import Interest_Product from "../Components/Interest_Product.js";
 import InquiryPage from "../Components/InquiryPage.js";
@@ -17,8 +15,6 @@ import SubHeader from '../Components/SubHeader';
 const menuTitles = {
     unopened_purchase: "미개봉 구매 내역",
     unopened_sale: "미개봉 판매 내역",
-    used_purchase: "중고 구매 내역",
-    used_sale: "중고 판매 내역",
     interest_product: "관심 상품 목록",
     inquiry: "문의 내역",
     default: "마이페이지",
@@ -45,10 +41,6 @@ export default function MyPage() { // 마이페이지 메뉴
                 return <Unopened_Purchase />;
             case "unopened_sale":
                 return <Unopened_Sale />;
-            case "used_purchase":
-                return <Used_Purchase />;
-            case "used_sale":
-                return <Used_Sale />;
             case "modify_profile":
                 return <ModifyProfile />;
             case "interest_product":
@@ -73,12 +65,6 @@ export default function MyPage() { // 마이페이지 메뉴
 
                 <NaviList selected = {selectedMenu === "unopened_sale"}
                           onClick = {() => dispatch(setSelectedMenu("unopened_sale"))}>미개봉 판매 내역</NaviList>
-
-                <NaviList selected = {selectedMenu === "used_purchase"}
-                          onClick = {() => dispatch(setSelectedMenu("used_purchase"))}>중고 구매 내역</NaviList>
-
-                <NaviList selected = {selectedMenu === "used_sale"}
-                          onClick = {() => dispatch(setSelectedMenu("used_sale"))}>중고 판매 내역</NaviList>
 
                 <NaviList selected = {selectedMenu === "interest_product"}
                           onClick = {() => dispatch(setSelectedMenu("interest_product"))}>관심 상품 목록</NaviList>
