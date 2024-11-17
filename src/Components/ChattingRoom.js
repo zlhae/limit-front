@@ -1,17 +1,17 @@
 import styled from "styled-components"
 
-const ChattingRoom=({chattingRoomData, selectedChattingRoom, handleSelectedChattingRoom})=>{
+const ChattingRoom=({chatRoomData, selectedChatRoom, handleSelectedChatRoom})=>{
     return(
         <ChattingRoomContainer
-            $check={selectedChattingRoom===chattingRoomData.id?true:false}
-            onClick={(e)=>{handleSelectedChattingRoom(chattingRoomData.id)}}
+            $check={selectedChatRoom===chatRoomData.chatRoomId?true:false}
+            onClick={(e)=>{handleSelectedChatRoom(chatRoomData.chatRoomId)}}
         >
             <ImgWrapper>
-                <ProfileImageInList src={chattingRoomData.profile_img}></ProfileImageInList>
+                <ProfileImageInList src={chatRoomData.profileImgUrl}></ProfileImageInList>
             </ImgWrapper>
             <ChattingPreview>
-                <UserNameInList>{chattingRoomData.user_name}</UserNameInList>
-                <ContentInPreview>{chattingRoomData.content}</ContentInPreview>
+                <UserNameInList>{chatRoomData.name}</UserNameInList>
+                <ContentInPreview>{chatRoomData.lastChatMessage}</ContentInPreview>
             </ChattingPreview>
         </ChattingRoomContainer>
     )

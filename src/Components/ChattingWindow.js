@@ -1,141 +1,158 @@
 import styled from "styled-components";
 import PlusIcon from "../Images/plus_icon.svg";
 import ArrowUPIcon from "../Images/arrow-up.svg";
-import React, { useState, useEffect } from "react";
-import {over} from 'stompjs';
-import SockJS from 'sockjs-client';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import Cookies from 'js-cookie';
+import { over } from 'stompjs';
+import SockJS from 'sockjs-client';
 
-var stompClient=null;
-const ChattingWindow=({selectedChattingRoomData})=>{
-    const [privateChats, setPrivateChats]=useState(new Map());
-    const [publicChats, setPublicChats]=useState([]);
-    const [tab, setTab]=useState("CHATROOM");
-    const [userData, setUserData]=useState({
-        username: '',
-        connected: false,
-    });
-    const [customHeaders, setCustomeHeaders]=useState({
-        Authorization: `Bearer ${Cookies.get("accessToken") || ''}`
-    })
-    const [messageInput, setMessageInput] = useState("");
+var stompClient = null;
+const ChattingWindow=({selectedChatRoomData})=>{
+    const chatRoomId=selectedChatRoomData?selectedChatRoomData.chatRoomId:null;
+    const [bubbleContentList, setBubbleContentList]=useState([]);
+    const [messageInput,setMessageInput]=useState("");
+    const bubbleContainerRef = useRef(null);
+    const userId = 1;
 
     useEffect(()=>{
-        console.log(userData);
-    }, [userData]);
-
-    const connect=()=>{
-        let Sock=new SockJS('https://api.lim-it.one/ws/stomp');
-        stompClient=over(Sock);
-        stompClient.connect(customHeaders, onConnected, onError);
-    }
-
-    const onConnected=()=>{
-        setUserData({...userData, "connected": true});
-
-        stompClient.subscribe('/topic/chat.1', onMessageReceived);
-        stompClient.subscribe('/queue/error', onMessageReceived);
-
-        var chatRequest={
-            content: "HELLO I'm "+userData.username
+        const accessToken = Cookies.get('accessToken');
+        if(selectedChatRoomData) {
+            axios
+            .get(`https://api.lim-it.one/api/v1/chats/rooms/${chatRoomId}`,{
+                params: {
+                    page: 0,
+                    size: 500,
+                    sort: 'ASC'
+                },
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            .then((response)=>{
+                setBubbleContentList(response.data.content);
+                if(response.data.content){
+                    let bubbleList=response.data.content;
+                    bubbleList.reverse();
+                    console.log(bubbleList);
+                    setBubbleContentList(bubbleList);
+                }
+            })
+            .catch((error)=>{
+                console.log(error);
+            })
         }
-        stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
-    }
+    },[selectedChatRoomData])
 
-    const onMessageReceived=(payload)=>{
-        var payloadData=JSON.parse(payload.body);
-        console.log(payloadData);
-    }
-
-    const onError=(err)=>{
-        console.log(err);
-    }
-
-    const handleMessage =(event)=>{
-        var messageContent = messageInput;
-        messageContent = "asdf!!!test1"; // 이건 html text input 받으면 되는데 몰라서 못 받겠어요
-        if (messageContent && stompClient) { // 메세지 입력했고, stomp 연결된 경우
-            var chatRequest = {
-                content: messageInput + userData.username + ": sent message!",
-            };
-
-            // 메세지 전송, /pub/chat/talk/{chatRoomId}
-            stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
+    useEffect(() => {
+        if (bubbleContainerRef.current) {
+            bubbleContainerRef.current.scrollTop = bubbleContainerRef.current.scrollHeight;
         }
-    }
+    }, [bubbleContentList]);
 
-    const sendValue=()=>{
+    useEffect(()=>{
+        if(chatRoomId) {
+            connect();
+        }
+        return()=>{
+            disconnect();
+        };
+    },[chatRoomId]);
+
+    const connect = () => {
+        let Sock = new SockJS('https://api.lim-it.one/ws/stomp');
+        stompClient = over(Sock);
+        const accessToken = Cookies.get('accessToken');
+        const myHeaders = {
+            Authorization: `Bearer ${accessToken}`
+        }
+        stompClient.connect(myHeaders, onConnected, onError);
+    };
+
+    const onConnected = () => {
+        console.log("Connected to WebSocket!");
+        stompClient.subscribe(`/topic/chat.${chatRoomId}`, onMessageReceived);
+    };
+
+    const onMessageReceived = (payload) => {
+        let newMessage = JSON.parse(payload.body);
+        if (!newMessage.writerId) {
+            newMessage = { ...newMessage, writerId: userId };
+        }
+        setBubbleContentList((prevList) => [...prevList, newMessage]);
+    };
+
+    const onError = (err) => {
+        console.error('WebSocket connection error:', err);
+    };
+
+    const disconnect = () => {
         if (stompClient) {
-            var chatRequest = {
-                content: messageInput + userData.username,
-            };
-
-            stompClient.send("/pub/chat/talk/1", null, JSON.stringify(chatRequest));
-            setUserData({...userData,"message": ""});
+            stompClient.disconnect();
         }
-    }
+    };
 
-    const handleUsername=(event)=>{
-        const {value}=event.target;
-        setUserData({...userData,"username": value});
-    }
-
-    const registerUser=()=>{
-        connect();
-    }
+    const sendMessage = () => {
+        if (messageInput.trim() && stompClient) {
+            const chatRequest = { 
+                content: messageInput
+            };
+            stompClient.send(`/pub/chat/talk/${chatRoomId}`, {}, JSON.stringify(chatRequest));
+            setMessageInput("");
+        }
+    };
 
     return(
         <ChattingWindowContainer>
             <UserInformation>
                 <ImgWrapper>
-                    <ProfileImageInWindow src={selectedChattingRoomData.profile_img}></ProfileImageInWindow>
+                    <ProfileImageInWindow src={selectedChatRoomData?.profileImgUrl}></ProfileImageInWindow>
                 </ImgWrapper>
-                <UserName>{selectedChattingRoomData.user_name}</UserName>
+                <UserName>{selectedChatRoomData.name}</UserName>
             </UserInformation>
-            <SpeechBubbleContainer>
-                <MeSpeechBubbleContainer>
-                    <MeSpeechBubble>안녕하세요! 거래하고 싶어 연락 드립니다!</MeSpeechBubble>
-                </MeSpeechBubbleContainer>   
-                <YouSpeechBubbleContainer>                    
-                    <YouProfileWrapper>
-                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
-                    </YouProfileWrapper>    
-                    <YouSpeechBubble>네 가능하십니다.</YouSpeechBubble>
-                </YouSpeechBubbleContainer>
-                <YouSpeechBubbleContainer>                    
-                    <YouProfileWrapper>
-                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
-                    </YouProfileWrapper>    
-                    <YouSpeechBubble>배송 방식은 어떤 거 원하실까요? 편의점 택배는 3000원 우체국 택배는 4000원입니다.</YouSpeechBubble>
-                </YouSpeechBubbleContainer>
-                <YouSpeechBubbleContainer>                    
-                    <YouProfileWrapper>
-                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
-                    </YouProfileWrapper>    
-                    <YouSpeechBubble>원하시는 배송 방법의 금액을 포함하여 총 000000원 농협 000 0000 000000으로 입금해주시고 배송지 정보 남겨주세요.</YouSpeechBubble>
-                </YouSpeechBubbleContainer>
-                <MeSpeechBubbleContainer>
-                    <MeSpeechBubble>편의점 택배로 부탁드립니다!</MeSpeechBubble>
-                </MeSpeechBubbleContainer>
-                <MeSpeechBubbleContainer>
-                    <MeSpeechBubble>주소는 ㅇㅇ시 ㅇ구 ㅇㅇ동 ㅇㅇㅇ아파트 ㅇㅇㅇ동 ㅇㅇㅇ호로 부탁드려요!</MeSpeechBubble>
-                </MeSpeechBubbleContainer>
-                <YouSpeechBubbleContainer>                    
-                    <YouProfileWrapper>
-                        <YouProfile src={selectedChattingRoomData.profile_img}></YouProfile>
-                    </YouProfileWrapper>    
-                    <YouSpeechBubble>넵! 발송 후 연락드리겠습니다 좋은 하루 되세요</YouSpeechBubble>
-                </YouSpeechBubbleContainer>
+
+            <SpeechBubbleContainer ref={bubbleContainerRef}>
+                {chatRoomId? (
+                    bubbleContentList.length > 0 ? (
+                        bubbleContentList.map((item) => (
+                            item.writerId === userId ? (
+                                <MeSpeechBubbleContainer key={item.id}>
+                                    <MeSpeechBubble>{item.content}</MeSpeechBubble>
+                                </MeSpeechBubbleContainer>
+                            ) : (
+                                <YouSpeechBubbleContainer key={item.id}>
+                                    <YouProfileWrapper>
+                                        <YouProfile src={selectedChatRoomData.profileImgUrl} />
+                                    </YouProfileWrapper>
+                                    <YouSpeechBubble>{item.content}</YouSpeechBubble>
+                                </YouSpeechBubbleContainer>
+                            )
+                        ))
+                    ) : (
+                        <LoadingMessage>
+                            첫 메시지를 보내보세요!
+                        </LoadingMessage>
+                    )
+                ):(
+                    <LoadingMessage>
+                        채팅방을 선택해주세요
+                    </LoadingMessage>
+                )}
             </SpeechBubbleContainer>
             <InputWindowContainer>
                 <AddPicturebutton src={PlusIcon}></AddPicturebutton>
                 <InputWindow>
-                    <MessageInput type="text"></MessageInput>
-                    <SendButton src={ArrowUPIcon}></SendButton>
+                    <MessageInput
+                        type="text"
+                        value={messageInput}
+                        onChange={(e)=>setMessageInput(e.target.value)}
+                        onKeyDown={(e)=>e.key==='Enter' && sendMessage()}
+                    ></MessageInput>
+                    <SendButton src={ArrowUPIcon} onClick={sendMessage}></SendButton>
                 </InputWindow>
             </InputWindowContainer>
         </ChattingWindowContainer>
-    )
+    );
 }
 
 const ChattingWindowContainer=styled.div`
@@ -233,6 +250,11 @@ const YouSpeechBubble=styled.div`
     padding: 10px;
     border-radius: 0px 15px 15px 15px;
     margin-top: 10px;
+`
+
+const LoadingMessage=styled.div`
+    text-align: center;
+    color: #d9d9d9;
 `
 
 const InputWindowContainer=styled.div`

@@ -69,7 +69,7 @@ const ProductDetail = () => {
     const [brandData, setBrandData] = useState(null);
     const [error, setError] = useState(null);
     const [sizeInfo, setSizeInfo]=useState([]);
-    const [selectedSize,setSelectedSize]=useState({});
+    const [selectedSize,setSelectedSize]=useState();
 
     const fetchBrandData = async (brandId) => {
         try {

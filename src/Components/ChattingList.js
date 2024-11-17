@@ -1,20 +1,19 @@
 import styled from "styled-components"
-import { useState } from "react"
 import ChattingRoom from "./ChattingRoom"
 
-const ChattingList=({chattingListData, selectedChattingRoom, setSelectedChattingRoom})=>{
-    const handleSelectedChattingRoom=(id)=>{
-        setSelectedChattingRoom(id);
+const ChattingList=({chatListData, selectedChatRoom, setSelectedChatRoom})=>{
+    const handleSelectedChatRoom=(id)=>{
+        setSelectedChatRoom(id);
     }
 
     return(
         <ChattingListContainer>
-            {chattingListData.map(item=>(
+            {chatListData && chatListData.map(item=>(
                 <ChattingRoom
-                    chattingRoomData={item}
+                    chatRoomData={item}
                     key={item.id}
-                    selectedChattingRoom={selectedChattingRoom}
-                    handleSelectedChattingRoom={handleSelectedChattingRoom}
+                    selectedChatRoom={selectedChatRoom}
+                    handleSelectedChatRoom={handleSelectedChatRoom}
                 ></ChattingRoom>
             ))}
         </ChattingListContainer>
