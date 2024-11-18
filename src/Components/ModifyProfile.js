@@ -40,11 +40,12 @@ export default function ModifyProfile() {
                     Authorization: `Bearer ${token}` 
                 }
             });
-            const { profileUrl, email, nickname, phoneNumber } = response.data;
+            const { profileUrl, email, nickname, phoneNumber, address } = response.data;
             setProfileImage(profileUrl);
             setEmail(email);
             setNickName(nickname);
             setPhoneNumber(phoneNumber);
+            setUserAddress(address);
             setFormattedPhoneNumber(phoneNumberChange(phoneNumber));
         } catch (error) {
               console.error("프로필 정보조회중 오류발생 : ", error);
@@ -194,9 +195,27 @@ export default function ModifyProfile() {
         }
     };
 
-  const toggleEditPhoneNumber = () => { // 휴대전화번호 입력필드 활성화 메서드
-      setIsPhoneEditable(true); // 수정 활성화
-  };
+    const toggleEditPhoneNumber = () => { // 휴대전화번호 입력필드 활성화 메서드
+        setIsPhoneEditable(true); // 수정 활성화
+    };
+
+    const handleAddressSubmit = async (selectedAddress) => { // 주소 수정 메서드
+        const token = Cookies.get('accessToken');
+        try {
+            await axios.put('https://api.lim-it.one/api/v1/members/my-profile/address', 
+                { address: selectedAddress }, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+            window.alert("주소가 변경되었습니다.");
+        } catch (error) {
+            console.error("주소 변경 중 오류 발생: ", error);
+            window.alert("주소 변경에 실패했습니다.");
+        }
+    };
 
   const addressModal = () => {
     RS.fire({
@@ -313,6 +332,7 @@ export default function ModifyProfile() {
                             name: item.querySelector(".region-name").textContent
                         };
                         setUserAddress(selectedLocation.name);
+                        handleAddressSubmit(selectedLocation.name);
                         RS.close();
                     });
                 });

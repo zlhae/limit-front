@@ -82,21 +82,6 @@ export default function Default_MyPage() { // 기본 마이페이지
                     <div>{0}</div>
                 </Contents>
             </ContentsBox>
-            <Title>중고 거래 내역</Title>
-            <UsedProductBox>
-                <UsedContents type = {"Purchase"}>
-                    <div>구매</div>
-                    <div>{0}</div>
-                </UsedContents>
-                <UsedContents>
-                    <div>판매</div>
-                    <div>{0}</div>
-                </UsedContents>
-            </UsedProductBox>
-            <Title>관심 상품 목록</Title>
-            <DipsContainer>
-                
-            </DipsContainer>
         </Container>
     );
 }
