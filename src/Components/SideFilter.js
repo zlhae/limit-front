@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import MinusIcon from '../Images/icon-minus.svg';
 import PlusIcon from '../Images/icon-plus.svg';
-import Modal from './Modal';
+import Modal from './Modal'; 
 
 const SideFilter = ({ selectedCategory, categories = [], allCategories = [], setProducts, onCategoryChange, onGenderChange }) => {
 
