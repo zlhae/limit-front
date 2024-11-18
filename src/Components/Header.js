@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
-import { login, logout } from '../store'; 
+import { login, logout } from '../store';   
 import axios from 'axios'; 
 import Logo from '../Images/limit-logo.svg';
 import ChattingIcon from '../Images/chatting-icon.svg';
