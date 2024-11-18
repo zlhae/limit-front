@@ -669,7 +669,7 @@ const CateFilterBox = styled.div`
     }
 
     .cate_filter_checkbox input[type="checkbox"]:checked::before {
-        background-color: #transparent; 
+        background-color: transparent; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cline x1='0.353553' y1='2.64645' x2='3.35355' y2='5.64645' stroke='black'/%3E%3Cline x1='2.64645' y1='5.64645' x2='7.64645' y2='0.646447' stroke='black'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-size: 100% 100%;
@@ -796,7 +796,7 @@ const GenderFilterBox = styled.div`
     }
 
     .gender_filter_checkbox input[type="checkbox"]:checked::before {
-        background-color: #transparent; 
+        background-color: transparent; 
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6' viewBox='0 0 8 6'%3E%3Cline x1='0.353553' y1='2.64645' x2='3.35355' y2='5.64645' stroke='black'/%3E%3Cline x1='2.64645' y1='5.64645' x2='7.64645' y2='0.646447' stroke='black'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-size: 100% 100%;
