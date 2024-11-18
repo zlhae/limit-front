@@ -13,7 +13,6 @@ const ChattingWindow=({selectedChatRoomData})=>{
     const [bubbleContentList, setBubbleContentList]=useState([]);
     const [messageInput,setMessageInput]=useState("");
     const bubbleContainerRef = useRef(null);
-    const userId = 1;
 
     useEffect(()=>{
         const accessToken = Cookies.get('accessToken');
@@ -77,7 +76,7 @@ const ChattingWindow=({selectedChatRoomData})=>{
     const onMessageReceived = (payload) => {
         let newMessage = JSON.parse(payload.body);
         if (!newMessage.writerId) {
-            newMessage = { ...newMessage, writerId: userId };
+            newMessage = { ...newMessage, isMine: true};
         }
         setBubbleContentList((prevList) => [...prevList, newMessage]);
     };
@@ -115,7 +114,7 @@ const ChattingWindow=({selectedChatRoomData})=>{
                 {chatRoomId? (
                     bubbleContentList.length > 0 ? (
                         bubbleContentList.map((item) => (
-                            item.writerId === userId ? (
+                            item.isMine === true ? (
                                 <MeSpeechBubbleContainer key={item.id}>
                                     <MeSpeechBubble>{item.content}</MeSpeechBubble>
                                 </MeSpeechBubbleContainer>
