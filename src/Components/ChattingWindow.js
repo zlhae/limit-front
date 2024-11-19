@@ -33,7 +33,6 @@ const ChattingWindow=({selectedChatRoomData})=>{
                 if(response.data.content){
                     let bubbleList=response.data.content;
                     bubbleList.reverse();
-                    console.log(bubbleList);
                     setBubbleContentList(bubbleList);
                 }
             })
@@ -69,16 +68,33 @@ const ChattingWindow=({selectedChatRoomData})=>{
     };
 
     const onConnected = () => {
-        console.log("Connected to WebSocket!");
         stompClient.subscribe(`/topic/chat.${chatRoomId}`, onMessageReceived);
     };
 
     const onMessageReceived = (payload) => {
-        let newMessage = JSON.parse(payload.body);
-        if (!newMessage.writerId) {
-            newMessage = { ...newMessage, isMine: true};
-        }
-        setBubbleContentList((prevList) => [...prevList, newMessage]);
+        const accessToken = Cookies.get('accessToken');
+        axios
+            .get(`https://api.lim-it.one/api/v1/chats/rooms/${chatRoomId}`,{
+                params: {
+                    page: 0,
+                    size: 500,
+                    sort: 'ASC'
+                },
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            .then((response)=>{
+                setBubbleContentList(response.data.content);
+                if(response.data.content){
+                    let bubbleList=response.data.content;
+                    bubbleList.reverse();
+                    setBubbleContentList(bubbleList);
+                }
+            })
+            .catch((error)=>{
+                console.log(error);
+            })
     };
 
     const onError = (err) => {
@@ -92,13 +108,17 @@ const ChattingWindow=({selectedChatRoomData})=>{
     };
 
     const sendMessage = () => {
+        const accessToken = Cookies.get('accessToken');
+        const myHeaders = {
+            Authorization: `Bearer ${accessToken}`
+        }
         if (messageInput.trim() && stompClient) {
             const chatRequest = { 
-                content: messageInput
+                content: messageInput,
             };
-            stompClient.send(`/pub/chat/talk/${chatRoomId}`, {}, JSON.stringify(chatRequest));
-            setMessageInput("");
+            stompClient.send(`/pub/chat/talk/${chatRoomId}`, myHeaders, JSON.stringify(chatRequest));
         }
+        setMessageInput("");
     };
 
     return(
