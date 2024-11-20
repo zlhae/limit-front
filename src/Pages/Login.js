@@ -29,8 +29,8 @@ const Login = () => { // 로그인 페이지
                 refreshToken: response.data.refreshToken,
             }));
 
-            Cookies.set("accessToken", response.data.accessToken, { expires: 14 }); 
-            Cookies.set("refreshToken", response.data.refreshToken, { expires: 14 }); 
+            Cookies.set("accessToken", response.data.accessToken); 
+            Cookies.set("refreshToken", response.data.refreshToken); 
 
             setTimeout(() => {
                 window.location.href = "/";

@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { login, logout } from '../store'; 
-import axios from 'axios'; 
 import Logo from '../Images/limit-logo.svg';
 import ChattingIcon from '../Images/chatting-icon.svg';
 import SearchIcon from '../Images/search-icon.svg'
@@ -12,6 +11,7 @@ import SearchIcon from '../Images/search-icon.svg'
 const Header = () => { // 헤더
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn); // 로그인 상태 
 
     useEffect(() => {
@@ -21,25 +21,11 @@ const Header = () => { // 헤더
         }
     }, [isLoggedIn]);
 
-    const Logout = async () => { // 로그아웃 메서드
-        const refreshToken = Cookies.get("refreshToken"); 
-    
-        try {
-            const response = await axios.post('https://api.lim-it.one/api/v1/accounts/logout', {
-                RefreshToken: refreshToken
-            });
-    
-            if (response.status === 200) {
-                Cookies.remove("accessToken");
-                Cookies.remove("refreshToken");
-                dispatch(logout());
-                window.location.href = "/";
-            } else {
-                console.error("로그아웃 실패", response.status);
-            }
-        } catch (error) {
-            console.error("로그아웃 중 오류 발생", error);
-        }
+    const handleLogout = () => { // 로그아웃
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        dispatch(logout()); 
+        window.location.href = "/";
     };
 
     return(
@@ -49,7 +35,7 @@ const Header = () => { // 헤더
                     <HeaderTopItem><HeaderTopItemLink to = {"/cs-center"}>고객센터</HeaderTopItemLink></HeaderTopItem>
                     <HeaderTopItem><HeaderTopItemLink to = {"/my-page"}>마이페이지</HeaderTopItemLink></HeaderTopItem>
                     <HeaderTopItem>
-                        {isLoggedIn ? (<HeaderLoggedIn onClick = {Logout}>로그아웃</HeaderLoggedIn>) : (
+                        {isLoggedIn ? (<HeaderLoggedIn onClick = {handleLogout}>로그아웃</HeaderLoggedIn>) : (
                             <HeaderTopItemLink to = "/login">로그인</HeaderTopItemLink>)}
                     </HeaderTopItem>
                 </HeaderTopList>
