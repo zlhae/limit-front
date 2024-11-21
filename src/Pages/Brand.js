@@ -14,7 +14,7 @@ const Brand = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [selectedGenders, setSelectedGenders] = useState([]);
 
-    // 카테고리 및 성별 매핑
+    // 카테고리 및 성별 매핑     
     const categoryNameMap = {    
         2: '자켓',
         3: '아노락',
