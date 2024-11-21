@@ -39,7 +39,7 @@ export default function Default_MyPage() { // 기본 마이페이지
     }, []);
 
     return (
-        <Container>
+        <Container> 
             <ProfileContainer> 
                 <ProfileImage profileUrl = {profileUrl}/>
                 <UserInfoContainer>
