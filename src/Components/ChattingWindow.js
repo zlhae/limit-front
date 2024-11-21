@@ -97,7 +97,7 @@ const ChattingWindow=({selectedChatRoomData})=>{
             })
     };
 
-    const onError = (err) => {
+    const onError = (err) => { 
         console.error('WebSocket connection error:', err);
     };
 
