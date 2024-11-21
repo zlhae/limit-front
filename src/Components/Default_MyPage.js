@@ -52,29 +52,29 @@ export default function Default_MyPage() { // 기본 마이페이지
             <ContentsBox type = {"Purchase"}>
                 <Contents>
                     <div>전체</div>
-                    <div>{3}</div>
-                </Contents>
-                <Vline type = {"Purchase"}/>
-                <Contents>
-                    <div>입찰중</div>
                     <div>{1}</div>
                 </Contents>
                 <Vline type = {"Purchase"}/>
                 <Contents>
+                    <div>입찰중</div>
+                    <div>{0}</div>
+                </Contents>
+                <Vline type = {"Purchase"}/>
+                <Contents>
                     <div>구매 완료</div>
-                    <div>{2}</div>
+                    <div>{1}</div>
                 </Contents>
             </ContentsBox>
             <Title>미개봉 판매 내역</Title>
             <ContentsBox>
                 <Contents>
                     <div>전체</div>
-                    <div>{1}</div>
+                    <div>{0}</div>
                 </Contents>
                 <Vline/>
                 <Contents>
                     <div>입찰중</div>
-                    <div>{1}</div>
+                    <div>{0}</div>
                 </Contents>
                 <Vline/>
                 <Contents>

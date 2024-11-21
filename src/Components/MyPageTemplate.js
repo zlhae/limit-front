@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const MyPageTemplate = ({ title, toggleButtons, api }) => {
+const MyPageTemplate = ({ title, toggleButtons, imgBox }) => {
     return (
         <Container>
             <Title>{title}</Title>
@@ -15,7 +15,7 @@ const MyPageTemplate = ({ title, toggleButtons, api }) => {
                     ))}
                 </ButtonContainer>
                 <BottomContainer>
-                    {api}
+                    {imgBox}
                 </BottomContainer>
             </InnerContainer>
         </Container>
@@ -66,6 +66,8 @@ const ToggleButton = styled.div` // 토글버튼 컴포넌트
 `;
 
 const BottomContainer = styled.div` // 세부정보 컨테이너
+    display: flex;
+    padding: 15px;
     width: 100%;
     height: 100%;
 `;
