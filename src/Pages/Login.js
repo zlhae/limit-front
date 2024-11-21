@@ -100,7 +100,7 @@ const LoginTitle = styled.h1`
 
     @media (max-width: 600px){
         font-size: 20px;
-    }
+}
 `
 
 const EmailLoginContainer = styled.div`

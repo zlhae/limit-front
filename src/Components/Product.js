@@ -6,7 +6,6 @@ import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
 import Cookies from 'js-cookie';
 
-// 모든 찜한 상품을 서버에서 가져오는 함수
 const fetchAllBookmarks = async () => {
     try {
         const token = Cookies.get("accessToken");
@@ -23,11 +22,10 @@ const fetchAllBookmarks = async () => {
 const updateBookmarkStatus = async (productId, shouldBookmark) => {
     try {
         const token = Cookies.get("accessToken");
-        // 항상 PUT 요청을 사용하고, 요청 본문에 찜 상태를 전달
         const data = { wish: shouldBookmark };
 
         const response = await axios({
-            method: 'PUT', // PUT 요청 사용
+            method: 'PUT', 
             url: `https://api.lim-it.one/api/v1/products/${productId}/wishes`,
             headers: { 'Authorization': `Bearer ${token}` },
             data: data
@@ -36,11 +34,9 @@ const updateBookmarkStatus = async (productId, shouldBookmark) => {
         return response.status === 200;
     } catch (error) {
         if (error.response) {
-            // 서버가 응답을 반환한 경우
             console.error('서버 오류:', error.response.data);
             console.error('응답 상태 코드:', error.response.status);
         } else {
-            // 서버가 응답하지 않은 경우
             console.error('요청 오류:', error.message);
         }
         return false;
@@ -48,25 +44,22 @@ const updateBookmarkStatus = async (productId, shouldBookmark) => {
 };
 
 
-// 상품 컴포넌트
 const Product = ({ product, bookmarkedProducts, updateBookmarks }) => {
     const navigate = useNavigate();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
 
-    // 찜한 목록에 있는지 확인하여 상태 설정
     useEffect(() => {
         const isProductBookmarked = bookmarkedProducts.some(bookmarked => bookmarked.productId === product.id);
         setIsBookmarked(isProductBookmarked);
     }, [product.id, bookmarkedProducts]);
 
-    // 찜 버튼 클릭 시 UI와 서버 동기화
     const handleBookmarkClick = async (e) => {
         e.stopPropagation();
-        if (isUpdating) return; // 이미 업데이트 중이면 무시
+        if (isUpdating) return; 
 
-        setIsUpdating(true); // 업데이트 중으로 설정
+        setIsUpdating(true); 
         const shouldBookmark = !isBookmarked;
 
         console.log('현재 찜 상태:', isBookmarked);
@@ -75,12 +68,12 @@ const Product = ({ product, bookmarkedProducts, updateBookmarks }) => {
         const success = await updateBookmarkStatus(product.id, shouldBookmark);
         if (success) {
             console.log('찜 상태 업데이트 성공');
-            setIsBookmarked(shouldBookmark); // UI 상태 업데이트
-            updateBookmarks(); // 찜 목록 업데이트
+            setIsBookmarked(shouldBookmark); 
+            updateBookmarks(); 
         } else {
             console.error('찜 상태 업데이트 실패');
         }
-        setIsUpdating(false); // 업데이트 완료
+        setIsUpdating(false); 
     };
 
     const handleProductClick = () => {
@@ -125,12 +118,23 @@ const Product = ({ product, bookmarkedProducts, updateBookmarks }) => {
     );
 };
 
-// 상품 목록 컴포넌트
-const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, size = 900, sort = 'ASC' }) => {
+const ProductListWrap = ({ brand = '', category = [], gender = '', sort = 'ASC' }) => {
     const [products, setProducts] = useState([]);
     const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [size, setSize] = useState(window.innerWidth <= 600 ? 18 : 20);
 
-    // 모든 찜한 상품을 불러옵니다
+    useEffect(() => {
+        const handleResize = () => {
+            setSize(window.innerWidth <= 600 ? 18 : 20);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     useEffect(() => {
         loadBookmarks();
     }, []);
@@ -140,53 +144,60 @@ const ProductListWrap = ({ brand = '', category = [], gender = '', page = 0, siz
         setBookmarkedProducts(bookmarks);
     };
 
-    // 상품 데이터를 불러옵니다
+    const fetchProductData = async (pageNum) => {
+        setIsLoading(true);
+        const categoryParam = category.length > 0 ? category.map(cat => `category=${cat}`).join('&') : '';
+        const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${gender}&page=${pageNum}&size=${size}&sort=${sort}`;
+
+        try {
+            const response = await axios.get(url);
+            const newProducts = response.data.content;
+
+            setProducts(prev => [...prev, ...newProducts]);
+            setHasMore(newProducts.length === size);
+        } catch (error) {
+            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchProductData = async (brandId, category = [], gender = '', page = 0, size = 1000, sort = 'ASC') => {
-            let categoryParam = '';
-            if (category.length > 0) {
-                categoryParam = category.map(cat => `category=${cat}`).join('&');
-            }
+        setPage(0);
+        setProducts([]);
+        setHasMore(true);
+        fetchProductData(0);
+    }, [brand, category, gender, sort]);
 
-            const url = `https://api.lim-it.one/api/v1/products?${categoryParam}&gender=${gender}&page=${page}&size=${size}&sort=${sort}`;
-
-            try {
-                const response = await axios.get(url);
-                console.log('API Response:', response.data);
-                return response.data;
-            } catch (error) {
-                console.error('상품 데이터를 가져오는 중 오류 발생:', error);
-                return { content: [] };
-            }
-        };
-
-        const getProductData = async () => {
-            const data = await fetchProductData(brand, category, gender, page, size, sort);
-            setProducts(data.content);
-        };
-        getProductData();
-    }, [brand, category, gender, page, size, sort]);
+    const loadMoreProducts = () => {
+        setPage(prevPage => {
+            const nextPage = prevPage + 1;
+            fetchProductData(nextPage);
+            return nextPage;
+        });
+    };
 
     return (
         <ProductListContainer>
             <ProductGroup>
-                {products.length > 0 ? (
-                    products.map(product => (
-                        <Product 
-                            key={product.id} 
-                            product={product}
-                            bookmarkedProducts={bookmarkedProducts} // 찜한 상품 목록 전달
-                            updateBookmarks={loadBookmarks} // 찜 목록 업데이트 함수 전달
-                        />
-                    ))
-                ) : (
-                    <p>상품이 없습니다.</p>
-                )}
+                {products.map(product => (
+                    <Product 
+                        key={product.id} 
+                        product={product}
+                        bookmarkedProducts={bookmarkedProducts}
+                        updateBookmarks={loadBookmarks}
+                    />
+                ))}
             </ProductGroup>
+            {hasMore && !isLoading && (
+                <LoadMoreButtonWrapper>
+                    <LoadMoreButton onClick={loadMoreProducts}>더 보기</LoadMoreButton>
+                </LoadMoreButtonWrapper>
+            )}
+            {isLoading && <p>로딩 중...</p>}
         </ProductListContainer>
     );
 };
-
 
 const ProductContainer = styled.div`
     width: 100%; 
@@ -204,7 +215,7 @@ const ThumbBox = styled.div`
         width: 100%;
         height: auto;
         border-radius: 10px;
-        background-color: rgba(221, 126, 96, 0.15); /* 배경색과 투명도 설정 */
+        background-color: rgba(221, 126, 96, 0.15);
     }
 `;
 
@@ -224,7 +235,6 @@ const BrandBookmark = styled.div`
 `;
 
 const Brand = styled.div`
-
     h1 {
         font-size: 15px;
         font-weight: bold;
@@ -237,7 +247,6 @@ const Brand = styled.div`
 `;
 
 const Name = styled.div`
-
     h2 {
         font-size: 13px;
         font-weight: 500;
@@ -251,7 +260,6 @@ const Name = styled.div`
 `;
 
 const KoreaName = styled.div`
-
     h3 {
         font-size: 12px;
         font-weight: lighter;
@@ -280,7 +288,6 @@ const TagText = styled.span`
 `;
 
 const Price = styled.div`
-
     h3 {
         font-size: 15px;
         margin-top: 8px;
@@ -293,7 +300,8 @@ const Price = styled.div`
 
 const ProductListContainer = styled.div`
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
     @media (max-width: 600px) {
         width: 90%; 
@@ -318,5 +326,25 @@ const ProductGroup = styled.div`
     }
 `;
 
+const LoadMoreButtonWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 50px;
+`;
+
+const LoadMoreButton = styled.button`
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 0.5px solid #d9d9d9; 
+    background-color: #f0f0f0; 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        background-color: #d9d9d9; 
+    }
+`;
 
 export default ProductListWrap;

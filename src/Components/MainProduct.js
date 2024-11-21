@@ -128,16 +128,29 @@ const RecentProductListWrap = () => {
         setBookmarkedProducts(bookmarks);
     };
 
-    const fetchRecentProducts = async () => {
-        try {
-            const response = await axios.get('https://api.lim-it.one/api/v1/products', {
-                params: { sort: 'releaseDate,desc', size: 30 }
-            });
-            setProducts(response.data.content);
-        } catch (error) {
-            console.error('상품 데이터를 가져오는 중 오류 발생:', error);
-        }
-    };
+    // 배열을 섞는 함수
+const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
+
+// fetchRecentProducts 함수 수정
+const fetchRecentProducts = async () => {
+    try {
+        const response = await axios.get('https://api.lim-it.one/api/v1/products', {
+            params: { sort: 'releaseDate,desc', size: 30 }
+        });
+        const shuffledProducts = shuffleArray(response.data.content); // 상품 배열 섞기
+        setProducts(shuffledProducts); // 상태에 무작위 데이터 설정
+    } catch (error) {
+        console.error('상품 데이터를 가져오는 중 오류 발생:', error);
+    }
+};
+
 
     const checkScrollButtons = () => {
         const { current } = productListRef;

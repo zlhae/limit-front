@@ -4,20 +4,18 @@ import styled from 'styled-components';
 import axios from 'axios';
 import BookmarkIcon from './BookmarkIcon';
 import LoadingImage from '../Images/Loading.svg';
-import Cookies from 'js-cookie';
 
 const Product = ({ searchResults }) => {
     const navigate = useNavigate(); 
     const [bookmarkedProducts, setBookmarkedProducts] = useState([]);
 
-    // 모든 찜한 상품을 불러옵니다
     useEffect(() => {
         loadBookmarks();
     }, []);
 
     const loadBookmarks = async () => {
         try {
-            const token = Cookies.get("accessToken");
+            const token = localStorage.getItem('accessToken');
             const response = await axios.get('https://api.lim-it.one/api/v1/products/wishes', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -29,7 +27,7 @@ const Product = ({ searchResults }) => {
 
     const updateBookmarks = async (productId, shouldBookmark) => {
         try {
-            const token = Cookies.get("accessToken");
+            const token = localStorage.getItem('accessToken');
             const data = { wish: shouldBookmark };
             const response = await axios({
                 method: 'PUT',
@@ -38,7 +36,7 @@ const Product = ({ searchResults }) => {
                 data: data
             });
             if (response.status === 200) {
-                loadBookmarks(); // 찜 목록을 다시 불러와 업데이트
+                loadBookmarks(); 
             }
         } catch (error) {
             console.error('찜 상태를 업데이트하는 중 오류 발생:', error);
@@ -74,6 +72,7 @@ const SingleProduct = ({ product, handleProductClick, bookmarkedProducts, update
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [imageSrc, setImageSrc] = useState(`https://${product.imageUrl}`);
+    
 
     // 찜한 목록에 있는지 확인하여 상태 설정
     useEffect(() => {
