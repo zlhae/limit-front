@@ -70,7 +70,6 @@ const DoBid=({type, productId, productOptionId, immediatePriceData})=>{
                         icon: "success",
                         title: "입찰이 완료되었습니다.",
                     })
-                    navigate("/chatting")
                 })
                 .catch(()=>{
                     Swal.fire({

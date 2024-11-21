@@ -5,8 +5,10 @@ import Cookies from 'js-cookie';
 import SubHeader from "../Components/SubHeader";
 import ChattingList from "../Components/ChattingList";
 import ChattingWindow from "../Components/ChattingWindow";
+import { useNavigate } from "react-router-dom";
 
 const Chatting=()=>{
+    const navigate = useNavigate();
     const [chatListData, setChatListData]=useState();
     const [selectedChatRoom, setSelectedChatRoom]=useState(null);
     const [selectedChatRoomData,setSelectedChatRoomData]=useState({});
@@ -39,6 +41,14 @@ const Chatting=()=>{
             }
         })
     },[selectedChatRoom])
+
+    useEffect(() => {
+        const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken='));
+        if (!accessToken) {
+            alert("로그인 이용 후 이용가능합니다.");
+            navigate("/"); 
+        }
+    }, [navigate]);
 
     return(
         <div>

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProductInformation from '../Components/ProductInformation';
 import ImmediatePrice from '../Components/ImmediatePrice';
@@ -8,6 +8,7 @@ import DoBid from '../Components/DoBid';
 import DoImmediate from '../Components/DoImmediate';
 
 const Purchase=()=>{
+    const navigate = useNavigate();
     const location=useLocation();
     const queryParams=new URLSearchParams(location.search);
     const productId=queryParams.get("id");
@@ -59,6 +60,14 @@ const Purchase=()=>{
         productInformationDataFetch();
         productImmediatePriceDataFetch();
     },[]);
+
+    useEffect(() => {
+        const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken='));
+        if (!accessToken) {
+            alert("로그인 이용 후 이용가능합니다.");
+            navigate("/"); 
+        }
+    }, [navigate]);
 
     const showSubmitBox=()=>{
         switch(position){
