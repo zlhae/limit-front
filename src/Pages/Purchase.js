@@ -29,7 +29,7 @@ const Purchase=()=>{
                 name_kor: response.data.names.kor,
                 size: productSizeName
             };
-            setProductInformationData(productInformation); 
+            setProductInformationData(productInformation);  
         })
         .catch((error)=>{
             console.log(error);
